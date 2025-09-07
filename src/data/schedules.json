@@ -1,0 +1,93 @@
+[
+  {
+    "day": "Monday",
+    "time": "09:00 - 10:45",
+    "course": "SWE401",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Monday",
+    "time": "11:00 - 12:45",
+    "course": "SWE370",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Monday",
+    "time": "14:30 - 16:15",
+    "course": "ITE390",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Monday",
+    "time": "16:30 - 18:15",
+    "course": "SWE371",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Tuesday",
+    "time": "11:00 - 12:45",
+    "course": "CSC301",
+    "type": "Lecture",
+    "room": "HGF-08A"
+  },
+  {
+    "day": "Tuesday",
+    "time": "14:30 - 16:15",
+    "course": "ITE390",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Wednesday",
+    "time": "09:00 - 10:45",
+    "course": "SWE401",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Wednesday",
+    "time": "11:00 - 12:45",
+    "course": "SWE370",
+    "type": "Lecture",
+    "room": "D-1F-08"
+  },
+  {
+    "day": "Wednesday",
+    "time": "14:30 - 16:15",
+    "course": "SWE371",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Thursday",
+    "time": "09:00 - 10:45",
+    "course": "CSC301",
+    "type": "Tutorial",
+    "room": "HGF-08A"
+  },
+  {
+    "day": "Thursday",
+    "time": "11:00 - 12:45",
+    "course": "CSC301",
+    "type": "Lecture",
+    "room": "HGF-08A"
+  },
+  {
+    "day": "Thursday",
+    "time": "14:30 - 16:15",
+    "course": "ITE390",
+    "type": "Lecture",
+    "room": "UF-10"
+  },
+  {
+    "day": "Friday",
+    "time": "14:30 - 16:15",
+    "course": "CHE201L",
+    "type": "Laboratory",
+    "room": "HGF-02"
+  }
+]
