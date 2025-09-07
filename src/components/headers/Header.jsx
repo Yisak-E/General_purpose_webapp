@@ -14,9 +14,9 @@ export default function Header({headerProps}) {
             <nav className={'nav flex-row align-items-center justify-center ml-auto mr-10 my-12'}>
                 {
                     headerProps.navLinks.map((link, index) => (
-                        <a
+                        <button
                             key={index}
-                            href={link.path}
+                           
                             onClick={
                                 (e) => {
                                     e.preventDefault();
@@ -26,7 +26,7 @@ export default function Header({headerProps}) {
                             className={'mx-2 hover:text-black  bg-blue-500 text-white px-3 py-3 rounded-2xl'}
                         >
                             {link.label}
-                        </a>
+                        </button>
                     ))
                 }
 
@@ -34,3 +34,4 @@ export default function Header({headerProps}) {
         </header>
     );
 }
+
