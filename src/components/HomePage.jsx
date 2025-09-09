@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import scheduleImg from '../assets/schedule.jpg';
 import studyplanImg from '../assets/studyplan.jpg';
 import jopsearchImg from '../assets/jopSearch.jpg';
+import weatherImg from '../assets/weatherabu.png';
 import '../general.css'
 import Header from "./headers/Header.jsx";
 
@@ -50,6 +51,25 @@ export default function HomePage() {
             description: 'Optimized job search engine to find your dream job',
             navigateTo: '/jobSearch',
             navigator: navigateTo
+        },
+        {
+            title: 'Weather',
+            image: weatherImg,
+            description: 'Get real-time weather updates for your location',
+            navigateTo: '/weather',
+            navigator: navigateTo
+        },
+        {
+            title:'Memory Game',
+            image:'https://img.freepik.com/free-vector/memory-game-concept-illustration_114360-1921.jpg?w=740&t=st=1696117203~exp=1696117803~hmac=5a3e2f0f4e2e4fc1a4e3f8e6f4b5e6c7d8e9f0a1b2c3d4e5f6g7h8i9j0k',
+            description:'Play a fun and engaging memory game to boost your cognitive skills',
+            navigateTo: '/memoryGame',
+            navigator: navigateTo
+        },{
+        title: 'comming soon...',
+        image: 'https://img.freepik.com/free-vector/coming-soon-concept-illustration_114360-7861.jpg?w=740&t=st=1696117323~exp=1696117923~hmac=5c6d7e8f9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5',
+        description: 'Stay tuned for more exciting features and updates!',
+        navigateTo: '/#',
         }
     ];
 

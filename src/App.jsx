@@ -5,6 +5,8 @@ import HomePage from "./components/HomePage.jsx";
 import StudyPlan from "./components/StudyPlan.jsx";
 import JopSearch from "./components/JopSearch.jsx";
 import Footer from "./components/Footer.jsx";
+import WeatherAbuDhabi from "./components/weather/WeatherAbuDhabi.jsx";
+import MemoryGame from "./components/game/MemoryGame.jsx";
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
                 <Route path="/schedule" element={<Schedules/>}/>
                 <Route path="/studyPlan" element={<StudyPlan/>}/>
                 <Route path="/jobSearch" element={<JopSearch/>}/>
+                <Route path="/weather" element={<WeatherAbuDhabi/>}/>
+                <Route path="/memorygame" element={<MemoryGame/>}/>
             </Routes>
           <Footer/>
       </BrowserRouter>
