@@ -19,11 +19,17 @@ export default function TodoAndDone(){
                     }
                 }/>
 
-                <section className={'grid gap-2 bg-gray-300 wx-50 p-4 rounded-lg'}>
+                <section className={'grid  bg-gray-300 wx-50 p-4 rounded-lg'}>
                     <h1 className={'text-center text-2xl'}>Todo And Done</h1>
-                    <div className={'grid gap-2'}>
-                        <div className={'left-side-nav w-1/3 rounded-2xl bg-amber-100 p-3'}>
-                            <h3 className={'text-center text-2xl'}>Log Task</h3>
+                    <div className={' gap-1.5 flex flex-row justify-between'}>
+                        <div className={' w-1/3 rounded-2xl bg-green-300 p-3'}>
+                             <h3 className={'text-center text-2xl'}>Accomplished Tasks</h3>
+                            <p className={'text-center'}> Coming soon...</p>
+                        </div>
+
+                        <div className={' w-1/3 rounded-2xl bg-amber-300 p-3'}>
+
+                             <h3 className={'text-center text-2xl'}>Log Task</h3>
                             <form onSubmit={e => e.preventDefault()}
                                   >
 
@@ -63,10 +69,12 @@ export default function TodoAndDone(){
                                     Add Task
                                 </button>
                             </form>
+
                         </div>
 
-                        <div className={'right-side-view '}>
-                            <p className={'text-center'}> Todo And Done coming soon...</p>
+                        <div className={'w-1/3 rounded-2xl bg-red-300 '}>
+                             <h3 className={'text-center text-2xl'}>Todo Tasks</h3>
+                            <p className={'text-center'}> Coming soon...</p>
                         </div>
                     </div>
 
