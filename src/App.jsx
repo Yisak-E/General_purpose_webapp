@@ -7,6 +7,7 @@ import JopSearch from "./components/JopSearch.jsx";
 import Footer from "./components/Footer.jsx";
 import WeatherAbuDhabi from "./components/weather/WeatherAbuDhabi.jsx";
 import MemoryGame from "./components/game/MemoryGame.jsx";
+import Tracker from "./components/nutrition/Tracker.jsx";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/jobSearch" element={<JopSearch/>}/>
                 <Route path="/weather" element={<WeatherAbuDhabi/>}/>
                 <Route path="/memorygame" element={<MemoryGame/>}/>
+                <Route path="/Tracker" element={<Tracker/>}/>
             </Routes>
           <Footer/>
       </BrowserRouter>

@@ -37,7 +37,7 @@ function StudyPlan() {
                         studyplan.semesters.map((semester, index) => {
 
                             return (
-                                <div>
+                                <div key={index}>
                                     <h2 key={semester.name+index} className={'text-center text-xl font-bold my-2 hover:underline'}
                                     onClick={() => setSelectedSemester(semester)}>{semester.name}</h2>
                                     {

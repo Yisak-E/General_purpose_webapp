@@ -1,7 +1,14 @@
 import logo from '../../assets/gpa.png';
+import {useNavigate} from "react-router-dom";
 
 
 export default function Header({headerProps}) {
+      const nav = useNavigate();
+
+    const navigateTo= (navData) => {
+        nav(navData);
+    }
+
     return (
         <header className={'flex align-items-center'}>
             <img src={logo} alt="Logo" className={'h-30 w-40 mr-4'}/>
@@ -11,7 +18,7 @@ export default function Header({headerProps}) {
                     headerProps.navLinks.map((link, index) => (
                         <button
                             key={index}
-                            onClick={headerProps.navigateTo}
+                            onClick={()=>navigateTo(link.path)}
                             className={'mx-2 hover:text-black  bg-blue-500 text-white px-3 py-3 rounded-2xl'}
                         >
                             {link.label}
