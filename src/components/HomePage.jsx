@@ -76,6 +76,13 @@ export default function HomePage() {
             navigator: navigateTo
         },
         {
+            title: 'Todo And Done',
+            image: 'https://img.freepik.com/free-vector/todo-list-concept-illustration_114360-7860.jpg?w=740&t=st=1696117263~exp=1696117863~hmac=3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8',
+            description: 'Manage your tasks efficiently with our Todo And Done feature',
+            navigateTo: '/TodoAndDone',
+            navigator: navigateTo
+        },
+        {
         title: 'comming soon...',
         image: 'https://img.freepik.com/free-vector/coming-soon-concept-illustration_114360-7861.jpg?w=740&t=st=1696117323~exp=1696117923~hmac=5c6d7e8f9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5',
         description: 'Stay tuned for more exciting features and updates!',

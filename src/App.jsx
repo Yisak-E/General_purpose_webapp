@@ -8,6 +8,7 @@ import Footer from "./components/Footer.jsx";
 import WeatherAbuDhabi from "./components/weather/WeatherAbuDhabi.jsx";
 import MemoryGame from "./components/game/MemoryGame.jsx";
 import Tracker from "./components/nutrition/Tracker.jsx";
+import TodoAndDone from "./components/todo/TodoAndDone.jsx";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/weather" element={<WeatherAbuDhabi/>}/>
                 <Route path="/memorygame" element={<MemoryGame/>}/>
                 <Route path="/Tracker" element={<Tracker/>}/>
+                <Route path="/TodoAndDone" element={<TodoAndDone/>}/>
             </Routes>
           <Footer/>
       </BrowserRouter>
