@@ -16,13 +16,15 @@ export default function Header({headerProps}) {
             <nav className={'nav flex-row align-items-center justify-center ml-auto mr-10 my-12'}>
                 {
                     headerProps.navLinks.map((link, index) => (
-                        <button
+                       <div className={'inline-flex items-center justify-center'} key={index}>
+                            <button
                             key={index}
                             onClick={()=>navigateTo(link.path)}
                             className={'mx-2 hover:text-black  bg-blue-500 text-white px-3 py-3 rounded-2xl'}
                         >
                             {link.label}
                         </button>
+                       </div>
                     ))
                 }
 
