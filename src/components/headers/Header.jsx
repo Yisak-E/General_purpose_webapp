@@ -10,17 +10,17 @@ export default function Header({headerProps}) {
     }
 
     return (
-        <header className={'flex align-items-center'}>
+        <header className={'flex lg:flex-row lg:align-items-center lg:justify-center sm:flex-col'}>
             <img src={logo} alt="Logo" className={'h-30 w-40 mr-4'}/>
-            <h1 className={'text-center text-4xl font-bold my-10'}>{headerProps.title}</h1>
-            <nav className={'nav flex-row align-items-center justify-center ml-auto mr-10 my-12'}>
+            <h1 className={'text-center text-4xl font-bold m-auto '}>{headerProps.title}</h1>
+            <nav className={'  m-auto'}>
                 {
                     headerProps.navLinks.map((link, index) => (
                        <div className={'inline-flex items-center justify-center'} key={index}>
                             <button
                             key={index}
                             onClick={()=>navigateTo(link.path)}
-                            className={'mx-2 hover:text-black  bg-blue-500 text-white px-3 py-3 rounded-2xl'}
+                            className={'mx-2 hover:text-black  md:bg-blue-500 text-white p-1 rounded-xl md:h  lg:bg-gray-500 sm:bg-blue-950'}
                         >
                             {link.label}
                         </button>

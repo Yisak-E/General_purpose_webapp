@@ -60,41 +60,16 @@ export default function TodoAndDone(){
                     }
                 }/>
 
-                <section className={'grid  bg-gray-300 wx-50 p-4 rounded-lg'}>
-                    <h1 className={'text-center text-2xl'}>Todo And Done</h1>
+                <section className={'flex-wrap bg-gray-300 wx-50 p-4 rounded-lg'}>
+
                     <p id={'form-message'}>{message}</p>
-                    <div className={' gap-1.5 flex flex-row justify-between'}>
-                        <div className={' w-1/3 rounded-2xl bg-green-300 p-3'}>
-                             <h3 className={'text-center text-2xl'}>Accomplished Tasks</h3>
-                            {
-                              toDOList.filter(data => data.completed).length > 0
-                                ? toDOList.map((data, i) =>
-                                    data.completed && (
-                                     <div key={i} className="bg-amber-100 p-4 rounded-xl mb-2 flex flex-row justify-between">
-                                           <div className={''}>
-                                               <p className="uppercase font-bold flex  text-gray-600">{data.title}</p>
-                                               <p className="text-sm font-semibold text-blue-700 text-wrap px-2">{data.description}</p>
-                                           </div>
-
-                                              <div className={'ml-3 my-auto'}>
-                                                   <button type={'button'} className={'bg-red-700 text-white p-2 rounded-xl'}
-                                                   onClick={()=>handleMarking(i)}> uncompleted</button>
-                                              </div>
-
-                                          </div>
-                                    )
-                                  )
-                                : <p>Nothing completed</p>
-                            }
-
-                        </div>
-
-                        <div className={' w-1/3 rounded-2xl bg-amber-300 p-3'}>
+                    <div className={'flex flex-col justify-center'}>
+                          <div className={'flex justify-center bg-green-300'}>
+                              <div className={' w-1/1 rounded-2xl bg-amber-300 p-3'}>
 
                              <h3 className={'text-center text-2xl'}>Log Task</h3>
                             <form onSubmit={handleSubmit}
                                   >
-
 
                                 <div className={'flex justify-start ml-3'}>
                                     <label htmlFor={'task_date'} className={'m-2 p-2 font-bold'}>Date of task: </label>
@@ -144,8 +119,36 @@ export default function TodoAndDone(){
                             </form>
 
                         </div>
+                        </div>
 
-                        <div className={'w-1/3  bg-red-300 p-3 rounded'}>
+
+                      <div className={'flex md:flex-row justify-center sm:flex-col lg:gap-5'}>
+                            <div className={' w-1/2 rounded-2xl bg-green-300 p-3'}>
+                             <h3 className={'text-center text-2xl'}>Accomplished Tasks</h3>
+                            {
+                              toDOList.filter(data => data.completed).length > 0
+                                ? toDOList.map((data, i) =>
+                                    data.completed && (
+                                     <div key={i} className="bg-amber-100 p-4 rounded-xl mb-2 flex flex-row justify-between">
+                                           <div className={''}>
+                                               <p className="uppercase font-bold flex  text-gray-600">{data.title}</p>
+                                               <p className="text-sm font-semibold text-blue-700 text-wrap px-2">{data.description}</p>
+                                           </div>
+
+                                              <div className={'ml-3 my-auto'}>
+                                                   <button type={'button'} className={'bg-red-700 text-white p-2 rounded-xl'}
+                                                   onClick={()=>handleMarking(i)}> uncompleted</button>
+                                              </div>
+
+                                          </div>
+                                    )
+                                  )
+                                : <p>Nothing completed</p>
+                            }
+
+                        </div>
+
+                        <div className={'w-1/2  bg-red-300 p-3 rounded'}>
                              <h3 className={'text-center text-2xl'}>Todo Tasks</h3>
                                 {
                                   toDOList.filter(data => !data.completed).length > 0
@@ -170,6 +173,9 @@ export default function TodoAndDone(){
                                     : <p>Nothing completed</p>
 }
                         </div>
+                      </div>
+
+
                     </div>
 
 
