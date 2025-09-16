@@ -1,34 +1,11 @@
 
 import React , {useState} from "react";
 import Header from "../headers/Header.jsx";
-//import studyplan from "../data/studyplan.json"
+import todo from './todo.json'
 
 
 export default function TodoAndDone(){
-    const toDOList = [{
-        title:"study DSA",
-        description:"start learning and practicing linked list",
-        date:"2025-09-08",
-        completed:false
-    },
-    {
-        title:"study SWE401",
-        description:"start learning  SDLC",
-        date:"2025-09-05",
-         completed:false
-    },
-          {
-        title:"study CSC305",
-        description:"chapter one to three",
-        date:"2025-09-05",
-         completed:true
-    },
-    {
-        title:"study ITE390",
-        description:"start learning and practicing ethical theories",
-        date:"2025-09-18",
-         completed:false
-    }]
+    const [toDOList, setTodoList] =useState(todo)
     const [formData, setFormData] = useState({
         taskDate: "",
         taskName: "",
@@ -56,11 +33,17 @@ export default function TodoAndDone(){
     }
 
     const handleMarking = (index)=>{
-        toDOList.map((data, i)=>{
+        const updatedData = toDOList.map((data, i)=>{
             if(i === index){
-                data.isComplete = !data.isComplete;
+                return {
+                    ... data,
+                    completed:!data.completed
+                };
             }
+            return data;
         })
+
+        setTodoList(updatedData);
     }
 
     return(
@@ -94,7 +77,8 @@ export default function TodoAndDone(){
                                            </div>
 
                                               <div className={'ml-3 my-auto'}>
-                                                   <button type={'button'} className={'bg-red-700 text-white p-2 rounded-xl'}> uncompleted</button>
+                                                   <button type={'button'} className={'bg-red-700 text-white p-2 rounded-xl'}
+                                                   onClick={()=>handleMarking(i)}> uncompleted</button>
                                               </div>
 
                                           </div>
