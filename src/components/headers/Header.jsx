@@ -11,7 +11,7 @@ export default function Header({headerProps}) {
 
     return (
         <header className={'flex flex-col lg:flex-row md:flex-row lg:align-items-center lg:justify-center '}>
-            <img src={logo} alt="Logo" className={' h-fit w-40 mx-auto lg:'}/>
+            <img src={logo} alt="Logo" className={' h-fit w-40 mx-auto lg:  cursor-pointer' } onClick={()=>navigateTo("/")}/>
             <h1 className={'text-center text-2xl lg:text-5xl md:text-4xl lg:m-auto md:m-auto font-bold mx-auto '}>{headerProps.title}</h1>
             <nav className={'  m-auto'}>
                 {

@@ -12,13 +12,13 @@ import {useNavigate} from "react-router-dom";
 const CardView = ({card})=>{
 
     return(
-            <div className={'col-4 bg-gray-200 cursor-pointer m-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300'}
+            <div className={'w-full my-3 flex flex-col align-middle  bg-gray-200 cursor-pointer m-auto rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 lg:flex-wrap lg:w-1/4 lg:mx-2 md:flex-wrap md:w-1/3 md:mx-1'}
               onClick={() => (card.navigator(card.navigateTo))}>
                 <h3 className={'text-center text-xl font-bold p-4'}>{card.title}</h3>
-                <div className="grid gap-2 ">
+                <div className="m-auto md:w-50 md:flex md:flex-col md:justify-start  ">
                     <img src={card.image} alt={card.title} className="rounded-circle home_img " />
                  </div>
-                <pre className={'w-50 text-wrap p-3 hover:bg-gray-300 mx-auto rounded-3xl'}>{card.description}</pre>
+                <pre className={'w-70 my-2 mx-auto p-3 hover:bg-gray-300 text-wrap rounded-3xl'}>{card.description}</pre>
 
             </div>
 
@@ -96,7 +96,7 @@ export default function HomePage() {
                 <div className={'container p-0 m-0 min-w-full min-h-screen'}>
 
                         <Header headerProps={{
-                            title: 'General Purpose Application',
+                            title: 'GPA',
                             navLinks: [
                                 { label: 'Schedules', path: '/schedule' },
                                 { label: 'Study Plan', path: '/studyPlan' },
