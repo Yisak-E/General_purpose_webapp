@@ -134,7 +134,7 @@ export default function TodoAndDone() {
             <div className={'container min-w-full px-2 py-0 min-h-screen'}>
                 <Header headerProps={
                     {
-                        title: 'Todo And Done',
+                        title: 'Mini Todo',
                         navLinks: [
                             { label: 'Home', path: '/' },
                             { label: 'Schedules', path: '/schedule' },
@@ -143,7 +143,7 @@ export default function TodoAndDone() {
                     }
                 } />
 
-                <section className={'flex-wrap bg-gray-300 wx-50 p-4 rounded-lg'}>
+                <section className={'flex-wrap bg-gray-300 w-full mt-3 p-4 '}>
 
                     {message && (
                         <div id={'form-message'} className={`p-3 mb-4 rounded-lg text-center ${
@@ -155,7 +155,7 @@ export default function TodoAndDone() {
 
                     <div className={'flex flex-col justify-center'}>
                         <div className={'flex justify-center bg-green-300'}>
-                            <div className={' w-1/1 rounded-2xl bg-amber-300 p-3'}>
+                            <div className={' w-1/1  bg-amber-300 p-3'}>
 
                                 <h3 className={'text-start ml-7 font-bold text-2xl'}>Log Task</h3>
                                 <form onSubmit={handleSubmit}>
@@ -207,7 +207,7 @@ export default function TodoAndDone() {
                         </div>
 
                         <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4'}>
-                            <div className={'w-full md:w-1/2 mx-auto rounded-2xl bg-green-300 p-3'}>
+                            <div className={'w-full md:w-1/2 mx-auto  bg-green-300 p-3'}>
                                 <h3 className={'text-center text-2xl mb-4'}>Accomplished Tasks</h3>
                                 {accomplishedTasks.length > 0?
                                     accomplishedTasks.map((data) =>

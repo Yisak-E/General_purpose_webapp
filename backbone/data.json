@@ -12,5 +12,12 @@
     "description": "sfdssd g dsa",
     "id": "83ed68f7-a00e-41c3-9e59-c843e2ef6aae",
     "title": "Wake him up"
+  },
+  {
+    "completed": false,
+    "date": "2025-09-01",
+    "description": "computer ethics",
+    "id": "5b42c692-fa84-410d-90f1-2fdbb01bab23",
+    "title": "Quiz1"
   }
 ]

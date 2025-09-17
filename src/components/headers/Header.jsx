@@ -10,9 +10,9 @@ export default function Header({headerProps}) {
     }
 
     return (
-        <header className={'flex lg:flex-row lg:align-items-center lg:justify-center sm:flex-col'}>
-            <img src={logo} alt="Logo" className={'h-30 w-40 mr-4'}/>
-            <h1 className={'text-center text-4xl font-bold m-auto '}>{headerProps.title}</h1>
+        <header className={'flex flex-col lg:flex-row md:flex-row lg:align-items-center lg:justify-center '}>
+            <img src={logo} alt="Logo" className={' h-fit w-40 mx-auto lg:'}/>
+            <h1 className={'text-center text-2xl lg:text-5xl md:text-4xl lg:m-auto md:m-auto font-bold mx-auto '}>{headerProps.title}</h1>
             <nav className={'  m-auto'}>
                 {
                     headerProps.navLinks.map((link, index) => (
@@ -20,7 +20,7 @@ export default function Header({headerProps}) {
                             <button
                             key={index}
                             onClick={()=>navigateTo(link.path)}
-                            className={'mx-2 hover:text-black  md:bg-blue-500 text-white p-1 rounded-xl md:h  lg:bg-gray-500 sm:bg-blue-950'}
+                            className={'mx-2 hover:text-black  md:bg-blue-500 text-white px-2 py-1 rounded-xl md:h  lg:bg-gray-500 bg-blue-600'}
                         >
                             {link.label}
                         </button>
