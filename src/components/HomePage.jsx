@@ -1,7 +1,7 @@
 
 import scheduleImg from '../assets/schedule.jpg';
 import studyplanImg from '../assets/studyplan.jpg';
-import jopsearchImg from '../assets/jopSearch.jpg';
+import jopSearchImg from '../assets/jopSearch.jpg';
 import weatherImg from '../assets/weatherabu.png';
 import nutTrackerImg from '../assets/nut_tracker.jpg';
 import '../general.css'
@@ -49,7 +49,7 @@ export default function HomePage() {
         },
         {
             title: 'Job Search',
-            image: jopsearchImg,
+            image: jopSearchImg,
             description: 'Optimized job search engine to find your dream job',
             navigateTo: '/jobSearch',
             navigator: navigateTo
