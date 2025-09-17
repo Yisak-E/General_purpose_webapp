@@ -3,11 +3,12 @@ from flask import request, jsonify
 import json
 import os
 from flask_cors import CORS
+import uuid
 
 
 
 app = FlaskAPI(__name__)
-CORS(app)
+CORS(app, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 DATA_FILE = 'data.json'
 
 def read_json():
@@ -26,18 +27,21 @@ def get_items():
 
 @app.route('/api/items', methods=['POST'])
 def add_item():
-    new_item = request.data
+    new_item = request.get_json()
+
+    new_item['id'] = str(uuid.uuid4())
+
     data = read_json()
     data.append(new_item)
     write_json(data)
     return {"message": "Item added", "item": new_item}, 201
 
-@app.route('/api/items/<int:item_id>', methods=['PUT'])
+@app.route('/api/items/<string:item_id>', methods=['PUT'])
 def update_item(item_id):
     updated = request.data
     data = read_json()
     for i, item in enumerate(data):
-        if i == item_id:
+        if item.get("id") == item_id:
             data[i] = updated
             write_json(data)
             return {"message": "Item updated", "item": updated}

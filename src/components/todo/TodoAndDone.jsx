@@ -2,6 +2,7 @@ import React, { useState, useEffect , useMemo} from "react";
 import Header from "../headers/Header.jsx";
 
 export default function TodoAndDone() {
+
     const [toDOList, setTodoList] = useState([]);
     const [formData, setFormData] = useState({
         date: "",
@@ -32,6 +33,7 @@ export default function TodoAndDone() {
                     // throw new Error('Failed to fetch items');
                 }
                 const result = await response.json();
+
                 setTodoList(result.items || result || []); // Handle different API response structures
             } catch (error) {
                 console.error("Failed to fetch items", error);
@@ -82,7 +84,6 @@ export default function TodoAndDone() {
         }
 
         setFormData({
-            id:toDOList.length,
             date: "",
             title: "",
             description: "",
