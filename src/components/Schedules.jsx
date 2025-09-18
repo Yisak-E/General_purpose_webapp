@@ -13,7 +13,7 @@ function ScheduleTable({schedlue}) {
 
   return (
     <>
-        <form>
+        <form className="mt-4 ">
             <label htmlFor={'daySelection'}
             className={'w-56 bg-amber-300 px-2 py-1 text-2xl'}
             >Show For: </label>
@@ -37,23 +37,24 @@ function ScheduleTable({schedlue}) {
                 <th>Room</th>
             </tr>
             </thead>
+            <tbody>
             {schedlue.length>0? schedlue.map((schedule, index) => (
 
-
                         schedule.day === day?(
-                          <tr key={index} className={'w-full gap-6 h-12'}>
+                          <tr key={index} className={'w-full gap-6 h-12  text-center'}>
                              <td className={'border-gray-300 border-1'}>{schedule.course}</td>
                               <td className={'border-gray-300 border-1'}>{schedule.time}</td>
                               <td className={'border-gray-300 border-1'}>{schedule.room}</td>
                           </tr>
                         ):(
-                            <p className={'hidden'}>not the need</p>
+                            <tr key={index} className={'hidden'}><td>not the need</td></tr>
                         )
 
 
 
             )):(<></>)
             }
+            </tbody>
         </table>
 
     </>
@@ -75,7 +76,6 @@ export default function Schedules() {
                        ]
                    }
                } />
-                <p>This is the Schedules page.</p>
                     <ScheduleTable schedlue={schedulesData} />
 
             </div>
