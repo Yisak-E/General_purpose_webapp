@@ -4,7 +4,7 @@ import Header from "./headers/Header.jsx";
 import {useState} from "react";
 
 
-function ScheduleTable({schedlue}) {
+function ScheduleTable({schedule}) {
     const [day, setDay] = useState("Monday");
 
     const handleChange = (e)=>{
@@ -38,7 +38,7 @@ function ScheduleTable({schedlue}) {
             </tr>
             </thead>
             <tbody>
-            {schedlue.length>0? schedlue.map((schedule, index) => (
+            {schedule.length>0? schedule.map((schedule, index) => (
 
                         schedule.day === day?(
                           <tr key={index} className={'w-full gap-6 h-12  text-center'}>
@@ -76,7 +76,7 @@ export default function Schedules() {
                        ]
                    }
                } />
-                    <ScheduleTable schedlue={schedulesData} />
+                    <ScheduleTable schedule={schedulesData} />
 
             </div>
         </>
