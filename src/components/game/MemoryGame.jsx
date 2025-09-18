@@ -79,7 +79,6 @@ export default function MemoryGame() {
                 {
                     title: 'Memory Game',
                     navLinks: [
-                        {label: 'Home', path: '/'},
                         {label: 'Schedules', path: '/schedule'},
                         {label: 'Study Plan', path: '/studyPlan'},
                         {label: 'Job Search', path: '/jobSearch'}
@@ -90,20 +89,8 @@ export default function MemoryGame() {
             <div className="container-fluid flex flex-col mt-4 bg-gray-100">
                 <h1 className="text-3xl font-bold mb-4 text-center">Memory Game</h1>
                 <p className={'text-center'}> {notification}</p>
-               <div className=" flex flex-row p-4">
-                    <div className="flex justify-center flex-wrap w-1/2">
-                        {cards.map((card, index) => (
-                            <div
-                                key={index}
-                                className={`w-27 h-27 m-2 flex items-center justify-center text-5xl border rounded-lg cursor-pointer ${card.isFlipped ? 'bg-white' : 'bg-blue-500 text-white'}`}
-                                onClick={() => handleCardClick(index)}
-                            >
-                                {card.isFlipped ? card.item : '❓'}
-                            </div>
-                        ))}
-                    </div>
-
-                   <div>
+               <div className=" flex flex-col p-4">
+                    <div className={'bg-gray-200 rounded-lg p-3'}>
                           <h2 className="text-2xl font-bold mb-2">How to Play</h2>
                           <ul className="list-disc list-inside">
                             <li>Click on a card to flip it over and reveal the item.</li>
@@ -113,6 +100,19 @@ export default function MemoryGame() {
                             <li>The game continues until all pairs are matched.</li>
                           </ul>
                    </div>
+                    <div className="flex flex-row flex-wrap w-full">
+                        {cards.map((card, index) => (
+                            <div
+                                key={index}
+                                className={`w-20 h-20 m-2 flex items-center justify-center text-5xl border rounded-lg cursor-pointer ${card.isFlipped ? 'bg-white' : 'bg-blue-500 text-white'}`}
+                                onClick={() => handleCardClick(index)}
+                            >
+                                {card.isFlipped ? card.item : '❓'}
+                            </div>
+                        ))}
+                    </div>
+
+
                </div>
             </div>
         </div>
