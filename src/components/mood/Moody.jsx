@@ -1,15 +1,14 @@
 import Header from "../headers/Header.jsx";
+// import {useState} from "react";
 
-import {useState} from "react";
-import LogSignPage from "../../accessories/LogSignPage.jsx";
-import {useState} from "react";
+
 
 
 
 
 
 export default function Moody(){
-    const [isGoing, setIsGoing] = useState(false);
+
 
     return (
         <>
@@ -20,7 +19,7 @@ export default function Moody(){
                            {label: 'Job Search', path: '/jobSearch'}
                        ]
             }}/>
-            <LogSignPage {...setIsGoing(false)}/ />
+
 
         </>
     )
