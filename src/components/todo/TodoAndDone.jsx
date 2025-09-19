@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Header from "../headers/Header.jsx";
 import relaxImg from "../../assets/relax.png";
-import hardworkImg from "../../assets/hardwork.png";
+import hardworkingImg from "../../assets/hardwork.png";
 import {
   getFirestore,
   collection,
@@ -243,7 +243,7 @@ export default function TodoAndDone() {
                   : <div className="text-center p-4 flex flex-col ">
                         <p className="text-center p-4">No task completed!</p>
                         <div className={'mx-auto my-auto rounded-xl'}>
-                            <img src={hardworkImg} alt={'hard work'} className={'rounded-3xl w-100'}/>
+                            <img src={hardworkingImg} alt={'hard work'} className={'rounded-3xl w-100'}/>
                         </div>
                     </div>
 
