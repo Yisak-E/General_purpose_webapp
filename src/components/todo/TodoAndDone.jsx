@@ -6,7 +6,8 @@ import {
   addDoc,
   onSnapshot,
   updateDoc,
-  doc
+  doc,
+    deleteDoc,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
@@ -24,6 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export default function TodoAndDone() {
+
   const db = getFirestore(app);
   const [toDOList, setTodoList] = useState([]);
   const [formData, setFormData] = useState({
@@ -115,6 +117,17 @@ export default function TodoAndDone() {
     }
   };
 
+  const handleDelete = async (id) => {
+      try{
+          await deleteDoc(doc(db, "todos", id));
+          setMessage("Task deleted successfully!");
+          setTimeout(() => setMessage(""), 3000);
+      } catch (error) {
+          console.error("Error deleting document: ", error);
+          setMessage("Error deleting task");
+          setTimeout(() => setMessage(""), 3000);
+      }
+  }
   if (loading) {
     return (
       <div className="container min-w-full px-2 py-0 min-h-screen flex items-center justify-center">
@@ -200,21 +213,26 @@ export default function TodoAndDone() {
               </div>
             </div>
 
-            <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4'}>
-              <div className={'w-full md:w-1/2 mx-auto  bg-green-300 p-3'}>
+            <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4 '}>
+              <div className={'w-full md:w-1/2 mx-auto  bg-green-300 p-3 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Accomplished Tasks</h3>
+                   <section className={'flex flex-col w-full p-o lg:h-svh lg:overflow-y-scroll '}>
                 {accomplishedTasks.length > 0 ?
                   accomplishedTasks.map((data) =>
                     data && (
                       <div key={data.id} className="bg-amber-100 p-4 rounded-xl mb-2 flex flex-row justify-between">
-                        <div className={''}>
+                        <div className={' w-6/7'}>
                           <p className="uppercase font-bold flex text-gray-600">{data.title}</p>
                           <p className="text-sm font-semibold text-blue-700 text-wrap px-2">{data.description}</p>
                           <p className="text-xs text-gray-500 mt-1">{data.date}</p>
                         </div>
-                        <div className={'ml-3 my-auto'}>
-                          <button type={'button'} className={'bg-red-700 text-white p-2 rounded-xl'}
+                        <div className={'ml-3 my-auto w-72'}>
+                              <button type={'button'} className={'bg-rose-400 text-white p-2 rounded-l-xl'}
                             onClick={() => handleMarking(data.id, data.completed)}> Mark as Todo</button>
+                              <button type={'button'} className={'bg-red-700 text-white p-2 rounded-r-xl'}
+                            onClick={() => handleDelete(data.id)}> Delete</button>
+
+                        {/*   */}
                         </div>
                       </div>
                     )
@@ -222,10 +240,13 @@ export default function TodoAndDone() {
                   : <p className="text-center p-4">No completed tasks yet</p>
 
                 }
+                 </section>
               </div>
 
-              <div className={'w-full md:w-1/2 mx-auto bg-red-300 p-3 rounded mt-4 md:mt-0'}>
+
+              <div className={'w-full md:w-1/2 mx-auto bg-red-300 p-3 rounded mt-4 md:mt-0 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Todo Tasks</h3>
+                      <section className={'flex flex-col w-full p-o lg:h-svh  lg:overflow-y-scroll '}>
                 {todoTasks.length > 0 ?
                   todoTasks.map((data) =>
                     !data.completed && (
@@ -246,7 +267,9 @@ export default function TodoAndDone() {
                   )
                   : <p className="text-center p-4">All tasks completed! Great job!</p>
                 }
+                  </section>
               </div>
+
             </div>
           </div>
         </section>
