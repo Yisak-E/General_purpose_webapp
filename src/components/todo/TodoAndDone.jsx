@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Header from "../headers/Header.jsx";
+import relaxImg from "../../assets/relax.png";
+import hardworkingImg from "../../assets/hardwork.png";
 import {
   getFirestore,
   collection,
@@ -10,6 +12,7 @@ import {
     deleteDoc,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
+
 
 // configs
 const firebaseConfig = {
@@ -213,10 +216,10 @@ export default function TodoAndDone() {
               </div>
             </div>
 
-            <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4 '}>
+            <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4'}>
               <div className={'w-full md:w-1/2 mx-auto  bg-green-300 p-3 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Accomplished Tasks</h3>
-                   <section className={'flex flex-col w-full p-o lg:h-svh lg:overflow-y-scroll '}>
+                   <section className={'flex flex-col w-full p-o h-svh overflow-y-scroll'}>
                 {accomplishedTasks.length > 0 ?
                   accomplishedTasks.map((data) =>
                     data && (
@@ -226,7 +229,7 @@ export default function TodoAndDone() {
                           <p className="text-sm font-semibold text-blue-700 text-wrap px-2">{data.description}</p>
                           <p className="text-xs text-gray-500 mt-1">{data.date}</p>
                         </div>
-                        <div className={'ml-3 my-auto w-72'}>
+                        <div className={'mx-auto my-auto w-72'}>
                               <button type={'button'} className={'bg-rose-400 text-white p-2 rounded-l-xl'}
                             onClick={() => handleMarking(data.id, data.completed)}> Mark as Todo</button>
                               <button type={'button'} className={'bg-red-700 text-white p-2 rounded-r-xl'}
@@ -237,7 +240,12 @@ export default function TodoAndDone() {
                       </div>
                     )
                   )
-                  : <p className="text-center p-4">No completed tasks yet</p>
+                  : <div className="text-center p-4 flex flex-col ">
+                        <p className="text-center p-4">No task completed!</p>
+                        <div className={'mx-auto my-auto rounded-xl'}>
+                            <img src={hardworkingImg} alt={'hard work'} className={'rounded-3xl w-100'}/>
+                        </div>
+                    </div>
 
                 }
                  </section>
@@ -246,7 +254,7 @@ export default function TodoAndDone() {
 
               <div className={'w-full md:w-1/2 mx-auto bg-red-300 p-3 rounded mt-4 md:mt-0 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Todo Tasks</h3>
-                      <section className={'flex flex-col w-full p-o lg:h-svh  lg:overflow-y-scroll '}>
+                  <section className={'flex flex-col w-full p-o h-svh  overflow-y-scroll '}>
                 {todoTasks.length > 0 ?
                   todoTasks.map((data) =>
                     !data.completed && (
@@ -265,8 +273,14 @@ export default function TodoAndDone() {
                       </div>
                     )
                   )
-                  : <p className="text-center p-4">All tasks completed! Great job!</p>
+                  : <div className="text-center p-4 flex flex-col ">
+                        <p className="text-center p-4">All tasks completed! Great job!</p>
+                        <div className={'mx-auto my-auto rounded-xl'}>
+                            <img src={relaxImg} alt={'relax'} className={'rounded-3xl w-100'}/>
+                        </div>
+                    </div>
                 }
+                  {/*relaxImg*/}
                   </section>
               </div>
 
