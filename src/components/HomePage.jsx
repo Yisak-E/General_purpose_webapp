@@ -4,6 +4,7 @@ import studyplanImg from '../assets/studyplan.jpg';
 import jopSearchImg from '../assets/jopSearch.jpg';
 import weatherImg from '../assets/weatherabu.png';
 import nutTrackerImg from '../assets/nut_tracker.jpg';
+import moodyImg from '../assets/img.png';
 import '../general.css'
 import Header from "./headers/Header.jsx";
 import {useNavigate} from "react-router-dom";
@@ -80,6 +81,12 @@ export default function HomePage() {
             image: 'https://img.freepik.com/free-vector/todo-list-concept-illustration_114360-7860.jpg?w=740&t=st=1696117263~exp=1696117863~hmac=3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8',
             description: 'Manage your tasks efficiently with our Todo And Done feature',
             navigateTo: '/TodoAndDone',
+            navigator: navigateTo
+        },{
+            title:'Moody',
+            image:moodyImg,
+            description:'track your mood with your post 😃🤐🤨😋',
+            navigateTo: '/moody',
             navigator: navigateTo
         },
         {
