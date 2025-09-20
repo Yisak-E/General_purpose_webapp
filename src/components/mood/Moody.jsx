@@ -222,8 +222,10 @@ export default function Moody() {
         }}
       />
 
-      <section className="Moody bg-gray-50 min-h-screen py-8">
-        <div className="container mx-auto px-4 max-w-2xl">
+      <section className=" bg-gray-50 min-h-screen py-8 ">
+        <div className="container mx-auto px-4  lg:flex lg:flex-row lg:justify-between ">
+         <div className={'flex flex-col lg:w-1/2'}>
+
           {message && (
             <div
               id={"form-message"}
@@ -302,8 +304,9 @@ export default function Moody() {
               </div>
             </form>
           </div>
+         </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 lg:flex lg:flex-col lg:ml-12 max-h-dvh overflow-y-auto ">
             {postCollection.length > 0 ? (
               postCollection.map((data) => (
                 <div
@@ -341,8 +344,9 @@ export default function Moody() {
               ))
             ) : (
               <div className="text-center py-10 text-gray-500">
-                <p className="text-lg">No posts yet</p>
+                <p className="text-lg">No posts yet(Aún no hay publicaciones)</p>
                 <p className="mt-2">Share how you're feeling to get started!</p>
+                  <p className="mt-2"> Cuéntanos cómo te sientes para comenzar.</p>
               </div>
             )}
           </div>

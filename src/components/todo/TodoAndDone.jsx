@@ -219,7 +219,7 @@ export default function TodoAndDone() {
             <div className={'flex w-full flex-col lg:gap-5 md:flex-row mt-4'}>
               <div className={'w-full md:w-1/2 mx-auto  bg-green-300 p-3 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Accomplished Tasks</h3>
-                   <section className={`flex flex-col w-full p-o lg:h-svh ${accomplishedTasks.length === 0 ? 'w-100' :  'h-svh overflow-y-scroll'}`}>
+                   <section className={`flex flex-col  p-o max-h-dvh overflow-y-scroll ${accomplishedTasks.length === 0 ? 'w-100' :  'w-full '}`}>
                 {accomplishedTasks.length > 0 ?
                   accomplishedTasks.map((data) =>
                     data && (
@@ -256,7 +256,7 @@ export default function TodoAndDone() {
 
               <div className={'w-full md:w-1/2 mx-auto bg-red-300 p-3 rounded mt-4 md:mt-0 '}>
                 <h3 className={'text-center text-2xl mb-4'}>Todo Tasks</h3>
-                     <section className={`flex flex-col w-full p-o lg:h-svh ${todoTasks.length === 0 ? 'w-100' :  'h-svh overflow-y-scroll'}`}>
+                   <section className={`flex flex-col  p-o max-h-dvh overflow-y-scroll ${todoTasks.length === 0 ? 'w-100' :  'w-full '}`}>
                 {todoTasks.length > 0 ?
                   todoTasks.map((data) =>
                     !data.completed && (
