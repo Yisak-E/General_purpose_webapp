@@ -223,16 +223,12 @@ export default function Moody() {
   ];
 
 
-  const pieOption = {
-    title: "Mood",
-  };
-
   const options = {
   title: "Mood Frequency",
   hAxis: { title: "Mood" },
   vAxis: { title: "Frequency" },
   legend: "none",
-  colors: ["#4caf50"],
+
 };
 
 
@@ -378,21 +374,24 @@ export default function Moody() {
           </div>
 
         </div>
-         <div className={'flex flex-col lg:flex-row '}>
-            <Chart
-                chartType="PieChart"
-                data={data}
-                options={pieOption}
-                width={"100%"}
-                height={"300px"}
-              />
+         <div className={'flex flex-col lg:flex-row mt-3'}>
+           {/*<div className={'sm:w-sm'}>*/}
+           {/*   <Chart*/}
+           {/*     chartType="PieChart"*/}
+           {/*     data={data}*/}
+           {/*     options={pieOption}*/}
+           {/*     width={"100%"}*/}
+           {/*     height={"400px"}*/}
+           {/*   />*/}
+           {/*</div>*/}
+
            <Chart
               chartType="ColumnChart"
               width="100%"
               height="400px"
               data={data}
               options={options}
-            />
+           />
 
           </div>
       </section>
