@@ -105,9 +105,9 @@ export default function HomePage() {
                         <Header headerProps={{
                             title: 'GPA',
                             navLinks: [
-                                { label: 'Schedules', path: '/schedule' },
-                                { label: 'Study Plan', path: '/studyPlan' },
-                                { label: 'Job Search', path: '/jobSearch' }
+                                { label: 'Todo', path: '/TodoAndDone' },
+                                { label: 'Moody', path: '/moody' },
+                                { label: 'Memory Game', path: '/memoryGame' }
                             ]
                         }} />
 

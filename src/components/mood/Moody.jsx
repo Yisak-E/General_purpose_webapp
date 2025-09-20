@@ -1,4 +1,5 @@
 import Header from "../headers/Header.jsx";
+import { Chart } from "react-google-charts";
 import relaxImg from "../../assets/relax.png";
 import {
   getFirestore,
@@ -210,6 +211,31 @@ export default function Moody() {
     );
   }
 
+
+  // statistics
+  const data = [
+    ["Mood", "Feeling Frequency"],
+    ["😊 Happy", postCollection.filter(d => d.feeling === "😊").length],
+    ["😡 Angry", postCollection.filter(d => d.feeling === "😡").length],
+    ["😔 Sad", postCollection.filter(d => d.feeling === "😔").length],
+    ["😋 Playful", postCollection.filter(d => d.feeling === "😋").length],
+    ["😍 Loving", postCollection.filter(d => d.feeling === "😍").length],
+  ];
+
+
+  const pieOption = {
+    title: "Mood",
+  };
+
+  const options = {
+  title: "Mood Frequency",
+  hAxis: { title: "Mood" },
+  vAxis: { title: "Frequency" },
+  legend: "none",
+  colors: ["#4caf50"],
+};
+
+
   return (
     <>
       <Header
@@ -350,8 +376,28 @@ export default function Moody() {
               </div>
             )}
           </div>
+
         </div>
+         <div className={'flex flex-col lg:flex-row '}>
+            <Chart
+                chartType="PieChart"
+                data={data}
+                options={pieOption}
+                width={"100%"}
+                height={"300px"}
+              />
+           <Chart
+              chartType="ColumnChart"
+              width="100%"
+              height="400px"
+              data={data}
+              options={options}
+            />
+
+          </div>
       </section>
     </>
   );
 }
+
+
