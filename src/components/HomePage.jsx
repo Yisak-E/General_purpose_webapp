@@ -90,11 +90,11 @@ export default function HomePage() {
             navigator: navigateTo
         },
         {
-        title: 'comming soon...',
+        title: 'NoteBook',
         image: 'https://img.freepik.com/free-vector/coming-soon-concept-illustration_114360-7861.jpg?w=740&t=st=1696117323~exp=1696117923~hmac=5c6d7e8f9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5',
         description: 'Stay tuned for more exciting features and updates!',
-        navigateTo: '/#',
-            // navigator: navigateTo
+        navigateTo: '/course',
+        navigator: navigateTo
         }
     ];
 
