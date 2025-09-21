@@ -95,6 +95,13 @@ export default function HomePage() {
         description: 'Stay tuned for more exciting features and updates!',
         navigateTo: '/course',
         navigator: navigateTo
+        },
+        {
+            title: 'Language Tracker',
+            image: 'https://tse4.mm.bing.net/th/id/OIP.PMRRjYlgOPwDQ1W-Z0l2_gHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
+            navigateTo: '/language',
+             description: 'check your spanish language skill with language tracker',
+            navigator: navigateTo
         }
     ];
 
