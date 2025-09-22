@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from '../../api/firebaseConfigs.js';
 import { initialVocabulary } from './initialVocabulary.js';
+import Header from "../headers/Header.jsx";
 
 export default function LanguageTrack() {
   const [message, setMessage] = useState("");
@@ -182,10 +183,16 @@ export default function LanguageTrack() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8 font-sans">
       <div className="container mx-auto px-4">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800">Spanish Vocabulary Quiz</h1>
-          <p className="mt-2 text-gray-600">Test your knowledge and track your progress.</p>
-        </header>
+
+         <Header
+          headerProps={{
+            title: "Spanish Quiz",
+            navLinks: [
+              { label: "Study Plan", path: "/studyPlan" },
+              { label: "Job Search", path: "/jobSearch" },
+            ],
+          }}
+        />
 
         {message && (
           <div className="p-3 mb-6 rounded-lg text-center bg-blue-100 text-blue-800 border border-blue-200">
@@ -193,7 +200,7 @@ export default function LanguageTrack() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-5">
           {/* Quiz Section */}
           <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
             {!quizWord ? (
