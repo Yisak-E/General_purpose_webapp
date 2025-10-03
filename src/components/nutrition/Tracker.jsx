@@ -1,10 +1,15 @@
 import Header from "../headers/Header.jsx";
 import React from "react";
+import foodLogo from "../../assets/nut_tracker.jpg";
 
 
 export  default function Tracker() {
-
-    const [showProgress, setShowProgress] = React.useState(false);
+    const [itemToShow, setItemToShow] = React.useState({
+        logForm:true,
+        report: false,
+        Dailytracker: false,
+        updateMode: false,
+    });
 
     return (
  <div className={'container min-w-full px-2 py-0 min-h-screen'}>
@@ -12,7 +17,6 @@ export  default function Tracker() {
                     {
                         title: 'Nutrition Tracker',
                         navLinks: [
-                            {label: 'Home', path: '/'},
                             {label: 'Schedules', path: '/schedule'},
                             {label: 'Study Plan', path: '/studyPlan'},
                             {label: 'Job Search', path: '/jobSearch'}
@@ -22,9 +26,12 @@ export  default function Tracker() {
 
      <section className={' bg-gray-300  rounded-lg max-w-full'}>
 
-            <article className={' flex lg:flex-row flex-col gap-2'}>
-                <section className={'lg:w-1/3  flex flex-col h-200'}>
-                    <h3 className={'text-center text-2xl font-bold'}>log meal</h3>
+            <article className={' flex  flex-col gap-2'}>
+
+                {
+                    itemToShow.logForm && (
+                         <section className={'lg:w-2/3 lg:px-12  flex flex-col mx-auto h-screen nut-image-cover'}>
+                    <h3 className={'text-center text-2xl font-bold '}>log meal</h3>
                     <form onSubmit={e => e.preventDefault()} className={'flex flex-col bg-green-100 rounded-xl'}>
 
                         <div className={'flex justify-start ml-3'}>
@@ -51,7 +58,7 @@ export  default function Tracker() {
                             <select name={'mealType'} onChange={e => e.preventDefault()} className={'m-2 p-2 bg-green-600 rounded-xl w-40'}>
                                 <option>Breakfast</option>
                                 <option>Lunch</option>
-                                <option>snack</option>
+                                <option>Snack</option>
                                 <option>Dinner</option>
                             </select>
                        </div>
@@ -65,16 +72,21 @@ export  default function Tracker() {
                     </form>
 
                 </section>
-
+                    )
+                }
                 {
-                    showProgress? (  <section className={'lg:w-1/3 flex flex-col justify-between'} >
+                  itemToShow.Dailytracker &&  (  <section className={'lg:w-1/3 flex flex-col justify-between'} >
                     <h3 className={'text-center text-2xl font-bold'}>Daily Progress</h3>
                     <div className={'flex justify-start ml-3 bg-yellow-300 h-200 rounded-lg'} >
 
                     </div>
                 </section>
 
-               ):( <section className={'lg:w-1/3  flex flex-col justify-between'}>
+               )
+                }
+
+                {
+                 itemToShow.report && ( <section className={'lg:w-1/3  flex flex-col justify-between'}>
                    <h3 className={'text-center text-2xl font-bold'}> Generate report</h3>
                      <div className={'flex justify-start ml-3 bg-blue-400   h-200 rounded-lg'} >
 
