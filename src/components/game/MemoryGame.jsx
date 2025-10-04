@@ -8,7 +8,10 @@ import {
   query,
   orderBy,
   limit,
-  where
+  where,
+  getDocs,
+  updateDoc,
+  doc
 } from 'firebase/firestore';
 import { Chart } from 'react-google-charts';
 
@@ -42,83 +45,82 @@ export default function MemoryGame() {
         }
     }, [difficulty]);
 
- const generateCards = () => {
-    const items = emojiSets[difficulty];
-    let cardsNeeded;
+    const generateCards = () => {
+        const items = emojiSets[difficulty];
+        let cardsNeeded;
 
-    switch(difficulty) {
-        case 'junior':
-            cardsNeeded = 8; // 8 pairs = 16 cards
-            break;
-        case 'senior':
-            cardsNeeded = 16; // 16 pairs = 32 cards
-            break;
-        case 'expert':
-            cardsNeeded = 8; // 8 triples = 24 cards (8 × 3 = 24)
-            break;
-        default:
-            cardsNeeded = 8;
-    }
-
-    const initialCards = [];
-    const selectedItems = items.slice(0, cardsNeeded);
-
-    for (let i = 0; i < cardsNeeded; i++) {
-        if (difficulty === 'expert') {
-            // Expert: Add 3 identical cards for each item
-            initialCards.push({
-                index: i * 3,
-                item: selectedItems[i],
-                isFlipped: false,
-                isMatched: false
-            });
-            initialCards.push({
-                index: i * 3 + 1,
-                item: selectedItems[i],
-                isFlipped: false,
-                isMatched: false
-            });
-            initialCards.push({
-                index: i * 3 + 2,
-                item: selectedItems[i],
-                isFlipped: false,
-                isMatched: false
-            });
-        } else {
-            // Junior & Senior: Add 2 identical cards for each item
-            initialCards.push({
-                index: i * 2,
-                item: selectedItems[i],
-                isFlipped: false,
-                isMatched: false
-            });
-            initialCards.push({
-                index: i * 2 + 1,
-                item: selectedItems[i],
-                isFlipped: false,
-                isMatched: false
-            });
+        switch(difficulty) {
+            case 'junior':
+                cardsNeeded = 8; // 8 pairs = 16 cards
+                break;
+            case 'senior':
+                cardsNeeded = 16; // 16 pairs = 32 cards
+                break;
+            case 'expert':
+                cardsNeeded = 8; // 8 triples = 24 cards (8 × 3 = 24)
+                break;
+            default:
+                cardsNeeded = 8;
         }
-    }
 
-    // Shuffle the cards
-    for(let i = initialCards.length - 1; i >= 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [initialCards[i], initialCards[j]] = [initialCards[j], initialCards[i]];
-    }
+        const initialCards = [];
+        const selectedItems = items.slice(0, cardsNeeded);
 
-    setCards(initialCards);
-    setFlippedCards([]);
-    setSelectedCards([]);
-    setFlipCount(0);
-};
+        for (let i = 0; i < cardsNeeded; i++) {
+            if (difficulty === 'expert') {
+                // Expert: Add 3 identical cards for each item
+                initialCards.push({
+                    index: i * 3,
+                    item: selectedItems[i],
+                    isFlipped: false,
+                    isMatched: false
+                });
+                initialCards.push({
+                    index: i * 3 + 1,
+                    item: selectedItems[i],
+                    isFlipped: false,
+                    isMatched: false
+                });
+                initialCards.push({
+                    index: i * 3 + 2,
+                    item: selectedItems[i],
+                    isFlipped: false,
+                    isMatched: false
+                });
+            } else {
+                // Junior & Senior: Add 2 identical cards for each item
+                initialCards.push({
+                    index: i * 2,
+                    item: selectedItems[i],
+                    isFlipped: false,
+                    isMatched: false
+                });
+                initialCards.push({
+                    index: i * 2 + 1,
+                    item: selectedItems[i],
+                    isFlipped: false,
+                    isMatched: false
+                });
+            }
+        }
+
+        // Shuffle the cards
+        for(let i = initialCards.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [initialCards[i], initialCards[j]] = [initialCards[j], initialCards[i]];
+        }
+
+        setCards(initialCards);
+        setFlippedCards([]);
+        setSelectedCards([]);
+        setFlipCount(0);
+    };
 
     // Load scores from Firebase with error handling
     useEffect(() => {
         let unsubscribe;
 
         try {
-            // Try the composite index query first
             const q = query(
                 collection(db, 'memoScore'),
                 where('difficulty', '==', difficulty),
@@ -136,7 +138,7 @@ export default function MemoryGame() {
                         });
                     });
                     setScores(scoresData);
-                    setIndexError(''); // Clear error if successful
+                    setIndexError('');
                 },
                 (error) => {
                     console.error('Firestore error:', error);
@@ -165,7 +167,6 @@ export default function MemoryGame() {
                                     });
                                 }
                             });
-                            // Sort by score descending and take top 10
                             allScores.sort((a, b) => b.score - a.score);
                             setScores(allScores.slice(0, 10));
                         });
@@ -297,6 +298,31 @@ export default function MemoryGame() {
         }
     }, [cards, gameStarted, score]);
 
+    // NEW: Check if user already exists and get their highest score
+    const findExistingUserScore = async (userName, difficulty) => {
+        try {
+            const q = query(
+                collection(db, 'memoScore'),
+                where('name', '==', userName.trim()),
+                where('difficulty', '==', difficulty)
+            );
+
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const existingDoc = querySnapshot.docs[0];
+                return {
+                    exists: true,
+                    docId: existingDoc.id,
+                    currentHighScore: existingDoc.data().score
+                };
+            }
+            return { exists: false };
+        } catch (error) {
+            console.error('Error checking existing user:', error);
+            return { exists: false };
+        }
+    };
+
     const saveScoreToFirebase = async () => {
         if (!userName.trim()) {
             alert('Please enter your name to save your score!');
@@ -304,13 +330,31 @@ export default function MemoryGame() {
         }
 
         try {
-            await addDoc(collection(db, 'memoScore'), {
-                name: userName.trim(),
-                score: score,
-                difficulty: difficulty,
-                timestamp: new Date()
-            });
-            setNotification('Score saved successfully!');
+            // Check if user already has a score for this difficulty
+            const existingUser = await findExistingUserScore(userName, difficulty);
+
+            if (existingUser.exists) {
+                // User exists - only update if new score is higher
+                if (score > existingUser.currentHighScore) {
+                    await updateDoc(doc(db, 'memoScore', existingUser.docId), {
+                        score: score,
+                        timestamp: new Date()
+                    });
+                    setNotification(`New high score! Updated from ${existingUser.currentHighScore} to ${score}`);
+                } else {
+                    setNotification(`Your current high score (${existingUser.currentHighScore}) is better than this attempt (${score})`);
+                }
+            } else {
+                // New user - create document
+                await addDoc(collection(db, 'memoScore'), {
+                    name: userName.trim(),
+                    score: score,
+                    difficulty: difficulty,
+                    timestamp: new Date()
+                });
+                setNotification('Score saved successfully!');
+            }
+
             setShowScoreForm(false);
         } catch (error) {
             console.error('Error saving score:', error);
@@ -468,7 +512,7 @@ export default function MemoryGame() {
                         ))}
                     </div>
 
-                   {/* Difficulty Info */}
+                    {/* Difficulty Info */}
                     <div className="text-sm text-gray-600 mb-4">
                         {difficulty === 'junior' && '🎯 8 pairs • 4s preview • +10/-2 points'}
                         {difficulty === 'senior' && '🎯 16 pairs • 3s preview • +15/-3 points'}
