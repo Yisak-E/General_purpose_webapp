@@ -28,6 +28,7 @@ export default function LanguageTrack() {
   const [currentWordId, setCurrentWordId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [vocabularyStats, setVocabularyStats] = useState({ total: 0, mastered: 0, learning: 0, needsPractice: 0 });
+  const [skippedWords, setSkippedWords] = useState([]);
 
   // Function to seed the database with vocabulary from external file (only new words)
   const seedDatabase = async () => {
@@ -39,18 +40,33 @@ export default function LanguageTrack() {
 
     existingSnapshot.forEach((doc) => {
       const data = doc.data();
-      // Create a unique key for each word to check duplicates
-      const wordKey = `${data.english.toLowerCase()}-${data.spanish.toLowerCase()}`;
-      existingWords.add(wordKey);
+      // Safely check if the document has the expected structure
+      if (data.english && data.spanish &&
+          typeof data.english === 'string' &&
+          typeof data.spanish === 'string') {
+        // Create a unique key for each word to check duplicates
+        const wordKey = `${data.english.toLowerCase()}-${data.spanish.toLowerCase()}`;
+        existingWords.add(wordKey);
+      } else {
+        console.warn('Skipping invalid document:', doc.id, data);
+      }
     });
 
-    console.log(`Found ${existingWords.size} existing words in database`);
+    console.log(`Found ${existingWords.size} valid existing words in database`);
 
     // Use large vocabulary if available, otherwise fall back to initial vocabulary
     const wordsToSeed = largeVocabulary && largeVocabulary.length > 0 ? largeVocabulary : initialVocabulary;
 
-    // Filter out words that already exist
+    // Filter out words that already exist and validate new words
     const newWords = wordsToSeed.filter(word => {
+      // Validate the word structure
+      if (!word.english || !word.spanish ||
+          typeof word.english !== 'string' ||
+          typeof word.spanish !== 'string') {
+        console.warn('Skipping invalid word in vocabulary list:', word);
+        return false;
+      }
+
       const wordKey = `${word.english.toLowerCase()}-${word.spanish.toLowerCase()}`;
       return !existingWords.has(wordKey);
     });
@@ -78,11 +94,19 @@ export default function LanguageTrack() {
     const querySnapshot = await getDocs(collection(db, "vocabulary"));
     const vocabList = [];
     querySnapshot.forEach((doc) => {
-      vocabList.push({ id: doc.id, ...doc.data() });
+      const data = doc.data();
+      // Only include valid vocabulary documents
+      if (data.english && data.spanish &&
+          typeof data.english === 'string' &&
+          typeof data.spanish === 'string') {
+        vocabList.push({ id: doc.id, ...data });
+      } else {
+        console.warn('Skipping invalid vocabulary document:', doc.id, data);
+      }
     });
     setVocabulary(vocabList);
     calculateVocabularyStats(vocabList);
-    console.log(`Loaded ${vocabList.length} words from database`);
+    console.log(`Loaded ${vocabList.length} valid words from database`);
   }
 
   // Calculate vocabulary statistics
@@ -205,21 +229,71 @@ export default function LanguageTrack() {
       return;
     }
 
-    // Prioritize words that need practice
-    const wordsNeedingPractice = vocabulary.filter(word => {
+    // Filter out any invalid words and prioritize words that need practice
+    const validVocabulary = vocabulary.filter(word =>
+      word.english && word.spanish &&
+      typeof word.english === 'string' &&
+      typeof word.spanish === 'string'
+    );
+
+    if (validVocabulary.length === 0) {
+      setMessage("No valid vocabulary words found. Please check your database.");
+      return;
+    }
+
+    const wordsNeedingPractice = validVocabulary.filter(word => {
       const percentage = getWordPercentage(word.id);
       return percentage < 50 || percentage === 0; // Words with <50% or no attempts
     });
 
-    // Use words needing practice if available, otherwise use all words
-    const wordPool = wordsNeedingPractice.length > 0 ? wordsNeedingPractice : vocabulary;
+    // Use words needing practice if available, otherwise use all valid words
+    const wordPool = wordsNeedingPractice.length > 0 ? wordsNeedingPractice : validVocabulary;
 
+    // Filter out recently skipped words
+    const availableWords = wordPool.filter(word => !skippedWords.includes(word.id));
+
+    if (availableWords.length === 0) {
+      // If all words are skipped, reset skipped words and use the original pool
+      setSkippedWords([]);
+      getRandomWord(wordPool);
+    } else {
+      getRandomWord(availableWords);
+    }
+  };
+
+  const getRandomWord = (wordPool) => {
     const randomWord = wordPool[Math.floor(Math.random() * wordPool.length)];
     setQuizWord(randomWord.english);
     setCorrectAnswer(randomWord.spanish);
     setCurrentWordId(randomWord.id);
     setUserTranslation("");
     setShowResult(false);
+  };
+
+  const skipWord = () => {
+    if (currentWordId) {
+      // Add current word to skipped words list
+      setSkippedWords(prev => [...prev, currentWordId]);
+      setMessage(`Skipped "${quizWord}". Moving to next word...`);
+      setTimeout(() => setMessage(""), 2000);
+
+      // Save skip as a wrong answer for tracking
+      saveStat(false, currentWordId);
+
+      // Move to next word
+      setTimeout(() => {
+        startQuiz();
+      }, 500);
+    }
+  };
+
+  const quitQuiz = () => {
+    setQuizWord("");
+    setUserTranslation("");
+    setShowResult(false);
+    setMessage("Quiz ended. Your progress has been saved.");
+    setTimeout(() => setMessage(""), 3000);
+    setSkippedWords([]); // Reset skipped words when quitting
   };
 
   const checkTranslation = () => {
@@ -374,6 +448,7 @@ export default function LanguageTrack() {
                   <p className="text-3xl font-bold text-gray-800">{quizWord}</p>
                   <div className="mt-2 text-xs text-gray-400">
                     Word {vocabulary.findIndex(w => w.id === currentWordId) + 1} of {vocabulary.length}
+                    {skippedWords.length > 0 && ` • ${skippedWords.length} skipped`}
                   </div>
                 </div>
                 <div className="mb-4">
@@ -391,20 +466,44 @@ export default function LanguageTrack() {
                   <div className={`p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     <p className="font-bold text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
                     {!isCorrect && <p className="mt-2">The correct answer is: <span className="font-bold">{correctAnswer}</span></p>}
-                    <button
+                    <div className="flex gap-2 justify-center mt-4">
+                      <button
                         onClick={nextQuestion}
-                        className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                       >
                         Next Word
-                    </button>
+                      </button>
+                      <button
+                        onClick={quitQuiz}
+                        className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                      >
+                        End Quiz
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <button
-                    onClick={checkTranslation}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Check Answer
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      onClick={checkTranslation}
+                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Check Answer
+                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={skipWord}
+                        className="flex-1 bg-yellow-500 text-white py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors"
+                      >
+                        Skip Word
+                      </button>
+                      <button
+                        onClick={quitQuiz}
+                        className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                      >
+                        Quit Quiz
+                      </button>
+                    </div>
+                  </div>
                 )}
                 <div className="mt-6 flex justify-around border-t pt-4">
                   <div className="text-center">
@@ -414,6 +513,10 @@ export default function LanguageTrack() {
                   <div className="text-center">
                     <p className="text-3xl font-bold text-red-600">{score.wrong}</p>
                     <p className="text-gray-500">Wrong</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-yellow-600">{skippedWords.length}</p>
+                    <p className="text-gray-500">Skipped</p>
                   </div>
                 </div>
               </div>
@@ -447,7 +550,7 @@ export default function LanguageTrack() {
                         key={word.id}
                         className={`p-3 border rounded-lg transition-all duration-200 ${
                           word.id === currentWordId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
-                        }`}
+                        } ${skippedWords.includes(word.id) ? 'opacity-60' : ''}`}
                       >
                         <div className="flex justify-between items-center mb-2">
                           <div className="flex-1">
@@ -482,6 +585,7 @@ export default function LanguageTrack() {
                             {percentage >= 80 ? 'Mastered' :
                              percentage >= 50 ? 'Learning' :
                              'Needs Practice'}
+                            {skippedWords.includes(word.id) && ' • Skipped'}
                           </span>
                           {wordStats[word.id] && (
                             <span className="text-xs text-gray-500">
