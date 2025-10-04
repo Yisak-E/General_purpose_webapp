@@ -32,6 +32,7 @@ export default function LanguageTrack() {
   const [showSkippedAnswer, setShowSkippedAnswer] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const wordsPerPage = 10;
+  const [activeTab, setActiveTab] = useState('quiz'); // 'quiz', 'stats', 'words'
 
   // Function to seed the database with vocabulary from external file (only new words)
   const seedDatabase = async () => {
@@ -364,16 +365,69 @@ export default function LanguageTrack() {
     }
   };
 
-  // Chart configuration
+  // Chart configuration with better styling
   const chartOptions = {
     title: "Your Learning Progress",
+    titleTextStyle: {
+      fontSize: 16,
+      bold: true,
+      color: '#374151'
+    },
     curveType: "function",
-    legend: { position: "bottom" },
-    hAxis: { title: "Date", slantedText: true, slantedTextAngle: 30 },
-    vAxis: { title: "Answers", viewWindow: { min: 0 } },
+    legend: {
+      position: "bottom",
+      textStyle: {
+        fontSize: 11,
+        color: '#6B7280'
+      }
+    },
+    hAxis: {
+      title: "Date",
+      titleTextStyle: {
+        color: '#6B7280',
+        fontSize: 11,
+        bold: true
+      },
+      textStyle: {
+        color: '#6B7280',
+        fontSize: 10
+      },
+      slantedText: true,
+      slantedTextAngle: 45,
+      showTextEvery: 1
+    },
+    vAxis: {
+      title: "Answers",
+      titleTextStyle: {
+        color: '#6B7280',
+        fontSize: 11,
+        bold: true
+      },
+      textStyle: {
+        color: '#6B7280',
+        fontSize: 10
+      },
+      viewWindow: { min: 0 },
+      gridlines: {
+        color: '#F3F4F6',
+        count: 5
+      }
+    },
     colors: ["#10b981", "#ef4444"],
-    pointSize: 5,
+    pointSize: 4,
     backgroundColor: 'transparent',
+    chartArea: {
+      left: '15%',
+      top: '15%',
+      width: '80%',
+      height: '60%'
+    },
+    lineWidth: 2,
+    tooltip: {
+      textStyle: {
+        fontSize: 11
+      }
+    }
   };
 
   useEffect(() => {
@@ -403,7 +457,18 @@ export default function LanguageTrack() {
 
       const dataTable = window.google.visualization.arrayToDataTable(getChartData());
       const chart = new window.google.visualization.LineChart(document.getElementById('line_chart_div'));
+
+      // Add resize handler for responsiveness
+      const handleResize = () => {
+        chart.draw(dataTable, chartOptions);
+      };
+
+      window.addEventListener('resize', handleResize);
       chart.draw(dataTable, chartOptions);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
     }
   }, [statsData, isChartsLoaded]);
 
@@ -432,23 +497,23 @@ export default function LanguageTrack() {
           }}
         />
 
-        {/* Vocabulary Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg p-4 text-center shadow">
-            <div className="text-2xl font-bold text-blue-600">{vocabularyStats.total}</div>
-            <div className="text-sm text-gray-600">Total Words</div>
+        {/* Vocabulary Stats Overview - Always visible */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="bg-white rounded-lg p-3 text-center shadow">
+            <div className="text-xl md:text-2xl font-bold text-blue-600">{vocabularyStats.total}</div>
+            <div className="text-xs md:text-sm text-gray-600">Total Words</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center shadow">
-            <div className="text-2xl font-bold text-green-600">{vocabularyStats.mastered}</div>
-            <div className="text-sm text-gray-600">Mastered</div>
+          <div className="bg-white rounded-lg p-3 text-center shadow">
+            <div className="text-xl md:text-2xl font-bold text-green-600">{vocabularyStats.mastered}</div>
+            <div className="text-xs md:text-sm text-gray-600">Mastered</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center shadow">
-            <div className="text-2xl font-bold text-yellow-600">{vocabularyStats.learning}</div>
-            <div className="text-sm text-gray-600">Learning</div>
+          <div className="bg-white rounded-lg p-3 text-center shadow">
+            <div className="text-xl md:text-2xl font-bold text-yellow-600">{vocabularyStats.learning}</div>
+            <div className="text-xs md:text-sm text-gray-600">Learning</div>
           </div>
-          <div className="bg-white rounded-lg p-4 text-center shadow">
-            <div className="text-2xl font-bold text-red-600">{vocabularyStats.needsPractice}</div>
-            <div className="text-sm text-gray-600">Need Practice</div>
+          <div className="bg-white rounded-lg p-3 text-center shadow">
+            <div className="text-xl md:text-2xl font-bold text-red-600">{vocabularyStats.needsPractice}</div>
+            <div className="text-xs md:text-sm text-gray-600">Need Practice</div>
           </div>
         </div>
 
@@ -458,26 +523,65 @@ export default function LanguageTrack() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Mobile Tab Navigation */}
+        <div className="lg:hidden mb-6">
+          <div className="flex bg-white rounded-lg shadow p-1">
+            <button
+              onClick={() => setActiveTab('quiz')}
+              className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'quiz' 
+                  ? 'bg-blue-600 text-white shadow' 
+                  : 'text-gray-600 hover:text-blue-600'
+              }`}
+            >
+              🎯 Quiz
+            </button>
+            <button
+              onClick={() => setActiveTab('stats')}
+              className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'stats' 
+                  ? 'bg-blue-600 text-white shadow' 
+                  : 'text-gray-600 hover:text-blue-600'
+              }`}
+            >
+              📊 Stats
+            </button>
+            <button
+              onClick={() => setActiveTab('words')}
+              className={`flex-1 py-3 px-4 text-sm font-medium rounded-md transition-colors ${
+                activeTab === 'words' 
+                  ? 'bg-blue-600 text-white shadow' 
+                  : 'text-gray-600 hover:text-blue-600'
+              }`}
+            >
+              📝 Words
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Quiz Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
+          <div className={`bg-white rounded-xl shadow-lg p-4 md:p-6 flex flex-col justify-between ${
+            activeTab !== 'quiz' && 'lg:block hidden'
+          } ${activeTab === 'quiz' ? 'block' : 'hidden lg:block'}`}>
             {!quizWord ? (
               <div className="text-center my-auto">
-                <p className="text-gray-600 mb-6 text-lg">Ready to test your Spanish?</p>
-                <p className="text-sm text-gray-500 mb-4">Vocabulary database: {vocabulary.length} words</p>
+                <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg">Ready to test your Spanish?</p>
+                <p className="text-xs md:text-sm text-gray-500 mb-4">Vocabulary database: {vocabulary.length} words</p>
                 <button
                   onClick={startQuiz}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
+                  className="bg-blue-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
                 >
                   Start Quiz
                 </button>
               </div>
             ) : (
               <div>
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-500 mb-1">Translate this English word to Spanish:</p>
-                  <p className="text-3xl font-bold text-gray-800">{quizWord}</p>
-                  <div className="mt-2 text-xs text-gray-400">
+                <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg border">
+                  <p className="text-xs md:text-sm text-gray-500 mb-1">Translate this English word to Spanish:</p>
+                  <p className="text-xl md:text-3xl font-bold text-gray-800">{quizWord}</p>
+                  <div className="mt-1 md:mt-2 text-xs text-gray-400">
                     Word {vocabulary.findIndex(w => w.id === currentWordId) + 1} of {vocabulary.length}
                     {skippedWords.length > 0 && ` • ${skippedWords.length} skipped`}
                   </div>
@@ -485,11 +589,11 @@ export default function LanguageTrack() {
 
                 {/* Show skipped answer for 5 seconds */}
                 {showSkippedAnswer && (
-                  <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
-                    <p className="text-lg font-semibold text-yellow-800">
+                  <div className="mb-4 p-3 md:p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+                    <p className="text-base md:text-lg font-semibold text-yellow-800">
                       The answer is: <span className="font-bold">{correctAnswer}</span>
                     </p>
-                    <p className="text-sm text-yellow-600 mt-2">
+                    <p className="text-xs md:text-sm text-yellow-600 mt-2">
                       Next word in 5 seconds...
                     </p>
                   </div>
@@ -501,7 +605,7 @@ export default function LanguageTrack() {
                       type="text"
                       value={userTranslation}
                       onChange={(e) => setUserTranslation(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg text-base md:text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Your translation..."
                       disabled={showResult}
                       onKeyPress={(e) => e.key === 'Enter' && !showResult && checkTranslation()}
@@ -510,19 +614,19 @@ export default function LanguageTrack() {
                 )}
 
                 {showResult ? (
-                  <div className={`p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    <p className="font-bold text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
-                    {!isCorrect && <p className="mt-2">The correct answer is: <span className="font-bold">{correctAnswer}</span></p>}
-                    <div className="flex gap-2 justify-center mt-4">
+                  <div className={`p-3 md:p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <p className="font-bold text-lg md:text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
+                    {!isCorrect && <p className="mt-1 md:mt-2 text-sm md:text-base">The correct answer is: <span className="font-bold">{correctAnswer}</span></p>}
+                    <div className="flex gap-2 justify-center mt-3 md:mt-4">
                       <button
                         onClick={nextQuestion}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-blue-600 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-base"
                       >
                         Next Word
                       </button>
                       <button
                         onClick={quitQuiz}
-                        className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                        className="bg-gray-500 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-sm md:text-base"
                       >
                         End Quiz
                       </button>
@@ -530,23 +634,23 @@ export default function LanguageTrack() {
                   </div>
                 ) : (
                   !showSkippedAnswer && (
-                    <div className="space-y-3">
+                    <div className="space-y-2 md:space-y-3">
                       <button
                         onClick={checkTranslation}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
+                        className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-colors"
                       >
                         Check Answer
                       </button>
                       <div className="flex gap-2">
                         <button
                           onClick={skipWord}
-                          className="flex-1 bg-yellow-500 text-white py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors"
+                          className="flex-1 bg-yellow-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors text-sm md:text-base"
                         >
                           Skip Word
                         </button>
                         <button
                           onClick={quitQuiz}
-                          className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                          className="flex-1 bg-red-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm md:text-base"
                         >
                           Quit Quiz
                         </button>
@@ -554,58 +658,67 @@ export default function LanguageTrack() {
                     </div>
                   )
                 )}
-                <div className="mt-6 flex justify-around border-t pt-4">
+                <div className="mt-4 md:mt-6 flex justify-around border-t pt-3 md:pt-4">
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-green-600">{score.correct}</p>
-                    <p className="text-gray-500">Correct</p>
+                    <p className="text-xl md:text-3xl font-bold text-green-600">{score.correct}</p>
+                    <p className="text-xs md:text-sm text-gray-500">Correct</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-red-600">{score.wrong}</p>
-                    <p className="text-gray-500">Wrong</p>
+                    <p className="text-xl md:text-3xl font-bold text-red-600">{score.wrong}</p>
+                    <p className="text-xs md:text-sm text-gray-500">Wrong</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-yellow-600">{skippedWords.length}</p>
-                    <p className="text-gray-500">Skipped</p>
+                    <p className="text-xl md:text-3xl font-bold text-yellow-600">{skippedWords.length}</p>
+                    <p className="text-xs md:text-sm text-gray-500">Skipped</p>
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-        {/* Analytics Chart */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Your Progress</h2>
-          {statsData.length > 1 ? (
-            <div className="relative" style={{ minHeight: '400px' }}>
-              <div
-                id="line_chart_div"
-                className="w-full"
-                style={{
-                  height: '400px',
-                  minWidth: '100%',
-                  position: 'relative'
-                }}
-              ></div>
-            </div>
-          ) : (
-            <div
-              className="flex items-center justify-center text-center text-gray-500"
-              style={{ height: '400px' }}
-            >
-              <div>
-                <p className="mb-2">Complete a few quizzes over time to see your progress chart!</p>
-                <p className="text-sm">Your progress will appear here after you answer some questions.</p>
+          {/* Analytics Chart */}
+          <div className={`bg-white rounded-xl shadow-lg p-4 md:p-6 ${
+            activeTab !== 'stats' && 'lg:block hidden'
+          } ${activeTab === 'stats' ? 'block' : 'hidden lg:block'}`}>
+            <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-gray-700">Your Progress</h2>
+            {statsData.length > 1 ? (
+              <div className="relative" style={{ minHeight: '300px' }}>
+                <div
+                  id="line_chart_div"
+                  className="w-full"
+                  style={{
+                    height: '300px',
+                    minWidth: '100%',
+                    position: 'relative'
+                  }}
+                ></div>
+                <div className="mt-3 text-center text-xs md:text-sm text-gray-500">
+                  <p>Track your daily progress in learning Spanish</p>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div
+                className="flex items-center justify-center text-center text-gray-500 rounded-lg border-2 border-dashed border-gray-300"
+                style={{ height: '300px' }}
+              >
+                <div className="p-4 md:p-6">
+                  <div className="text-4xl md:text-6xl mb-3 md:mb-4">📊</div>
+                  <p className="mb-2 text-base md:text-lg font-medium">No data yet</p>
+                  <p className="text-xs md:text-sm max-w-xs">Complete quizzes to see your progress chart!</p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Word Statistics Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Word Statistics</h2>
-            <div className="max-h-[500px] overflow-y-auto">
+          <div className={`bg-white rounded-xl shadow-lg p-4 md:p-6 ${
+            activeTab !== 'words' && 'lg:block hidden'
+          } ${activeTab === 'words' ? 'block' : 'hidden lg:block'}`}>
+            <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-gray-700">Word Statistics</h2>
+            <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto">
               {vocabulary.length > 0 ? (
                 <div>
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-2 md:space-y-3 mb-3 md:mb-4">
                     {currentWords.map((word) => {
                       const percentage = getWordPercentage(word.id);
                       const attempts = wordStats[word.id] ? wordStats[word.id].total : 0;
@@ -613,25 +726,25 @@ export default function LanguageTrack() {
                       return (
                         <div
                           key={word.id}
-                          className={`p-3 border rounded-lg transition-all duration-200 ${
+                          className={`p-2 md:p-3 border rounded-lg transition-all duration-200 ${
                             word.id === currentWordId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
                           } ${skippedWords.includes(word.id) ? 'opacity-60' : ''}`}
                         >
-                          <div className="flex justify-between items-center mb-2">
+                          <div className="flex justify-between items-center mb-1 md:mb-2">
                             <div className="flex-1">
-                              <div className="font-semibold text-gray-800">{word.english}</div>
-                              <div className="text-sm text-gray-600">{word.spanish}</div>
+                              <div className="font-semibold text-gray-800 text-sm md:text-base">{word.english}</div>
+                              <div className="text-xs md:text-sm text-gray-600">{word.spanish}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-lg font-bold text-gray-700">{percentage}%</div>
+                              <div className="text-base md:text-lg font-bold text-gray-700">{percentage}%</div>
                               <div className="text-xs text-gray-500">{attempts} attempts</div>
                             </div>
                           </div>
 
                           {/* Progress Bar */}
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-gray-200 rounded-full h-1 md:h-2">
                             <div
-                              className={`h-2 rounded-full transition-all duration-500 ${
+                              className={`h-1 md:h-2 rounded-full transition-all duration-500 ${
                                 percentage >= 80 ? 'bg-green-500' : 
                                 percentage >= 50 ? 'bg-yellow-500' : 
                                 'bg-red-500'
@@ -665,11 +778,11 @@ export default function LanguageTrack() {
 
                   {/* Pagination Controls */}
                   {totalPages > 1 && (
-                    <div className="flex justify-between items-center border-t pt-4">
+                    <div className="flex justify-between items-center border-t pt-3 md:pt-4">
                       <button
                         onClick={prevPage}
                         disabled={currentPage === 0}
-                        className={`px-4 py-2 rounded-lg font-semibold ${
+                        className={`px-3 md:px-4 py-1 md:py-2 rounded-lg font-semibold text-xs md:text-sm ${
                           currentPage === 0 
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                             : 'bg-blue-500 text-white hover:bg-blue-600'
@@ -677,13 +790,13 @@ export default function LanguageTrack() {
                       >
                         Previous
                       </button>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-xs md:text-sm text-gray-600">
                         Page {currentPage + 1} of {totalPages}
                       </span>
                       <button
                         onClick={nextPage}
                         disabled={currentPage === totalPages - 1}
-                        className={`px-4 py-2 rounded-lg font-semibold ${
+                        className={`px-3 md:px-4 py-1 md:py-2 rounded-lg font-semibold text-xs md:text-sm ${
                           currentPage === totalPages - 1
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                             : 'bg-blue-500 text-white hover:bg-blue-600'
@@ -696,27 +809,27 @@ export default function LanguageTrack() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-32 text-center text-gray-500">
-                  <p>No vocabulary loaded. Please check your database connection.</p>
+                  <p className="text-sm md:text-base">No vocabulary loaded. Please check your database connection.</p>
                 </div>
               )}
             </div>
 
             {/* Summary Stats */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="text-center text-sm text-gray-600 mb-2">
+            <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-200">
+              <div className="text-center text-xs md:text-sm text-gray-600 mb-2">
                 Progress Overview
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-green-50 rounded p-2">
-                  <div className="text-lg font-bold text-green-600">{vocabularyStats.mastered}</div>
+              <div className="grid grid-cols-3 gap-1 md:gap-2 text-center">
+                <div className="bg-green-50 rounded p-1 md:p-2">
+                  <div className="text-base md:text-lg font-bold text-green-600">{vocabularyStats.mastered}</div>
                   <div className="text-xs text-green-800">Mastered</div>
                 </div>
-                <div className="bg-yellow-50 rounded p-2">
-                  <div className="text-lg font-bold text-yellow-600">{vocabularyStats.learning}</div>
+                <div className="bg-yellow-50 rounded p-1 md:p-2">
+                  <div className="text-base md:text-lg font-bold text-yellow-600">{vocabularyStats.learning}</div>
                   <div className="text-xs text-yellow-800">Learning</div>
                 </div>
-                <div className="bg-red-50 rounded p-2">
-                  <div className="text-lg font-bold text-red-600">{vocabularyStats.needsPractice}</div>
+                <div className="bg-red-50 rounded p-1 md:p-2">
+                  <div className="text-base md:text-lg font-bold text-red-600">{vocabularyStats.needsPractice}</div>
                   <div className="text-xs text-red-800">Practice</div>
                 </div>
               </div>
