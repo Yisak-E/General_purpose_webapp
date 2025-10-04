@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from '../../api/firebaseConfigs.js';
 import { initialVocabulary } from './initialVocabulary.js';
+import largeVocabulary from './large-vocabulary.json'; // Import from external file
 import Header from "../headers/Header.jsx";
 
 export default function LanguageTrack() {
@@ -23,19 +24,52 @@ export default function LanguageTrack() {
   const [statsData, setStatsData] = useState([]);
   const [vocabulary, setVocabulary] = useState([]);
   const [isChartsLoaded, setIsChartsLoaded] = useState(false);
+  const [wordStats, setWordStats] = useState({});
+  const [currentWordId, setCurrentWordId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [vocabularyStats, setVocabularyStats] = useState({ total: 0, mastered: 0, learning: 0, needsPractice: 0 });
 
-  // Function to seed the database one time with the initial vocabulary list
+  // Function to seed the database with vocabulary from external file (only new words)
   const seedDatabase = async () => {
     const vocabCollectionRef = collection(db, "vocabulary");
-    const snapshot = await getCountFromServer(vocabCollectionRef);
 
-    if (snapshot.data().count === 0) {
-      console.log("Database is empty. Seeding with initial vocabulary...");
-      const promises = initialVocabulary.map(word => addDoc(vocabCollectionRef, word));
-      await Promise.all(promises);
-      console.log("Database seeding complete.");
+    // Get all existing words from Firestore
+    const existingSnapshot = await getDocs(vocabCollectionRef);
+    const existingWords = new Set();
+
+    existingSnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Create a unique key for each word to check duplicates
+      const wordKey = `${data.english.toLowerCase()}-${data.spanish.toLowerCase()}`;
+      existingWords.add(wordKey);
+    });
+
+    console.log(`Found ${existingWords.size} existing words in database`);
+
+    // Use large vocabulary if available, otherwise fall back to initial vocabulary
+    const wordsToSeed = largeVocabulary && largeVocabulary.length > 0 ? largeVocabulary : initialVocabulary;
+
+    // Filter out words that already exist
+    const newWords = wordsToSeed.filter(word => {
+      const wordKey = `${word.english.toLowerCase()}-${word.spanish.toLowerCase()}`;
+      return !existingWords.has(wordKey);
+    });
+
+    console.log(`Adding ${newWords.length} new words out of ${wordsToSeed.length} total`);
+
+    if (newWords.length > 0) {
+      // Add only new words in batches to avoid timeout
+      const batchSize = 100;
+      for (let i = 0; i < newWords.length; i += batchSize) {
+        const batch = newWords.slice(i, i + batchSize);
+        const promises = batch.map(word => addDoc(vocabCollectionRef, word));
+        await Promise.all(promises);
+        console.log(`Added batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(newWords.length / batchSize)}`);
+      }
+      setMessage(`Added ${newWords.length} new words to your vocabulary!`);
+      setTimeout(() => setMessage(""), 5000);
     } else {
-      console.log("Database already contains vocabulary. Skipping seed.");
+      console.log("No new words to add - all words already exist in database.");
     }
   };
 
@@ -44,17 +78,41 @@ export default function LanguageTrack() {
     const querySnapshot = await getDocs(collection(db, "vocabulary"));
     const vocabList = [];
     querySnapshot.forEach((doc) => {
-      vocabList.push(doc.data());
+      vocabList.push({ id: doc.id, ...doc.data() });
     });
     setVocabulary(vocabList);
+    calculateVocabularyStats(vocabList);
+    console.log(`Loaded ${vocabList.length} words from database`);
   }
+
+  // Calculate vocabulary statistics
+  const calculateVocabularyStats = (vocabList) => {
+    const stats = {
+      total: vocabList.length,
+      mastered: 0,
+      learning: 0,
+      needsPractice: 0
+    };
+
+    vocabList.forEach(word => {
+      const percentage = getWordPercentage(word.id);
+      if (percentage >= 80) {
+        stats.mastered++;
+      } else if (percentage >= 50) {
+        stats.learning++;
+      } else {
+        stats.needsPractice++;
+      }
+    });
+
+    setVocabularyStats(stats);
+  };
 
   useEffect(() => {
     // Load Google Charts script
     const script = document.createElement('script');
     script.src = 'https://www.gstatic.com/charts/loader.js';
     script.onload = () => {
-      // The google object may not be immediately available
       if (window.google && window.google.charts) {
         window.google.charts.load('current', { packages: ['corechart'] });
         window.google.charts.setOnLoadCallback(() => {
@@ -65,9 +123,17 @@ export default function LanguageTrack() {
     document.head.appendChild(script);
 
     const initializeApp = async () => {
+      setIsLoading(true);
+      try {
         await seedDatabase();
         await loadVocabulary();
         await loadUserStats();
+      } catch (error) {
+        console.error("Error initializing app:", error);
+        setMessage("Error loading vocabulary. Please refresh the page.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     initializeApp();
   }, []);
@@ -80,36 +146,78 @@ export default function LanguageTrack() {
       );
       const querySnapshot = await getDocs(statsQuery);
       const stats = [];
+      const wordStatsTemp = {};
+
       querySnapshot.forEach((doc) => {
-        if (doc.data().date && doc.data().date.toDate) {
-             stats.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        if (data.date && data.date.toDate) {
+          stats.push({ id: doc.id, ...data });
+
+          // Track word-specific stats
+          if (data.wordId) {
+            if (!wordStatsTemp[data.wordId]) {
+              wordStatsTemp[data.wordId] = { correct: 0, total: 0 };
+            }
+            if (data.correct) {
+              wordStatsTemp[data.wordId].correct += 1;
+            }
+            wordStatsTemp[data.wordId].total += 1;
+          }
         }
       });
+
       setStatsData(stats);
+      setWordStats(wordStatsTemp);
     } catch (error) {
       console.error("Error loading stats:", error);
     }
   };
 
-  const saveStat = async (isCorrectAnswer) => {
+  const saveStat = async (isCorrectAnswer, wordId) => {
     try {
       await addDoc(collection(db, "languageStats"), {
         date: serverTimestamp(),
         correct: isCorrectAnswer,
+        wordId: wordId,
+        english: quizWord,
+        spanish: correctAnswer
       });
+
+      // Update local word stats
+      setWordStats(prev => ({
+        ...prev,
+        [wordId]: {
+          correct: prev[wordId] ? prev[wordId].correct + (isCorrectAnswer ? 1 : 0) : (isCorrectAnswer ? 1 : 0),
+          total: prev[wordId] ? prev[wordId].total + 1 : 1
+        }
+      }));
+
+      // Recalculate vocabulary stats after updating word stats
+      calculateVocabularyStats(vocabulary);
     } catch (error) {
-      console.error("Error saving stat:", error);
+      console.error('Error saving stat:', error);
     }
   };
 
   const startQuiz = () => {
     if (vocabulary.length === 0) {
-        setMessage("Loading vocabulary, please wait...");
-        return;
+      setMessage("Loading vocabulary, please wait...");
+      return;
     }
-    const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+
+    // Prioritize words that need practice
+    const wordsNeedingPractice = vocabulary.filter(word => {
+      const percentage = getWordPercentage(word.id);
+      return percentage < 50 || percentage === 0; // Words with <50% or no attempts
+    });
+
+    // Use words needing practice if available, otherwise use all words
+    const wordPool = wordsNeedingPractice.length > 0 ? wordsNeedingPractice : vocabulary;
+
+    const randomWord = wordPool[Math.floor(Math.random() * wordPool.length)];
     setQuizWord(randomWord.english);
     setCorrectAnswer(randomWord.spanish);
+    setCurrentWordId(randomWord.id);
     setUserTranslation("");
     setShowResult(false);
   };
@@ -127,10 +235,10 @@ export default function LanguageTrack() {
 
     if (isTranslationCorrect) {
       setScore(prevScore => ({ ...prevScore, correct: prevScore.correct + 1 }));
-      saveStat(true);
+      saveStat(true, currentWordId);
     } else {
       setScore(prevScore => ({ ...prevScore, wrong: prevScore.wrong + 1 }));
-      saveStat(false);
+      saveStat(false, currentWordId);
     }
   };
 
@@ -138,6 +246,20 @@ export default function LanguageTrack() {
     startQuiz();
   };
 
+  // Calculate percentage for each word
+  const getWordPercentage = (wordId) => {
+    if (!wordStats[wordId] || wordStats[wordId].total === 0) return 0;
+    return Math.round((wordStats[wordId].correct / wordStats[wordId].total) * 100);
+  };
+
+  // Sort words by percentage (lowest first for practice focus)
+  const sortedVocabulary = [...vocabulary].sort((a, b) => {
+    const percentageA = getWordPercentage(a.id);
+    const percentageB = getWordPercentage(b.id);
+    return percentageA - percentageB;
+  });
+
+  // Chart configuration
   const chartOptions = {
     title: "Your Learning Progress",
     curveType: "function",
@@ -180,11 +302,22 @@ export default function LanguageTrack() {
     }
   }, [statsData, isChartsLoaded]);
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8 font-sans">
-      <div className="container mx-auto px-4">
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-xl text-gray-600">Loading vocabulary database...</p>
+          <p className="text-sm text-gray-500">This may take a moment for large datasets</p>
+        </div>
+      </div>
+    );
+  }
 
-         <Header
+  return (
+    <div className="min-h-screen bg-gray-100 font-sans">
+      <div className="container mx-auto px-4 py-8">
+        <Header
           headerProps={{
             title: "Spanish Quiz",
             navLinks: [
@@ -194,18 +327,39 @@ export default function LanguageTrack() {
           }}
         />
 
+        {/* Vocabulary Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-lg p-4 text-center shadow">
+            <div className="text-2xl font-bold text-blue-600">{vocabularyStats.total}</div>
+            <div className="text-sm text-gray-600">Total Words</div>
+          </div>
+          <div className="bg-white rounded-lg p-4 text-center shadow">
+            <div className="text-2xl font-bold text-green-600">{vocabularyStats.mastered}</div>
+            <div className="text-sm text-gray-600">Mastered</div>
+          </div>
+          <div className="bg-white rounded-lg p-4 text-center shadow">
+            <div className="text-2xl font-bold text-yellow-600">{vocabularyStats.learning}</div>
+            <div className="text-sm text-gray-600">Learning</div>
+          </div>
+          <div className="bg-white rounded-lg p-4 text-center shadow">
+            <div className="text-2xl font-bold text-red-600">{vocabularyStats.needsPractice}</div>
+            <div className="text-sm text-gray-600">Need Practice</div>
+          </div>
+        </div>
+
         {message && (
           <div className="p-3 mb-6 rounded-lg text-center bg-blue-100 text-blue-800 border border-blue-200">
             {message}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Quiz Section */}
           <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
             {!quizWord ? (
               <div className="text-center my-auto">
-                <p className="text-gray-600 mb-6 text-lg">Ready to start?</p>
+                <p className="text-gray-600 mb-6 text-lg">Ready to test your Spanish?</p>
+                <p className="text-sm text-gray-500 mb-4">Vocabulary database: {vocabulary.length} words</p>
                 <button
                   onClick={startQuiz}
                   className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
@@ -218,6 +372,9 @@ export default function LanguageTrack() {
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
                   <p className="text-sm text-gray-500 mb-1">Translate this English word to Spanish:</p>
                   <p className="text-3xl font-bold text-gray-800">{quizWord}</p>
+                  <div className="mt-2 text-xs text-gray-400">
+                    Word {vocabulary.findIndex(w => w.id === currentWordId) + 1} of {vocabulary.length}
+                  </div>
                 </div>
                 <div className="mb-4">
                   <input
@@ -274,9 +431,103 @@ export default function LanguageTrack() {
               </div>
             )}
           </div>
+
+          {/* Word Statistics Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Word Statistics</h2>
+            <div className="max-h-[500px] overflow-y-auto">
+              {vocabulary.length > 0 ? (
+                <div className="space-y-3">
+                  {sortedVocabulary.slice(0, 50).map((word) => { // Show first 50 words for performance
+                    const percentage = getWordPercentage(word.id);
+                    const attempts = wordStats[word.id] ? wordStats[word.id].total : 0;
+
+                    return (
+                      <div
+                        key={word.id}
+                        className={`p-3 border rounded-lg transition-all duration-200 ${
+                          word.id === currentWordId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-800">{word.english}</div>
+                            <div className="text-sm text-gray-600">{word.spanish}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-gray-700">{percentage}%</div>
+                            <div className="text-xs text-gray-500">{attempts} attempts</div>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                              percentage >= 80 ? 'bg-green-500' : 
+                              percentage >= 50 ? 'bg-yellow-500' : 
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+
+                        {/* Status Indicator */}
+                        <div className="flex justify-between items-center mt-1">
+                          <span className={`text-xs font-medium ${
+                            percentage >= 80 ? 'text-green-600' : 
+                            percentage >= 50 ? 'text-yellow-600' : 
+                            'text-red-600'
+                          }`}>
+                            {percentage >= 80 ? 'Mastered' :
+                             percentage >= 50 ? 'Learning' :
+                             'Needs Practice'}
+                          </span>
+                          {wordStats[word.id] && (
+                            <span className="text-xs text-gray-500">
+                              {wordStats[word.id].correct}/{wordStats[word.id].total} correct
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {vocabulary.length > 50 && (
+                    <div className="text-center text-sm text-gray-500 pt-2">
+                      Showing 50 of {vocabulary.length} words
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-32 text-center text-gray-500">
+                  <p>No vocabulary loaded. Please check your database connection.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Summary Stats */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="text-center text-sm text-gray-600 mb-2">
+                Progress Overview
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-green-50 rounded p-2">
+                  <div className="text-lg font-bold text-green-600">{vocabularyStats.mastered}</div>
+                  <div className="text-xs text-green-800">Mastered</div>
+                </div>
+                <div className="bg-yellow-50 rounded p-2">
+                  <div className="text-lg font-bold text-yellow-600">{vocabularyStats.learning}</div>
+                  <div className="text-xs text-yellow-800">Learning</div>
+                </div>
+                <div className="bg-red-50 rounded p-2">
+                  <div className="text-lg font-bold text-red-600">{vocabularyStats.needsPractice}</div>
+                  <div className="text-xs text-red-800">Practice</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
