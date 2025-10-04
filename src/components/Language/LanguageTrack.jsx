@@ -29,6 +29,9 @@ export default function LanguageTrack() {
   const [isLoading, setIsLoading] = useState(true);
   const [vocabularyStats, setVocabularyStats] = useState({ total: 0, mastered: 0, learning: 0, needsPractice: 0 });
   const [skippedWords, setSkippedWords] = useState([]);
+  const [showSkippedAnswer, setShowSkippedAnswer] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const wordsPerPage = 10;
 
   // Function to seed the database with vocabulary from external file (only new words)
   const seedDatabase = async () => {
@@ -105,20 +108,21 @@ export default function LanguageTrack() {
       }
     });
     setVocabulary(vocabList);
-    calculateVocabularyStats(vocabList);
     console.log(`Loaded ${vocabList.length} valid words from database`);
   }
 
-  // Calculate vocabulary statistics
-  const calculateVocabularyStats = (vocabList) => {
+  // Calculate vocabulary statistics - UPDATED to use wordStats
+  const calculateVocabularyStats = () => {
+    if (vocabulary.length === 0) return;
+
     const stats = {
-      total: vocabList.length,
+      total: vocabulary.length,
       mastered: 0,
       learning: 0,
       needsPractice: 0
     };
 
-    vocabList.forEach(word => {
+    vocabulary.forEach(word => {
       const percentage = getWordPercentage(word.id);
       if (percentage >= 80) {
         stats.mastered++;
@@ -161,6 +165,11 @@ export default function LanguageTrack() {
     };
     initializeApp();
   }, []);
+
+  // Update stats when wordStats changes
+  useEffect(() => {
+    calculateVocabularyStats();
+  }, [wordStats, vocabulary]);
 
   const loadUserStats = async () => {
     try {
@@ -215,9 +224,6 @@ export default function LanguageTrack() {
           total: prev[wordId] ? prev[wordId].total + 1 : 1
         }
       }));
-
-      // Recalculate vocabulary stats after updating word stats
-      calculateVocabularyStats(vocabulary);
     } catch (error) {
       console.error('Error saving stat:', error);
     }
@@ -268,22 +274,27 @@ export default function LanguageTrack() {
     setCurrentWordId(randomWord.id);
     setUserTranslation("");
     setShowResult(false);
+    setShowSkippedAnswer(false);
   };
 
   const skipWord = () => {
     if (currentWordId) {
+      // Show the answer for 5 seconds
+      setShowSkippedAnswer(true);
+      setMessage(`Skipped "${quizWord}". The answer is: ${correctAnswer}`);
+
       // Add current word to skipped words list
       setSkippedWords(prev => [...prev, currentWordId]);
-      setMessage(`Skipped "${quizWord}". Moving to next word...`);
-      setTimeout(() => setMessage(""), 2000);
 
       // Save skip as a wrong answer for tracking
       saveStat(false, currentWordId);
 
-      // Move to next word
+      // Move to next word after 5 seconds
       setTimeout(() => {
+        setShowSkippedAnswer(false);
+        setMessage("");
         startQuiz();
-      }, 500);
+      }, 5000);
     }
   };
 
@@ -291,6 +302,7 @@ export default function LanguageTrack() {
     setQuizWord("");
     setUserTranslation("");
     setShowResult(false);
+    setShowSkippedAnswer(false);
     setMessage("Quiz ended. Your progress has been saved.");
     setTimeout(() => setMessage(""), 3000);
     setSkippedWords([]); // Reset skipped words when quitting
@@ -332,6 +344,25 @@ export default function LanguageTrack() {
     const percentageB = getWordPercentage(b.id);
     return percentageA - percentageB;
   });
+
+  // Pagination functions
+  const totalPages = Math.ceil(sortedVocabulary.length / wordsPerPage);
+  const currentWords = sortedVocabulary.slice(
+    currentPage * wordsPerPage,
+    (currentPage + 1) * wordsPerPage
+  );
+
+  const nextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // Chart configuration
   const chartOptions = {
@@ -451,17 +482,33 @@ export default function LanguageTrack() {
                     {skippedWords.length > 0 && ` • ${skippedWords.length} skipped`}
                   </div>
                 </div>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    value={userTranslation}
-                    onChange={(e) => setUserTranslation(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Your translation..."
-                    disabled={showResult}
-                    onKeyPress={(e) => e.key === 'Enter' && !showResult && checkTranslation()}
-                  />
-                </div>
+
+                {/* Show skipped answer for 5 seconds */}
+                {showSkippedAnswer && (
+                  <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+                    <p className="text-lg font-semibold text-yellow-800">
+                      The answer is: <span className="font-bold">{correctAnswer}</span>
+                    </p>
+                    <p className="text-sm text-yellow-600 mt-2">
+                      Next word in 5 seconds...
+                    </p>
+                  </div>
+                )}
+
+                {!showSkippedAnswer && (
+                  <div className="mb-4">
+                    <input
+                      type="text"
+                      value={userTranslation}
+                      onChange={(e) => setUserTranslation(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Your translation..."
+                      disabled={showResult}
+                      onKeyPress={(e) => e.key === 'Enter' && !showResult && checkTranslation()}
+                    />
+                  </div>
+                )}
+
                 {showResult ? (
                   <div className={`p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     <p className="font-bold text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
@@ -482,28 +529,30 @@ export default function LanguageTrack() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <button
-                      onClick={checkTranslation}
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Check Answer
-                    </button>
-                    <div className="flex gap-2">
+                  !showSkippedAnswer && (
+                    <div className="space-y-3">
                       <button
-                        onClick={skipWord}
-                        className="flex-1 bg-yellow-500 text-white py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors"
+                        onClick={checkTranslation}
+                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
                       >
-                        Skip Word
+                        Check Answer
                       </button>
-                      <button
-                        onClick={quitQuiz}
-                        className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
-                      >
-                        Quit Quiz
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={skipWord}
+                          className="flex-1 bg-yellow-500 text-white py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors"
+                        >
+                          Skip Word
+                        </button>
+                        <button
+                          onClick={quitQuiz}
+                          className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                        >
+                          Quit Quiz
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )
                 )}
                 <div className="mt-6 flex justify-around border-t pt-4">
                   <div className="text-center">
@@ -523,82 +572,125 @@ export default function LanguageTrack() {
             )}
           </div>
 
-          {/* Analytics Chart */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Your Progress</h2>
-            {statsData.length > 1 ? (
-              <div id="line_chart_div" style={{width: '100%', height: '400px'}}></div>
-            ) : (
-              <div className="flex items-center justify-center h-full text-center text-gray-500">
-                <p>Complete a few quizzes over time to see your progress chart grow!</p>
+        {/* Analytics Chart */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Your Progress</h2>
+          {statsData.length > 1 ? (
+            <div className="relative" style={{ minHeight: '400px' }}>
+              <div
+                id="line_chart_div"
+                className="w-full"
+                style={{
+                  height: '400px',
+                  minWidth: '100%',
+                  position: 'relative'
+                }}
+              ></div>
+            </div>
+          ) : (
+            <div
+              className="flex items-center justify-center text-center text-gray-500"
+              style={{ height: '400px' }}
+            >
+              <div>
+                <p className="mb-2">Complete a few quizzes over time to see your progress chart!</p>
+                <p className="text-sm">Your progress will appear here after you answer some questions.</p>
               </div>
-            )}
-          </div>
-
+            </div>
+          )}
+        </div>
           {/* Word Statistics Section */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Word Statistics</h2>
             <div className="max-h-[500px] overflow-y-auto">
               {vocabulary.length > 0 ? (
-                <div className="space-y-3">
-                  {sortedVocabulary.slice(0, 50).map((word) => { // Show first 50 words for performance
-                    const percentage = getWordPercentage(word.id);
-                    const attempts = wordStats[word.id] ? wordStats[word.id].total : 0;
+                <div>
+                  <div className="space-y-3 mb-4">
+                    {currentWords.map((word) => {
+                      const percentage = getWordPercentage(word.id);
+                      const attempts = wordStats[word.id] ? wordStats[word.id].total : 0;
 
-                    return (
-                      <div
-                        key={word.id}
-                        className={`p-3 border rounded-lg transition-all duration-200 ${
-                          word.id === currentWordId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
-                        } ${skippedWords.includes(word.id) ? 'opacity-60' : ''}`}
-                      >
-                        <div className="flex justify-between items-center mb-2">
-                          <div className="flex-1">
-                            <div className="font-semibold text-gray-800">{word.english}</div>
-                            <div className="text-sm text-gray-600">{word.spanish}</div>
+                      return (
+                        <div
+                          key={word.id}
+                          className={`p-3 border rounded-lg transition-all duration-200 ${
+                            word.id === currentWordId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                          } ${skippedWords.includes(word.id) ? 'opacity-60' : ''}`}
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="flex-1">
+                              <div className="font-semibold text-gray-800">{word.english}</div>
+                              <div className="text-sm text-gray-600">{word.spanish}</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-gray-700">{percentage}%</div>
+                              <div className="text-xs text-gray-500">{attempts} attempts</div>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-gray-700">{percentage}%</div>
-                            <div className="text-xs text-gray-500">{attempts} attempts</div>
+
+                          {/* Progress Bar */}
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                percentage >= 80 ? 'bg-green-500' : 
+                                percentage >= 50 ? 'bg-yellow-500' : 
+                                'bg-red-500'
+                              }`}
+                              style={{ width: `${percentage}%` }}
+                            ></div>
                           </div>
-                        </div>
 
-                        {/* Progress Bar */}
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-500 ${
-                              percentage >= 80 ? 'bg-green-500' : 
-                              percentage >= 50 ? 'bg-yellow-500' : 
-                              'bg-red-500'
-                            }`}
-                            style={{ width: `${percentage}%` }}
-                          ></div>
-                        </div>
-
-                        {/* Status Indicator */}
-                        <div className="flex justify-between items-center mt-1">
-                          <span className={`text-xs font-medium ${
-                            percentage >= 80 ? 'text-green-600' : 
-                            percentage >= 50 ? 'text-yellow-600' : 
-                            'text-red-600'
-                          }`}>
-                            {percentage >= 80 ? 'Mastered' :
-                             percentage >= 50 ? 'Learning' :
-                             'Needs Practice'}
-                            {skippedWords.includes(word.id) && ' • Skipped'}
-                          </span>
-                          {wordStats[word.id] && (
-                            <span className="text-xs text-gray-500">
-                              {wordStats[word.id].correct}/{wordStats[word.id].total} correct
+                          {/* Status Indicator */}
+                          <div className="flex justify-between items-center mt-1">
+                            <span className={`text-xs font-medium ${
+                              percentage >= 80 ? 'text-green-600' : 
+                              percentage >= 50 ? 'text-yellow-600' : 
+                              'text-red-600'
+                            }`}>
+                              {percentage >= 80 ? 'Mastered' :
+                              percentage >= 50 ? 'Learning' :
+                              'Needs Practice'}
+                              {skippedWords.includes(word.id) && ' • Skipped'}
                             </span>
-                          )}
+                            {wordStats[word.id] && (
+                              <span className="text-xs text-gray-500">
+                                {wordStats[word.id].correct}/{wordStats[word.id].total} correct
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  {vocabulary.length > 50 && (
-                    <div className="text-center text-sm text-gray-500 pt-2">
-                      Showing 50 of {vocabulary.length} words
+                      );
+                    })}
+                  </div>
+
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-between items-center border-t pt-4">
+                      <button
+                        onClick={prevPage}
+                        disabled={currentPage === 0}
+                        className={`px-4 py-2 rounded-lg font-semibold ${
+                          currentPage === 0 
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm text-gray-600">
+                        Page {currentPage + 1} of {totalPages}
+                      </span>
+                      <button
+                        onClick={nextPage}
+                        disabled={currentPage === totalPages - 1}
+                        className={`px-4 py-2 rounded-lg font-semibold ${
+                          currentPage === totalPages - 1
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
+                      >
+                        Next
+                      </button>
                     </div>
                   )}
                 </div>
