@@ -21,9 +21,11 @@ function ScheduleTable({schedule, selectedSemester, onDeleteSchedule}) {
     const filteredSchedules = schedule.filter(item => item.day === day);
 
     const handleDelete = async (scheduleId) => {
-        if (window.confirm("Are you sure you want to delete this schedule?")) {
-            await onDeleteSchedule(scheduleId);
-        }
+        // if (window.confirm("Are you sure you want to delete this schedule?")) {
+        //
+        //     await onDeleteSchedule(scheduleId);
+        // }
+        alert("Oh I know you try to delate, but I comment the codes 😊")
     };
 
     return (
