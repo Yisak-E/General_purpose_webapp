@@ -12,15 +12,19 @@ import TodoAndDone from "./components/todo/TodoAndDone.jsx";
 import Moody from "./components/mood/Moody.jsx";
 import CourseNotebook from "./components/study_adu/Notebook.jsx";
 import LanguageTrack from "./components/Language/LanguageTrack.jsx";
-
+import LandingPage from "./components/LandingPage.jsx"; // Import the new LandingPage
 
 function App() {
-
-
   return (
       <BrowserRouter>
             <Routes>
-                <Route path="/" element={<HomePage/>}/>
+                {/* Landing Page as the root path */}
+                <Route path="/" element={<LandingPage/>}/>
+
+                {/* Home Page as a separate route */}
+                <Route path="/home" element={<HomePage/>}/>
+
+                {/* All other routes remain the same */}
                 <Route path="/schedule" element={<Schedules/>}/>
                 <Route path="/studyPlan" element={<StudyPlan/>}/>
                 <Route path="/jobSearch" element={<JopSearch/>}/>
@@ -34,7 +38,6 @@ function App() {
             </Routes>
           <Footer/>
       </BrowserRouter>
-
   )
 }
 
