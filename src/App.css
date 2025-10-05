@@ -1,0 +1,8 @@
+.nut-image-cover{
+
+    background-image: url("./assets/nut_tracker.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+}

@@ -1,0 +1,1194 @@
+[
+  {
+    "english": "doctor",
+    "spanish": "médico"
+  },
+  {
+    "english": "engineer",
+    "spanish": "ingeniero"
+  },
+  {
+    "english": "lawyer",
+    "spanish": "abogado"
+  },
+  {
+    "english": "artist",
+    "spanish": "artista"
+  },
+  {
+    "english": "musician",
+    "spanish": "músico"
+  },
+  {
+    "english": "writer",
+    "spanish": "escritor"
+  },
+  {
+    "english": "actor",
+    "spanish": "actor"
+  },
+  {
+    "english": "chef",
+    "spanish": "chef"
+  },
+  {
+    "english": "pilot",
+    "spanish": "piloto"
+  },
+  {
+    "english": "soldier",
+    "spanish": "soldado"
+  },
+  {
+    "english": "police officer",
+    "spanish": "policía"
+  },
+  {
+    "english": "firefighter",
+    "spanish": "bombero"
+  },
+  {
+    "english": "nurse",
+    "spanish": "enfermero"
+  },
+  {
+    "english": "scientist",
+    "spanish": "científico"
+  },
+  {
+    "english": "architect",
+    "spanish": "arquitecto"
+  },
+  {
+    "english": "accountant",
+    "spanish": "contador"
+  },
+  {
+    "english": "manager",
+    "spanish": "gerente"
+  },
+  {
+    "english": "secretary",
+    "spanish": "secretario"
+  },
+  {
+    "english": "driver",
+    "spanish": "conductor"
+  },
+  {
+    "english": "farmer",
+    "spanish": "agricultor"
+  },
+  {
+    "english": "weather",
+    "spanish": "clima"
+  },
+  {
+    "english": "temperature",
+    "spanish": "temperatura"
+  },
+  {
+    "english": "sunny",
+    "spanish": "soleado"
+  },
+  {
+    "english": "cloudy",
+    "spanish": "nublado"
+  },
+  {
+    "english": "rainy",
+    "spanish": "lluvioso"
+  },
+  {
+    "english": "snowy",
+    "spanish": "nevado"
+  },
+  {
+    "english": "windy",
+    "spanish": "ventoso"
+  },
+  {
+    "english": "storm",
+    "spanish": "tormenta"
+  },
+  {
+    "english": "thunder",
+    "spanish": "trueno"
+  },
+  {
+    "english": "lightning",
+    "spanish": "relámpago"
+  },
+  {
+    "english": "fog",
+    "spanish": "niebla"
+  },
+  {
+    "english": "humidity",
+    "spanish": "humedad"
+  },
+  {
+    "english": "forecast",
+    "spanish": "pronóstico"
+  },
+  {
+    "english": "season",
+    "spanish": "estación"
+  },
+  {
+    "english": "spring",
+    "spanish": "primavera"
+  },
+  {
+    "english": "summer",
+    "spanish": "verano"
+  },
+  {
+    "english": "autumn",
+    "spanish": "otoño"
+  },
+  {
+    "english": "winter",
+    "spanish": "invierno"
+  },
+  {
+    "english": "sport",
+    "spanish": "deporte"
+  },
+  {
+    "english": "game",
+    "spanish": "juego"
+  },
+  {
+    "english": "team",
+    "spanish": "equipo"
+  },
+  {
+    "english": "player",
+    "spanish": "jugador"
+  },
+  {
+    "english": "coach",
+    "spanish": "entrenador"
+  },
+  {
+    "english": "ball",
+    "spanish": "pelota"
+  },
+  {
+    "english": "goal",
+    "spanish": "gol"
+  },
+  {
+    "english": "score",
+    "spanish": "puntuación"
+  },
+  {
+    "english": "win",
+    "spanish": "ganar"
+  },
+  {
+    "english": "lose",
+    "spanish": "perder"
+  },
+  {
+    "english": "swim",
+    "spanish": "nadar"
+  },
+  {
+    "english": "run",
+    "spanish": "correr"
+  },
+  {
+    "english": "jump",
+    "spanish": "saltar"
+  },
+  {
+    "english": "dance",
+    "spanish": "bailar"
+  },
+  {
+    "english": "sing",
+    "spanish": "cantar"
+  },
+  {
+    "english": "breakfast",
+    "spanish": "desayuno"
+  },
+  {
+    "english": "lunch",
+    "spanish": "almuerzo"
+  },
+  {
+    "english": "dinner",
+    "spanish": "cena"
+  },
+  {
+    "english": "snack",
+    "spanish": "merienda"
+  },
+  {
+    "english": "recipe",
+    "spanish": "receta"
+  },
+  {
+    "english": "ingredient",
+    "spanish": "ingrediente"
+  },
+  {
+    "english": "cook",
+    "spanish": "cocinar"
+  },
+  {
+    "english": "bake",
+    "spanish": "hornear"
+  },
+  {
+    "english": "fry",
+    "spanish": "freír"
+  },
+  {
+    "english": "boil",
+    "spanish": "hervir"
+  },
+  {
+    "english": "grill",
+    "spanish": "aspar"
+  },
+  {
+    "english": "spicy",
+    "spanish": "picante"
+  },
+  {
+    "english": "sweet",
+    "spanish": "dulce"
+  },
+  {
+    "english": "sour",
+    "spanish": "agrio"
+  },
+  {
+    "english": "bitter",
+    "spanish": "amargo"
+  },
+  {
+    "english": "to fly",
+    "spanish": "volar"
+  },
+  {
+    "english": "to sail",
+    "spanish": "navegar"
+  },
+  {
+    "english": "to ride",
+    "spanish": "montar"
+  },
+  {
+    "english": "to walk",
+    "spanish": "caminar"
+  },
+  {
+    "english": "to run",
+    "spanish": "correr"
+  },
+  {
+    "english": "to climb",
+    "spanish": "escalar"
+  },
+  {
+    "english": "to fall",
+    "spanish": "caer"
+  },
+  {
+    "english": "to arrive",
+    "spanish": "llegar"
+  },
+  {
+    "english": "to depart",
+    "spanish": "salir"
+  },
+  {
+    "english": "to return",
+    "spanish": "volver"
+  },
+  {
+    "english": "to clean",
+    "spanish": "limpiar"
+  },
+  {
+    "english": "to wash",
+    "spanish": "lavar"
+  },
+  {
+    "english": "to cook",
+    "spanish": "cocinar"
+  },
+  {
+    "english": "to repair",
+    "spanish": "reparar"
+  },
+  {
+    "english": "to build",
+    "spanish": "construir"
+  },
+  {
+    "english": "to paint",
+    "spanish": "pintar"
+  },
+  {
+    "english": "to decorate",
+    "spanish": "decorar"
+  },
+  {
+    "english": "to organize",
+    "spanish": "organizar"
+  },
+  {
+    "english": "to move",
+    "spanish": "mudar"
+  },
+  {
+    "english": "to fix",
+    "spanish": "arreglar"
+  },
+  {
+    "english": "mathematics",
+    "spanish": "matemáticas"
+  },
+  {
+    "english": "science",
+    "spanish": "ciencia"
+  },
+  {
+    "english": "history",
+    "spanish": "historia"
+  },
+  {
+    "english": "geography",
+    "spanish": "geografía"
+  },
+  {
+    "english": "literature",
+    "spanish": "literatura"
+  },
+  {
+    "english": "philosophy",
+    "spanish": "filosofía"
+  },
+  {
+    "english": "psychology",
+    "spanish": "psicología"
+  },
+  {
+    "english": "sociology",
+    "spanish": "sociología"
+  },
+  {
+    "english": "biology",
+    "spanish": "biología"
+  },
+  {
+    "english": "chemistry",
+    "spanish": "química"
+  },
+  {
+    "english": "physics",
+    "spanish": "física"
+  },
+  {
+    "english": "economics",
+    "spanish": "economía"
+  },
+  {
+    "english": "art",
+    "spanish": "arte"
+  },
+  {
+    "english": "music",
+    "spanish": "música"
+  },
+  {
+    "english": "drama",
+    "spanish": "teatro"
+  },
+  {
+    "english": "government",
+    "spanish": "gobierno"
+  },
+  {
+    "english": "president",
+    "spanish": "presidente"
+  },
+  {
+    "english": "minister",
+    "spanish": "ministro"
+  },
+  {
+    "english": "law",
+    "spanish": "ley"
+  },
+  {
+    "english": "right",
+    "spanish": "derecho"
+  },
+  {
+    "english": "freedom",
+    "spanish": "libertad"
+  },
+  {
+    "english": "justice",
+    "spanish": "justicia"
+  },
+  {
+    "english": "election",
+    "spanish": "elección"
+  },
+  {
+    "english": "vote",
+    "spanish": "voto"
+  },
+  {
+    "english": "tax",
+    "spanish": "impuesto"
+  },
+  {
+    "english": "policy",
+    "spanish": "política"
+  },
+  {
+    "english": "citizen",
+    "spanish": "ciudadano"
+  },
+  {
+    "english": "nation",
+    "spanish": "nación"
+  },
+  {
+    "english": "state",
+    "spanish": "estado"
+  },
+  {
+    "english": "city",
+    "spanish": "ciudad"
+  },
+  {
+    "english": "digital",
+    "spanish": "digital"
+  },
+  {
+    "english": "virtual",
+    "spanish": "virtual"
+  },
+  {
+    "english": "online",
+    "spanish": "en línea"
+  },
+  {
+    "english": "offline",
+    "spanish": "fuera de línea"
+  },
+  {
+    "english": "download",
+    "spanish": "descargar"
+  },
+  {
+    "english": "upload",
+    "spanish": "subir"
+  },
+  {
+    "english": "stream",
+    "spanish": "transmitir"
+  },
+  {
+    "english": "connect",
+    "spanish": "conectar"
+  },
+  {
+    "english": "disconnect",
+    "spanish": "desconectar"
+  },
+  {
+    "english": "update",
+    "spanish": "actualizar"
+  },
+  {
+    "english": "install",
+    "spanish": "instalar"
+  },
+  {
+    "english": "uninstall",
+    "spanish": "desinstalar"
+  },
+  {
+    "english": "backup",
+    "spanish": "copia de seguridad"
+  },
+  {
+    "english": "restore",
+    "spanish": "restaurar"
+  },
+  {
+    "english": "sync",
+    "spanish": "sincronizar"
+  },
+  {
+    "english": "patient",
+    "spanish": "paciente"
+  },
+  {
+    "english": "symptom",
+    "spanish": "síntoma"
+  },
+  {
+    "english": "diagnosis",
+    "spanish": "diagnóstico"
+  },
+  {
+    "english": "treatment",
+    "spanish": "tratamiento"
+  },
+  {
+    "english": "prescription",
+    "spanish": "receta"
+  },
+  {
+    "english": "appointment",
+    "spanish": "cita"
+  },
+  {
+    "english": "emergency",
+    "spanish": "emergencia"
+  },
+  {
+    "english": "ambulance",
+    "spanish": "ambulancia"
+  },
+  {
+    "english": "surgery",
+    "spanish": "cirugía"
+  },
+  {
+    "english": "recovery",
+    "spanish": "recuperación"
+  },
+  {
+    "english": "therapy",
+    "spanish": "terapia"
+  },
+  {
+    "english": "vaccination",
+    "spanish": "vacunación"
+  },
+  {
+    "english": "infection",
+    "spanish": "infección"
+  },
+  {
+    "english": "fever",
+    "spanish": "fiebre"
+  },
+  {
+    "english": "pain",
+    "spanish": "dolor"
+  },
+  {
+    "english": "court",
+    "spanish": "tribunal"
+  },
+  {
+    "english": "judge",
+    "spanish": "juez"
+  },
+  {
+    "english": "lawyer",
+    "spanish": "abogado"
+  },
+  {
+    "english": "case",
+    "spanish": "caso"
+  },
+  {
+    "english": "evidence",
+    "spanish": "evidencia"
+  },
+  {
+    "english": "witness",
+    "spanish": "testigo"
+  },
+  {
+    "english": "trial",
+    "spanish": "juicio"
+  },
+  {
+    "english": "verdict",
+    "spanish": "veredicto"
+  },
+  {
+    "english": "sentence",
+    "spanish": "sentencia"
+  },
+  {
+    "english": "crime",
+    "spanish": "crimen"
+  },
+  {
+    "english": "guilty",
+    "spanish": "culpable"
+  },
+  {
+    "english": "innocent",
+    "spanish": "inocente"
+  },
+  {
+    "english": "arrest",
+    "spanish": "arresto"
+  },
+  {
+    "english": "investigation",
+    "spanish": "investigación"
+  },
+  {
+    "english": "appeal",
+    "spanish": "apelación"
+  },
+  {
+    "english": "meeting",
+    "spanish": "reunión"
+  },
+  {
+    "english": "conference",
+    "spanish": "conferencia"
+  },
+  {
+    "english": "negotiation",
+    "spanish": "negociación"
+  },
+  {
+    "english": "contract",
+    "spanish": "contrato"
+  },
+  {
+    "english": "agreement",
+    "spanish": "acuerdo"
+  },
+  {
+    "english": "partnership",
+    "spanish": "asociación"
+  },
+  {
+    "english": "investment",
+    "spanish": "inversión"
+  },
+  {
+    "english": "profit",
+    "spanish": "beneficio"
+  },
+  {
+    "english": "loss",
+    "spanish": "pérdida"
+  },
+  {
+    "english": "growth",
+    "spanish": "crecimiento"
+  },
+  {
+    "english": "decline",
+    "spanish": "declive"
+  },
+  {
+    "english": "competition",
+    "spanish": "competencia"
+  },
+  {
+    "english": "innovation",
+    "spanish": "innovación"
+  },
+  {
+    "english": "efficiency",
+    "spanish": "eficiencia"
+  },
+  {
+    "english": "productivity",
+    "spanish": "productividad"
+  },
+  {
+    "english": "excited",
+    "spanish": "emocionado"
+  },
+  {
+    "english": "nervous",
+    "spanish": "nervioso"
+  },
+  {
+    "english": "calm",
+    "spanish": "tranquilo"
+  },
+  {
+    "english": "anxious",
+    "spanish": "ansioso"
+  },
+  {
+    "english": "relaxed",
+    "spanish": "relajado"
+  },
+  {
+    "english": "tired",
+    "spanish": "cansado"
+  },
+  {
+    "english": "energetic",
+    "spanish": "enérgico"
+  },
+  {
+    "english": "bored",
+    "spanish": "aburrido"
+  },
+  {
+    "english": "interested",
+    "spanish": "interesado"
+  },
+  {
+    "english": "curious",
+    "spanish": "curioso"
+  },
+  {
+    "english": "confused",
+    "spanish": "confundido"
+  },
+  {
+    "english": "focused",
+    "spanish": "concentrado"
+  },
+  {
+    "english": "distracted",
+    "spanish": "distraído"
+  },
+  {
+    "english": "motivated",
+    "spanish": "motivado"
+  },
+  {
+    "english": "discouraged",
+    "spanish": "desanimado"
+  },
+  {
+    "english": "environment",
+    "spanish": "medio ambiente"
+  },
+  {
+    "english": "nature",
+    "spanish": "naturaleza"
+  },
+  {
+    "english": "forest",
+    "spanish": "bosque"
+  },
+  {
+    "english": "desert",
+    "spanish": "desierto"
+  },
+  {
+    "english": "ocean",
+    "spanish": "océano"
+  },
+  {
+    "english": "lake",
+    "spanish": "lago"
+  },
+  {
+    "english": "island",
+    "spanish": "isla"
+  },
+  {
+    "english": "beach",
+    "spanish": "playa"
+  },
+  {
+    "english": "valley",
+    "spanish": "valle"
+  },
+  {
+    "english": "hill",
+    "spanish": "colina"
+  },
+  {
+    "english": "cave",
+    "spanish": "cueva"
+  },
+  {
+    "english": "waterfall",
+    "spanish": "cascada"
+  },
+  {
+    "english": "volcano",
+    "spanish": "volcán"
+  },
+  {
+    "english": "earthquake",
+    "spanish": "terremoto"
+  },
+  {
+    "english": "climate",
+    "spanish": "clima"
+  },
+  {
+    "english": "now",
+    "spanish": "ahora"
+  },
+  {
+    "english": "soon",
+    "spanish": "pronto"
+  },
+  {
+    "english": "later",
+    "spanish": "más tarde"
+  },
+  {
+    "english": "early",
+    "spanish": "temprano"
+  },
+  {
+    "english": "late",
+    "spanish": "tarde"
+  },
+  {
+    "english": "recently",
+    "spanish": "recientemente"
+  },
+  {
+    "english": "recently",
+    "spanish": "hace poco"
+  },
+  {
+    "english": "immediately",
+    "spanish": "inmediatamente"
+  },
+  {
+    "english": "suddenly",
+    "spanish": "de repente"
+  },
+  {
+    "english": "gradually",
+    "spanish": "gradualmente"
+  },
+  {
+    "english": "finally",
+    "spanish": "finalmente"
+  },
+  {
+    "english": "eventually",
+    "spanish": "eventualmente"
+  },
+  {
+    "english": "meanwhile",
+    "spanish": "mientras tanto"
+  },
+  {
+    "english": "currently",
+    "spanish": "actualmente"
+  },
+  {
+    "english": "previously",
+    "spanish": "anteriormente"
+  },
+  {
+    "english": "amount",
+    "spanish": "cantidad"
+  },
+  {
+    "english": "quantity",
+    "spanish": "cantidad"
+  },
+  {
+    "english": "size",
+    "spanish": "tamaño"
+  },
+  {
+    "english": "weight",
+    "spanish": "peso"
+  },
+  {
+    "english": "height",
+    "spanish": "altura"
+  },
+  {
+    "english": "length",
+    "spanish": "longitud"
+  },
+  {
+    "english": "width",
+    "spanish": "ancho"
+  },
+  {
+    "english": "depth",
+    "spanish": "profundidad"
+  },
+  {
+    "english": "volume",
+    "spanish": "volumen"
+  },
+  {
+    "english": "area",
+    "spanish": "área"
+  },
+  {
+    "english": "distance",
+    "spanish": "distancia"
+  },
+  {
+    "english": "speed",
+    "spanish": "velocidad"
+  },
+  {
+    "english": "temperature",
+    "spanish": "temperatura"
+  },
+  {
+    "english": "pressure",
+    "spanish": "presión"
+  },
+  {
+    "english": "density",
+    "spanish": "densidad"
+  },
+  {
+    "english": "conversation",
+    "spanish": "conversación"
+  },
+  {
+    "english": "discussion",
+    "spanish": "discusión"
+  },
+  {
+    "english": "argument",
+    "spanish": "discusión"
+  },
+  {
+    "english": "debate",
+    "spanish": "debate"
+  },
+  {
+    "english": "speech",
+    "spanish": "discurso"
+  },
+  {
+    "english": "presentation",
+    "spanish": "presentación"
+  },
+  {
+    "english": "message",
+    "spanish": "mensaje"
+  },
+  {
+    "english": "information",
+    "spanish": "información"
+  },
+  {
+    "english": "news",
+    "spanish": "noticias"
+  },
+  {
+    "english": "story",
+    "spanish": "historia"
+  },
+  {
+    "english": "joke",
+    "spanish": "broma"
+  },
+  {
+    "english": "secret",
+    "spanish": "secreto"
+  },
+  {
+    "english": "truth",
+    "spanish": "verdad"
+  },
+  {
+    "english": "lie",
+    "spanish": "mentira"
+  },
+  {
+    "english": "promise",
+    "spanish": "promesa"
+  },
+  {
+    "english": "store",
+    "spanish": "tienda"
+  },
+  {
+    "english": "market",
+    "spanish": "mercado"
+  },
+  {
+    "english": "mall",
+    "spanish": "centro comercial"
+  },
+  {
+    "english": "price",
+    "spanish": "precio"
+  },
+  {
+    "english": "cost",
+    "spanish": "costo"
+  },
+  {
+    "english": "discount",
+    "spanish": "descuento"
+  },
+  {
+    "english": "sale",
+    "spanish": "venta"
+  },
+  {
+    "english": "buy",
+    "spanish": "comprar"
+  },
+  {
+    "english": "sell",
+    "spanish": "vender"
+  },
+  {
+    "english": "pay",
+    "spanish": "pagar"
+  },
+  {
+    "english": "cash",
+    "spanish": "efectivo"
+  },
+  {
+    "english": "credit card",
+    "spanish": "tarjeta de crédito"
+  },
+  {
+    "english": "receipt",
+    "spanish": "recibo"
+  },
+  {
+    "english": "warranty",
+    "spanish": "garantía"
+  },
+  {
+    "english": "refund",
+    "spanish": "reembolso"
+  },
+  {
+    "english": "furniture",
+    "spanish": "muebles"
+  },
+  {
+    "english": "sofa",
+    "spanish": "sofá"
+  },
+  {
+    "english": "table",
+    "spanish": "mesa"
+  },
+  {
+    "english": "chair",
+    "spanish": "silla"
+  },
+  {
+    "english": "bed",
+    "spanish": "cama"
+  },
+  {
+    "english": "wardrobe",
+    "spanish": "armario"
+  },
+  {
+    "english": "shelf",
+    "spanish": "estante"
+  },
+  {
+    "english": "lamp",
+    "spanish": "lámpara"
+  },
+  {
+    "english": "mirror",
+    "spanish": "espejo"
+  },
+  {
+    "english": "carpet",
+    "spanish": "alfombra"
+  },
+  {
+    "english": "curtain",
+    "spanish": "cortina"
+  },
+  {
+    "english": "pillow",
+    "spanish": "almohada"
+  },
+  {
+    "english": "blanket",
+    "spanish": "manta"
+  },
+  {
+    "english": "sheet",
+    "spanish": "sábana"
+  },
+  {
+    "english": "towel",
+    "spanish": "toalla"
+  },
+  {
+    "english": "knife",
+    "spanish": "cuchillo"
+  },
+  {
+    "english": "fork",
+    "spanish": "tenedor"
+  },
+  {
+    "english": "spoon",
+    "spanish": "cuchara"
+  },
+  {
+    "english": "plate",
+    "spanish": "plato"
+  },
+  {
+    "english": "bowl",
+    "spanish": "bol"
+  },
+  {
+    "english": "cup",
+    "spanish": "taza"
+  },
+  {
+    "english": "glass",
+    "spanish": "vaso"
+  },
+  {
+    "english": "pot",
+    "spanish": "olla"
+  },
+  {
+    "english": "pan",
+    "spanish": "sartén"
+  },
+  {
+    "english": "oven",
+    "spanish": "horno"
+  },
+  {
+    "english": "stove",
+    "spanish": "estufa"
+  },
+  {
+    "english": "refrigerator",
+    "spanish": "refrigerador"
+  },
+  {
+    "english": "microwave",
+    "spanish": "microondas"
+  },
+  {
+    "english": "blender",
+    "spanish": "licuadora"
+  },
+  {
+    "english": "toaster",
+    "spanish": "tostadora"
+  }
+]

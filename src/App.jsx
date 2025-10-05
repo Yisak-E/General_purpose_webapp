@@ -10,6 +10,9 @@ import MemoryGame from "./components/game/MemoryGame.jsx";
 import Tracker from "./components/nutrition/Tracker.jsx";
 import TodoAndDone from "./components/todo/TodoAndDone.jsx";
 import Moody from "./components/mood/Moody.jsx";
+import CourseNotebook from "./components/study_adu/Notebook.jsx";
+import LanguageTrack from "./components/Language/LanguageTrack.jsx";
+
 
 function App() {
 
@@ -26,6 +29,8 @@ function App() {
                 <Route path="/Tracker" element={<Tracker/>}/>
                 <Route path="/TodoAndDone" element={<TodoAndDone/>}/>
                 <Route path="/moody" element={<Moody/>}/>
+                <Route path="/course" element={<CourseNotebook/>}/>
+                <Route path="/language" element={<LanguageTrack/>}/>
             </Routes>
           <Footer/>
       </BrowserRouter>
