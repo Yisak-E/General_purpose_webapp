@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Header from "../headers/Header.jsx";
+import useIsMobile from "./UseIsMobile.jsx";
 import { db } from '../../api/firebaseConfigs.js';
 import {
   collection,
@@ -30,6 +31,12 @@ export default function MemoryGame() {
     const [difficulty, setDifficulty] = useState('junior');
     const [selectedCards, setSelectedCards] = useState([]);
     const [indexError, setIndexError] = useState('');
+    const isMobile = useIsMobile()
+    const [showNow, setShowNow] = useState({
+            info: false,
+            game: true,
+            stat:false,
+            });
 
     // Different emoji sets for different difficulties
     const emojiSets = {
@@ -469,6 +476,35 @@ export default function MemoryGame() {
         colors: ['#4285F4']
     };
 
+    // FIXED: Corrected switch case syntax
+    const handleDisplaySelection = (toDisplay) => {
+        switch(toDisplay){
+            case "info":
+                setShowNow({
+                    info: true,
+                    game: false,
+                    stat: false
+                });
+                break;
+            case "game":
+                setShowNow({
+                    info: false,
+                    game: true,
+                    stat: false
+                });
+                break;
+            case "stat":
+                setShowNow({
+                    info: false,
+                    game: false,
+                    stat: true
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <div className="container-fluid px-4 py-0 min-w-full min-h-screen">
             <Header headerProps={
@@ -583,82 +619,188 @@ export default function MemoryGame() {
                 )}
 
                 <div className="flex flex-col p-4 lg:flex-row md:flex-row justify-between gap-4">
-                    <div className="bg-gray-200 rounded-lg p-3 md:w-160">
-                        <h2 className="text-2xl font-bold mb-2">How to Play - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</h2>
-                        <ul className="list-disc list-inside mb-4">
-                            {difficulty === 'expert' ? (
-                                <>
-                                    <li>Find groups of THREE matching cards</li>
-                                    <li>Select 3 cards to check for a match</li>
-                                    <li>+30 points for triple matches</li>
-                                    <li>-5 points for incorrect selections</li>
-                                    <li>8 triples (24 cards) - Most challenging!</li>
-                                </>
-                            ) : (
-                                <>
-                                    <li>Find matching pairs of cards</li>
-                                    <li>Select 2 cards to check for a match</li>
-                                    <li>{difficulty === 'junior' ? '+10 points' : '+15 points'} for matches</li>
-                                    <li>{difficulty === 'junior' ? '-2 points' : '-3 points'} for wrong guesses</li>
-                                    <li>{difficulty === 'junior' ? '8 pairs' : '16 pairs'}</li>
-                                </>
-                            )}
-                        </ul>
+                    {/* Tab view for small screen - FIXED: Added proper Tailwind classes */}
+                    <div className={'lg:hidden md:hidden bg-gray-200 h-12 flex flex-row justify-between rounded mb-4'}>
+                        <button
+                            onClick={() => handleDisplaySelection("info")}
+                            className={`flex-1 ${showNow.info ? 'bg-green-600' : 'bg-green-400'} hover:bg-green-700 text-white px-2 py-2 rounded-l`}
+                        >Game Info</button>
 
-                        {/* Leaderboard */}
-                        <div className="mt-6">
-                            <h3 className="text-xl font-bold mb-2">
-                                Top {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Scores
-                            </h3>
-                            {scores.length > 0 ? (
-                                <ol className="list-decimal list-inside">
-                                    {scores.map((score, index) => (
-                                        <li key={score.id} className="mb-1">
-                                            {score.name}: {score.score} points
-                                        </li>
-                                    ))}
-                                </ol>
-                            ) : (
-                                <p>No scores yet. Be the first!</p>
-                            )}
-                        </div>
+                        <button
+                            onClick={() => handleDisplaySelection("game")}
+                            className={`flex-1 ${showNow.game ? 'bg-yellow-600' : 'bg-yellow-400'} hover:bg-yellow-700 text-white px-2 py-2`}
+                        >Game</button>
+
+                        <button
+                            onClick={() => handleDisplaySelection("stat")}
+                            className={`flex-1 ${showNow.stat ? 'bg-red-600' : 'bg-red-400'} hover:bg-red-700 text-white px-2 py-2 rounded-r`}
+                        >Statistics</button>
                     </div>
 
-                    <div className="lg:w-300 md:w-400 flex flex-col">
-                        <div className={`grid ${getGridLayout()} gap-2 justify-center mx-auto`}>
-                            {cards.map((card, index) => (
-                                <div
-                                    key={index}
-                                    className={`${getCardSize()} flex items-center justify-center border-2 rounded-lg cursor-pointer transition-all duration-300 ${
-                                        (showAllCards || card.isFlipped) 
-                                            ? 'bg-white transform rotate-0 border-blue-300' 
-                                            : 'bg-blue-500 text-white border-blue-700'
-                                    } ${
-                                        card.isMatched ? 'bg-green-200 border-green-500' : ''
-                                    } ${
-                                        selectedCards.some(sc => sc.index === card.index) ? 'ring-2 ring-yellow-400' : ''
-                                    }`}
-                                    onClick={() => handleCardClick(index)}
-                                >
-                                    {(showAllCards || card.isFlipped) ? card.item : '?'}
+                    {/* FIXED: Conditional rendering for mobile */}
+                    {isMobile ? (
+                        <>
+                            {showNow.info && (
+                                <div className="bg-gray-200 rounded-lg p-3 w-full mb-4">
+                                    <h2 className="text-2xl font-bold mb-2">How to Play - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</h2>
+                                    <ul className="list-disc list-inside mb-4">
+                                        {difficulty === 'expert' ? (
+                                            <>
+                                                <li>Find groups of THREE matching cards</li>
+                                                <li>Select 3 cards to check for a match</li>
+                                                <li>+30 points for triple matches</li>
+                                                <li>-5 points for incorrect selections</li>
+                                                <li>8 triples (24 cards) - Most challenging!</li>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <li>Find matching pairs of cards</li>
+                                                <li>Select 2 cards to check for a match</li>
+                                                <li>{difficulty === 'junior' ? '+10 points' : '+15 points'} for matches</li>
+                                                <li>{difficulty === 'junior' ? '-2 points' : '-3 points'} for wrong guesses</li>
+                                                <li>{difficulty === 'junior' ? '8 pairs' : '16 pairs'}</li>
+                                            </>
+                                        )}
+                                    </ul>
+
+                                    {/* Leaderboard */}
+                                    <div className="mt-6">
+                                        <h3 className="text-xl font-bold mb-2">
+                                            Top {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Scores
+                                        </h3>
+                                        {scores.length > 0 ? (
+                                            <ol className="list-decimal list-inside">
+                                                {scores.map((score, index) => (
+                                                    <li key={score.id} className="mb-1">
+                                                        {score.name}: {score.score} points
+                                                    </li>
+                                                ))}
+                                            </ol>
+                                        ) : (
+                                            <p>No scores yet. Be the first!</p>
+                                        )}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            )}
 
-                        {/* Google Charts Graph */}
-                        {scores.length > 0 && (
-                            <div className="mt-6 bg-white p-4 rounded-lg">
-                                <Chart
-                                    width={'100%'}
-                                    height={'300px'}
-                                    chartType="BarChart"
-                                    loader={<div>Loading Chart...</div>}
-                                    data={chartData}
-                                    options={chartOptions}
-                                />
+                            {showNow.game && (
+                                <div className="w-full flex flex-col">
+                                    <div className={`grid ${getGridLayout()} gap-2 justify-center mx-auto`}>
+                                        {cards.map((card, index) => (
+                                            <div
+                                                key={index}
+                                                className={`${getCardSize()} flex items-center justify-center border-2 rounded-lg cursor-pointer transition-all duration-300 ${
+                                                    (showAllCards || card.isFlipped) 
+                                                        ? 'bg-white transform rotate-0 border-blue-300' 
+                                                        : 'bg-blue-500 text-white border-blue-700'
+                                                } ${
+                                                    card.isMatched ? 'bg-green-200 border-green-500' : ''
+                                                } ${
+                                                    selectedCards.some(sc => sc.index === card.index) ? 'ring-2 ring-yellow-400' : ''
+                                                }`}
+                                                onClick={() => handleCardClick(index)}
+                                            >
+                                                {(showAllCards || card.isFlipped) ? card.item : '?'}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {showNow.stat && scores.length > 0 && (
+                                <div className="w-full bg-white p-4 rounded-lg">
+                                    <Chart
+                                        width={'100%'}
+                                        height={'300px'}
+                                        chartType="BarChart"
+                                        loader={<div>Loading Chart...</div>}
+                                        data={chartData}
+                                        options={chartOptions}
+                                    />
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        /* Desktop layout */
+                        <>
+                            <div className="bg-gray-200 rounded-lg p-3 lg:w-1/3 md:w-1/3">
+                                <h2 className="text-2xl font-bold mb-2">How to Play - {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</h2>
+                                <ul className="list-disc list-inside mb-4">
+                                    {difficulty === 'expert' ? (
+                                        <>
+                                            <li>Find groups of THREE matching cards</li>
+                                            <li>Select 3 cards to check for a match</li>
+                                            <li>+30 points for triple matches</li>
+                                            <li>-5 points for incorrect selections</li>
+                                            <li>8 triples (24 cards) - Most challenging!</li>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <li>Find matching pairs of cards</li>
+                                            <li>Select 2 cards to check for a match</li>
+                                            <li>{difficulty === 'junior' ? '+10 points' : '+15 points'} for matches</li>
+                                            <li>{difficulty === 'junior' ? '-2 points' : '-3 points'} for wrong guesses</li>
+                                            <li>{difficulty === 'junior' ? '8 pairs' : '16 pairs'}</li>
+                                        </>
+                                    )}
+                                </ul>
+
+                                {/* Leaderboard */}
+                                <div className="mt-6">
+                                    <h3 className="text-xl font-bold mb-2">
+                                        Top {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Scores
+                                    </h3>
+                                    {scores.length > 0 ? (
+                                        <ol className="list-decimal list-inside">
+                                            {scores.map((score, index) => (
+                                                <li key={score.id} className="mb-1">
+                                                    {score.name}: {score.score} points
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    ) : (
+                                        <p>No scores yet. Be the first!</p>
+                                    )}
+                                </div>
                             </div>
-                        )}
-                    </div>
+
+                            <div className="lg:w-2/3 md:w-2/3 flex flex-col">
+                                <div className={`grid ${getGridLayout()} gap-2 justify-center mx-auto`}>
+                                    {cards.map((card, index) => (
+                                        <div
+                                            key={index}
+                                            className={`${getCardSize()} flex items-center justify-center border-2 rounded-lg cursor-pointer transition-all duration-300 ${
+                                                (showAllCards || card.isFlipped) 
+                                                    ? 'bg-white transform rotate-0 border-blue-300' 
+                                                    : 'bg-blue-500 text-white border-blue-700'
+                                            } ${
+                                                card.isMatched ? 'bg-green-200 border-green-500' : ''
+                                            } ${
+                                                selectedCards.some(sc => sc.index === card.index) ? 'ring-2 ring-yellow-400' : ''
+                                            }`}
+                                            onClick={() => handleCardClick(index)}
+                                        >
+                                            {(showAllCards || card.isFlipped) ? card.item : '?'}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Google Charts Graph */}
+                                {scores.length > 0 && (
+                                    <div className="mt-6 bg-white p-4 rounded-lg">
+                                        <Chart
+                                            width={'100%'}
+                                            height={'300px'}
+                                            chartType="BarChart"
+                                            loader={<div>Loading Chart...</div>}
+                                            data={chartData}
+                                            options={chartOptions}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
