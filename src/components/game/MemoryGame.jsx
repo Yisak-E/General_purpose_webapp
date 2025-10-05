@@ -456,24 +456,31 @@ export default function MemoryGame() {
         }
     };
 
-    // Prepare data for Google Charts
+    // Prepare data for Google Charts - UPDATED for Line Chart
     const chartData = [
         ['Player', 'Score'],
-        ...scores.map(score => [score.name, score.score])
+        ...scores.map((score, index) => [`${index + 1}. ${score.name}`, score.score])
     ];
 
+    // UPDATED: Line chart options
     const chartOptions = {
         title: `Top 10 ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Level Scores`,
-        chartArea: { width: '80%' },
+        chartArea: { width: '80%', height: '70%' },
         hAxis: {
+            title: 'Player Ranking',
+            textStyle: {
+                fontSize: 12
+            }
+        },
+        vAxis: {
             title: 'Score',
             minValue: 0,
         },
-        vAxis: {
-            title: 'Player',
-        },
-        bars: 'horizontal',
-        colors: ['#4285F4']
+        legend: { position: 'none' },
+        lineWidth: 3,
+        pointSize: 6,
+        colors: ['#4285F4'],
+        curveType: 'function'
     };
 
     // FIXED: Corrected switch case syntax
@@ -709,10 +716,11 @@ export default function MemoryGame() {
 
                             {showNow.stat && scores.length > 0 && (
                                 <div className="w-full bg-white p-4 rounded-lg">
+                                    {/* UPDATED: Changed to LineChart */}
                                     <Chart
                                         width={'100%'}
                                         height={'300px'}
-                                        chartType="BarChart"
+                                        chartType="LineChart"
                                         loader={<div>Loading Chart...</div>}
                                         data={chartData}
                                         options={chartOptions}
@@ -785,13 +793,13 @@ export default function MemoryGame() {
                                     ))}
                                 </div>
 
-                                {/* Google Charts Graph */}
+                                {/* UPDATED: Google Charts Line Graph */}
                                 {scores.length > 0 && (
                                     <div className="mt-6 bg-white p-4 rounded-lg">
                                         <Chart
                                             width={'100%'}
                                             height={'300px'}
-                                            chartType="BarChart"
+                                            chartType="LineChart"
                                             loader={<div>Loading Chart...</div>}
                                             data={chartData}
                                             options={chartOptions}
