@@ -25,7 +25,7 @@ function ScheduleTable({schedule, selectedSemester, onDeleteSchedule}) {
         //
         //     await onDeleteSchedule(scheduleId);
         // }
-        alert("Oh I know you try to delate, but I comment the codes 😊")
+        alert("Oh, I know you try to delete, but I commented the code 😊")
     };
 
     return (
