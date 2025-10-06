@@ -233,7 +233,7 @@ export default function HomePage() {
             }} />
 
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-16">
+            <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-16 mt-12">
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative container mx-auto px-4 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
