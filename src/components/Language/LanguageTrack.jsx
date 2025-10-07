@@ -32,7 +32,13 @@ export default function LanguageTrack() {
   const [showSkippedAnswer, setShowSkippedAnswer] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const wordsPerPage = 10;
-  const [activeTab, setActiveTab] = useState('quiz'); // 'quiz', 'stats', 'words'
+  const [activeTab, setActiveTab] = useState('quiz');
+  const [quizMode, setQuizMode] = useState('fill-blank'); // 'fill-blank', 'multiple-choice', 'matching'
+  const [multipleChoiceOptions, setMultipleChoiceOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [matchingPairs, setMatchingPairs] = useState([]);
+  const [selectedMatches, setSelectedMatches] = useState({});
+  const [matchedPairs, setMatchedPairs] = useState([]);
 
   // Function to seed the database with vocabulary from external file (only new words)
   const seedDatabase = async () => {
@@ -44,11 +50,9 @@ export default function LanguageTrack() {
 
     existingSnapshot.forEach((doc) => {
       const data = doc.data();
-      // Safely check if the document has the expected structure
       if (data.english && data.spanish &&
           typeof data.english === 'string' &&
           typeof data.spanish === 'string') {
-        // Create a unique key for each word to check duplicates
         const wordKey = `${data.english.toLowerCase()}-${data.spanish.toLowerCase()}`;
         existingWords.add(wordKey);
       } else {
@@ -63,7 +67,6 @@ export default function LanguageTrack() {
 
     // Filter out words that already exist and validate new words
     const newWords = wordsToSeed.filter(word => {
-      // Validate the word structure
       if (!word.english || !word.spanish ||
           typeof word.english !== 'string' ||
           typeof word.spanish !== 'string') {
@@ -78,7 +81,6 @@ export default function LanguageTrack() {
     console.log(`Adding ${newWords.length} new words out of ${wordsToSeed.length} total`);
 
     if (newWords.length > 0) {
-      // Add only new words in batches to avoid timeout
       const batchSize = 100;
       for (let i = 0; i < newWords.length; i += batchSize) {
         const batch = newWords.slice(i, i + batchSize);
@@ -99,7 +101,6 @@ export default function LanguageTrack() {
     const vocabList = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      // Only include valid vocabulary documents
       if (data.english && data.spanish &&
           typeof data.english === 'string' &&
           typeof data.spanish === 'string') {
@@ -112,7 +113,7 @@ export default function LanguageTrack() {
     console.log(`Loaded ${vocabList.length} valid words from database`);
   }
 
-  // Calculate vocabulary statistics - UPDATED to use wordStats
+  // Calculate vocabulary statistics
   const calculateVocabularyStats = () => {
     if (vocabulary.length === 0) return;
 
@@ -187,7 +188,6 @@ export default function LanguageTrack() {
         if (data.date && data.date.toDate) {
           stats.push({ id: doc.id, ...data });
 
-          // Track word-specific stats
           if (data.wordId) {
             if (!wordStatsTemp[data.wordId]) {
               wordStatsTemp[data.wordId] = { correct: 0, total: 0 };
@@ -214,10 +214,10 @@ export default function LanguageTrack() {
         correct: isCorrectAnswer,
         wordId: wordId,
         english: quizWord,
-        spanish: correctAnswer
+        spanish: correctAnswer,
+        quizMode: quizMode
       });
 
-      // Update local word stats
       setWordStats(prev => ({
         ...prev,
         [wordId]: {
@@ -230,13 +230,60 @@ export default function LanguageTrack() {
     }
   };
 
+  // Generate multiple choice options
+  const generateMultipleChoiceOptions = (correctWord, allWords) => {
+    const options = [correctWord];
+
+    // Add 3 random incorrect options
+    while (options.length < 4) {
+      const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+      if (!options.includes(randomWord.spanish) && randomWord.spanish !== correctWord) {
+        options.push(randomWord.spanish);
+      }
+    }
+
+    // Shuffle options
+    return options.sort(() => Math.random() - 0.5);
+  };
+
+  // Generate matching pairs
+  const generateMatchingPairs = (currentWord, allWords) => {
+    const pairs = [];
+    const usedWords = new Set([currentWord.id]);
+
+    // Add current word
+    pairs.push({
+      english: currentWord.english,
+      spanish: currentWord.spanish,
+      id: currentWord.id
+    });
+
+    // Add 3 more random pairs
+    while (pairs.length < 4) {
+      const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+      if (!usedWords.has(randomWord.id)) {
+        pairs.push({
+          english: randomWord.english,
+          spanish: randomWord.spanish,
+          id: randomWord.id
+        });
+        usedWords.add(randomWord.id);
+      }
+    }
+
+    // Shuffle both lists separately
+    const englishWords = pairs.map(pair => pair.english).sort(() => Math.random() - 0.5);
+    const spanishWords = pairs.map(pair => pair.spanish).sort(() => Math.random() - 0.5);
+
+    return { englishWords, spanishWords, pairs };
+  };
+
   const startQuiz = () => {
     if (vocabulary.length === 0) {
       setMessage("Loading vocabulary, please wait...");
       return;
     }
 
-    // Filter out any invalid words and prioritize words that need practice
     const validVocabulary = vocabulary.filter(word =>
       word.english && word.spanish &&
       typeof word.english === 'string' &&
@@ -250,17 +297,13 @@ export default function LanguageTrack() {
 
     const wordsNeedingPractice = validVocabulary.filter(word => {
       const percentage = getWordPercentage(word.id);
-      return percentage < 50 || percentage === 0; // Words with <50% or no attempts
+      return percentage < 50 || percentage === 0;
     });
 
-    // Use words needing practice if available, otherwise use all valid words
     const wordPool = wordsNeedingPractice.length > 0 ? wordsNeedingPractice : validVocabulary;
-
-    // Filter out recently skipped words
     const availableWords = wordPool.filter(word => !skippedWords.includes(word.id));
 
     if (availableWords.length === 0) {
-      // If all words are skipped, reset skipped words and use the original pool
       setSkippedWords([]);
       getRandomWord(wordPool);
     } else {
@@ -274,23 +317,29 @@ export default function LanguageTrack() {
     setCorrectAnswer(randomWord.spanish);
     setCurrentWordId(randomWord.id);
     setUserTranslation("");
+    setSelectedOption("");
+    setSelectedMatches({});
+    setMatchedPairs([]);
     setShowResult(false);
     setShowSkippedAnswer(false);
+
+    // Generate options based on quiz mode
+    if (quizMode === 'multiple-choice') {
+      const options = generateMultipleChoiceOptions(randomWord.spanish, wordPool);
+      setMultipleChoiceOptions(options);
+    } else if (quizMode === 'matching') {
+      const matchingData = generateMatchingPairs(randomWord, wordPool);
+      setMatchingPairs(matchingData);
+    }
   };
 
   const skipWord = () => {
     if (currentWordId) {
-      // Show the answer for 5 seconds
       setShowSkippedAnswer(true);
       setMessage(`Skipped "${quizWord}". The answer is: ${correctAnswer}`);
-
-      // Add current word to skipped words list
       setSkippedWords(prev => [...prev, currentWordId]);
-
-      // Save skip as a wrong answer for tracking
       saveStat(false, currentWordId);
 
-      // Move to next word after 5 seconds
       setTimeout(() => {
         setShowSkippedAnswer(false);
         setMessage("");
@@ -306,17 +355,42 @@ export default function LanguageTrack() {
     setShowSkippedAnswer(false);
     setMessage("Quiz ended. Your progress has been saved.");
     setTimeout(() => setMessage(""), 3000);
-    setSkippedWords([]); // Reset skipped words when quitting
+    setSkippedWords([]);
   };
 
   const checkTranslation = () => {
-    if (!userTranslation.trim()) {
+    if (quizMode === 'fill-blank' && !userTranslation.trim()) {
       setMessage("Please enter your translation");
       setTimeout(() => setMessage(""), 3000);
       return;
     }
 
-    const isTranslationCorrect = userTranslation.toLowerCase().trim() === correctAnswer.toLowerCase();
+    if (quizMode === 'multiple-choice' && !selectedOption) {
+      setMessage("Please select an option");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
+
+    if (quizMode === 'matching' && Object.keys(selectedMatches).length < 4) {
+      setMessage("Please match all pairs");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
+
+    let isTranslationCorrect = false;
+
+    if (quizMode === 'fill-blank') {
+      isTranslationCorrect = userTranslation.toLowerCase().trim() === correctAnswer.toLowerCase();
+    } else if (quizMode === 'multiple-choice') {
+      isTranslationCorrect = selectedOption === correctAnswer;
+    } else if (quizMode === 'matching') {
+      // Check if all matches are correct
+      isTranslationCorrect = Object.entries(selectedMatches).every(([english, spanish]) => {
+        const correctPair = matchingPairs.pairs.find(pair => pair.english === english);
+        return correctPair && correctPair.spanish === spanish;
+      });
+    }
+
     setIsCorrect(isTranslationCorrect);
     setShowResult(true);
 
@@ -331,6 +405,25 @@ export default function LanguageTrack() {
 
   const nextQuestion = () => {
     startQuiz();
+  };
+
+  // Handle matching selection
+  const handleMatchSelection = (english, spanish) => {
+    setSelectedMatches(prev => {
+      const newMatches = { ...prev };
+
+      // Remove any existing match for this english word
+      Object.keys(newMatches).forEach(key => {
+        if (newMatches[key] === spanish) {
+          delete newMatches[key];
+        }
+      });
+
+      // Add new match
+      newMatches[english] = spanish;
+
+      return newMatches;
+    });
   };
 
   // Calculate percentage for each word
@@ -365,7 +458,7 @@ export default function LanguageTrack() {
     }
   };
 
-  // Chart configuration with better styling
+  // Chart configuration
   const chartOptions = {
     title: "Your Learning Progress",
     titleTextStyle: {
@@ -458,7 +551,6 @@ export default function LanguageTrack() {
       const dataTable = window.google.visualization.arrayToDataTable(getChartData());
       const chart = new window.google.visualization.LineChart(document.getElementById('line_chart_div'));
 
-      // Add resize handler for responsiveness
       const handleResize = () => {
         chart.draw(dataTable, chartOptions);
       };
@@ -471,6 +563,196 @@ export default function LanguageTrack() {
       };
     }
   }, [statsData, isChartsLoaded]);
+
+  // Render quiz based on mode
+  const renderQuizContent = () => {
+    if (!quizWord) {
+      return (
+        <div className="text-center my-auto">
+          <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg">Ready to test your Spanish?</p>
+          <p className="text-xs md:text-sm text-gray-500 mb-4">Vocabulary database: {vocabulary.length} words</p>
+          <button
+            onClick={startQuiz}
+            className="bg-blue-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
+          >
+            Start Quiz
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg border">
+          <p className="text-xs md:text-sm text-gray-500 mb-1">
+            {quizMode === 'fill-blank' && 'Translate this English word to Spanish:'}
+            {quizMode === 'multiple-choice' && 'Select the correct Spanish translation:'}
+            {quizMode === 'matching' && 'Match the English words with their Spanish translations:'}
+          </p>
+          <p className="text-xl md:text-3xl font-bold text-gray-800">{quizWord}</p>
+          <div className="mt-1 md:mt-2 text-xs text-gray-400">
+            Word {vocabulary.findIndex(w => w.id === currentWordId) + 1} of {vocabulary.length}
+            {skippedWords.length > 0 && ` • ${skippedWords.length} skipped`}
+          </div>
+        </div>
+
+        {/* Show skipped answer for 5 seconds */}
+        {showSkippedAnswer && (
+          <div className="mb-4 p-3 md:p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+            <p className="text-base md:text-lg font-semibold text-yellow-800">
+              The answer is: <span className="font-bold">{correctAnswer}</span>
+            </p>
+            <p className="text-xs md:text-sm text-yellow-600 mt-2">
+              Next word in 5 seconds...
+            </p>
+          </div>
+        )}
+
+        {!showSkippedAnswer && (
+          <div className="mb-4">
+            {/* Fill in the Blank */}
+            {quizMode === 'fill-blank' && (
+              <input
+                type="text"
+                value={userTranslation}
+                onChange={(e) => setUserTranslation(e.target.value)}
+                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg text-base md:text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Your translation..."
+                disabled={showResult}
+                onKeyPress={(e) => e.key === 'Enter' && !showResult && checkTranslation()}
+              />
+            )}
+
+            {/* Multiple Choice */}
+            {quizMode === 'multiple-choice' && (
+              <div className="space-y-2">
+                {multipleChoiceOptions.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => !showResult && setSelectedOption(option)}
+                    className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
+                      selectedOption === option
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-25'
+                    } ${showResult && option === correctAnswer ? 'border-green-500 bg-green-50' : ''}
+                    ${showResult && selectedOption === option && option !== correctAnswer ? 'border-red-500 bg-red-50' : ''}`}
+                    disabled={showResult}
+                  >
+                    <span className="font-medium text-gray-800">{option}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Matching Game */}
+            {quizMode === 'matching' && matchingPairs.englishWords && (
+              <div className="grid grid-cols-2 gap-4">
+                {/* English Words */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-700 text-center mb-2">English</h4>
+                  {matchingPairs.englishWords.map((english, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-lg border-2 text-center font-medium ${
+                        selectedMatches[english]
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300'
+                      }`}
+                    >
+                      {english}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Spanish Words */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-700 text-center mb-2">Spanish</h4>
+                  {matchingPairs.spanishWords.map((spanish, index) => (
+                    <button
+                      key={index}
+                      onClick={() => !showResult && handleMatchSelection(quizWord, spanish)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all ${
+                        Object.values(selectedMatches).includes(spanish)
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300'
+                      }`}
+                      disabled={showResult}
+                    >
+                      {spanish}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {showResult ? (
+          <div className={`p-3 md:p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            <p className="font-bold text-lg md:text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
+            {!isCorrect && (
+              <p className="mt-1 md:mt-2 text-sm md:text-base">
+                The correct answer is: <span className="font-bold">{correctAnswer}</span>
+              </p>
+            )}
+            <div className="flex gap-2 justify-center mt-3 md:mt-4">
+              <button
+                onClick={nextQuestion}
+                className="bg-blue-600 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-base"
+              >
+                Next Word
+              </button>
+              <button
+                onClick={quitQuiz}
+                className="bg-gray-500 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-sm md:text-base"
+              >
+                End Quiz
+              </button>
+            </div>
+          </div>
+        ) : (
+          !showSkippedAnswer && (
+            <div className="space-y-2 md:space-y-3">
+              <button
+                onClick={checkTranslation}
+                className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-colors"
+              >
+                {quizMode === 'matching' ? 'Check Matches' : 'Check Answer'}
+              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={skipWord}
+                  className="flex-1 bg-yellow-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors text-sm md:text-base"
+                >
+                  Skip Word
+                </button>
+                <button
+                  onClick={quitQuiz}
+                  className="flex-1 bg-red-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm md:text-base"
+                >
+                  Quit Quiz
+                </button>
+              </div>
+            </div>
+          )
+        )}
+        <div className="mt-4 md:mt-6 flex justify-around border-t pt-3 md:pt-4">
+          <div className="text-center">
+            <p className="text-xl md:text-3xl font-bold text-green-600">{score.correct}</p>
+            <p className="text-xs md:text-sm text-gray-500">Correct</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xl md:text-3xl font-bold text-red-600">{score.wrong}</p>
+            <p className="text-xs md:text-sm text-gray-500">Wrong</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xl md:text-3xl font-bold text-yellow-600">{skippedWords.length}</p>
+            <p className="text-xs md:text-sm text-gray-500">Skipped</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -497,7 +779,7 @@ export default function LanguageTrack() {
           }}
         />
 
-        {/* Vocabulary Stats Overview - Always visible */}
+        {/* Vocabulary Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <div className="bg-white rounded-lg p-3 text-center shadow">
             <div className="text-xl md:text-2xl font-bold text-blue-600">{vocabularyStats.total}</div>
@@ -522,6 +804,43 @@ export default function LanguageTrack() {
             {message}
           </div>
         )}
+
+        {/* Quiz Mode Selection */}
+        <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-center text-gray-700">Select Quiz Mode</h3>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => setQuizMode('fill-blank')}
+              className={`p-3 rounded-lg font-semibold transition-all ${
+                quizMode === 'fill-blank'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              ✏️ Fill Blank
+            </button>
+            <button
+              onClick={() => setQuizMode('multiple-choice')}
+              className={`p-3 rounded-lg font-semibold transition-all ${
+                quizMode === 'multiple-choice'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              🔘 Multiple Choice
+            </button>
+            <button
+              onClick={() => setQuizMode('matching')}
+              className={`p-3 rounded-lg font-semibold transition-all ${
+                quizMode === 'matching'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              🔄 Matching
+            </button>
+          </div>
+        </div>
 
         {/* Mobile Tab Navigation */}
         <div className="lg:hidden mb-6">
@@ -565,115 +884,7 @@ export default function LanguageTrack() {
           <div className={`bg-white rounded-xl shadow-lg p-4 md:p-6 flex flex-col justify-between ${
             activeTab !== 'quiz' && 'lg:block hidden'
           } ${activeTab === 'quiz' ? 'block' : 'hidden lg:block'}`}>
-            {!quizWord ? (
-              <div className="text-center my-auto">
-                <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg">Ready to test your Spanish?</p>
-                <p className="text-xs md:text-sm text-gray-500 mb-4">Vocabulary database: {vocabulary.length} words</p>
-                <button
-                  onClick={startQuiz}
-                  className="bg-blue-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
-                >
-                  Start Quiz
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-xs md:text-sm text-gray-500 mb-1">Translate this English word to Spanish:</p>
-                  <p className="text-xl md:text-3xl font-bold text-gray-800">{quizWord}</p>
-                  <div className="mt-1 md:mt-2 text-xs text-gray-400">
-                    Word {vocabulary.findIndex(w => w.id === currentWordId) + 1} of {vocabulary.length}
-                    {skippedWords.length > 0 && ` • ${skippedWords.length} skipped`}
-                  </div>
-                </div>
-
-                {/* Show skipped answer for 5 seconds */}
-                {showSkippedAnswer && (
-                  <div className="mb-4 p-3 md:p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
-                    <p className="text-base md:text-lg font-semibold text-yellow-800">
-                      The answer is: <span className="font-bold">{correctAnswer}</span>
-                    </p>
-                    <p className="text-xs md:text-sm text-yellow-600 mt-2">
-                      Next word in 5 seconds...
-                    </p>
-                  </div>
-                )}
-
-                {!showSkippedAnswer && (
-                  <div className="mb-4">
-                    <input
-                      type="text"
-                      value={userTranslation}
-                      onChange={(e) => setUserTranslation(e.target.value)}
-                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg text-base md:text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Your translation..."
-                      disabled={showResult}
-                      onKeyPress={(e) => e.key === 'Enter' && !showResult && checkTranslation()}
-                    />
-                  </div>
-                )}
-
-                {showResult ? (
-                  <div className={`p-3 md:p-4 rounded-lg mb-4 text-center ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    <p className="font-bold text-lg md:text-xl">{isCorrect ? '¡Correcto! 🎉' : 'Incorrect 😞'}</p>
-                    {!isCorrect && <p className="mt-1 md:mt-2 text-sm md:text-base">The correct answer is: <span className="font-bold">{correctAnswer}</span></p>}
-                    <div className="flex gap-2 justify-center mt-3 md:mt-4">
-                      <button
-                        onClick={nextQuestion}
-                        className="bg-blue-600 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-base"
-                      >
-                        Next Word
-                      </button>
-                      <button
-                        onClick={quitQuiz}
-                        className="bg-gray-500 text-white px-4 md:px-6 py-1 md:py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-sm md:text-base"
-                      >
-                        End Quiz
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  !showSkippedAnswer && (
-                    <div className="space-y-2 md:space-y-3">
-                      <button
-                        onClick={checkTranslation}
-                        className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-colors"
-                      >
-                        Check Answer
-                      </button>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={skipWord}
-                          className="flex-1 bg-yellow-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors text-sm md:text-base"
-                        >
-                          Skip Word
-                        </button>
-                        <button
-                          onClick={quitQuiz}
-                          className="flex-1 bg-red-500 text-white py-1 md:py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm md:text-base"
-                        >
-                          Quit Quiz
-                        </button>
-                      </div>
-                    </div>
-                  )
-                )}
-                <div className="mt-4 md:mt-6 flex justify-around border-t pt-3 md:pt-4">
-                  <div className="text-center">
-                    <p className="text-xl md:text-3xl font-bold text-green-600">{score.correct}</p>
-                    <p className="text-xs md:text-sm text-gray-500">Correct</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xl md:text-3xl font-bold text-red-600">{score.wrong}</p>
-                    <p className="text-xs md:text-sm text-gray-500">Wrong</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xl md:text-3xl font-bold text-yellow-600">{skippedWords.length}</p>
-                    <p className="text-xs md:text-sm text-gray-500">Skipped</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            {renderQuizContent()}
           </div>
 
           {/* Analytics Chart */}
