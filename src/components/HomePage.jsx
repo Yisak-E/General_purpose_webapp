@@ -3,6 +3,7 @@ import studyplanImg from '../assets/studyplan.jpg';
 import jopSearchImg from '../assets/jopSearch.jpg';
 import weatherImg from '../assets/weatherabu.png';
 import nutTrackerImg from '../assets/nut_tracker.jpg';
+import tic from '../assets/tic.png';
 import moodyImg from '../assets/img.png';
 import '../general.css'
 import Header from "./headers/Header.jsx";
@@ -168,6 +169,17 @@ export default function HomePage() {
             navigator: navigateTo,
             category: 'games',
             icon: '🧠'
+        },
+        {
+            title: 'Tic Tac Toe',
+            image: tic,
+            description:
+                ' Tic-Tac-Toe helps improve decision-making,' +
+                ' pattern recognition, and tactical planning in just a few moves.',
+            navigateTo: '/tic',
+            navigator: navigateTo,
+            category: 'games',
+            icon:'✔️'
         },
         {
             title: "Nutrition Tracker+",

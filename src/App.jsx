@@ -7,6 +7,7 @@ import JopSearch from "./components/JopSearch.jsx";
 import Footer from "./components/Footer.jsx";
 import WeatherAbuDhabi from "./components/weather/WeatherAbuDhabi.jsx";
 import MemoryGame from "./components/game/MemoryGame.jsx";
+import TicTacToe from "./components/game/TicTacToe.jsx"
 import Tracker from "./components/nutrition/Tracker.jsx";
 import TodoAndDone from "./components/todo/TodoAndDone.jsx";
 import Moody from "./components/mood/Moody.jsx";
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/jobSearch" element={<JopSearch/>}/>
                 <Route path="/weather" element={<WeatherAbuDhabi/>}/>
                 <Route path="/memorygame" element={<MemoryGame/>}/>
+                <Route path="/tic" element={<TicTacToe/>}/>
                 <Route path="/Tracker" element={<Tracker/>}/>
                 <Route path="/TodoAndDone" element={<TodoAndDone/>}/>
                 <Route path="/moody" element={<Moody/>}/>
