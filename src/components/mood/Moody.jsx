@@ -244,7 +244,7 @@ export default function Moody() {
         }}
       />
 
-      <section className=" bg-gray-50 min-h-screen py-8 ">
+      <section className=" bg-gray-50 min-h-screen py-8 md:mt-16">
         <div className="container mx-auto px-4  lg:flex lg:flex-row lg:justify-between ">
          <div className={'flex flex-col lg:w-1/2'}>
 

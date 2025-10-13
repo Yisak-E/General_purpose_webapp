@@ -525,7 +525,7 @@ export default function MemoryGame() {
                 }
             } />
 
-            <div className="container-fluid flex flex-col mt-4 bg-gray-100 p-4">
+            <div className="container-fluid flex flex-col mt-4 bg-gray-100 p-4 md:mt-16">
                 <h1 className="text-3xl font-bold mb-4 text-center">Memory Game</h1>
 
                 {/* Index Error Warning */}

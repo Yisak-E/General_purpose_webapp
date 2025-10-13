@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   doc,
-  getDocs,
   updateDoc,
-  setDoc,
   onSnapshot
 } from "firebase/firestore";
 import { db } from '../api/firebaseConfigs.js'; // Adjust path as needed
@@ -17,131 +15,9 @@ function StudyPlan() {
 
   // Initialize study plan in Firestore
   const initializeStudyPlan = async () => {
-    const defaultStudyPlan = {
-      program: "Bachelor of Science in Software Engineering",
-      total_credit_hours: 135,
-      semesters: [
-        {
-          name: "Semester 1",
-          year: "First Year (Freshman)",
-          courses: [
-            { code: "ENG200", title: "English II", credits: 3, taken: true },
-            { code: "FWS205", title: "UAE and GCC Society", credits: 3, taken: true },
-            { code: "ARL101", title: "Communication Skills in Arabic I", credits: 3, taken: true },
-            { code: "MTT102", title: "Calculus I", credits: 3, taken: true },
-            { code: "STT100", title: "General Statistics", credits: 3, taken: true },
-            { code: "ISL100", title: "Islamic Culture", credits: 3, taken: true }
-          ],
-          total_credits: 18
-        },
-        {
-          name: "Semester 2",
-          year: "First Year (Freshman)",
-          courses: [
-            { code: "PHY102", title: "Physics and Engineering Applications I", credits: 3, taken: true },
-            { code: "PHY102L", title: "Physics and Engineering Applications I Lab", credits: 1, taken: true },
-            { code: "CHE205", title: "General Chemistry I", credits: 3, taken: true },
-            { code: "CHE201L", title: "Chemistry Lab", credits: 1, taken: false },
-            { code: "MTT200", title: "Calculus II", credits: 3, taken: true },
-            { code: "COE102", title: "Introductory Big Data Analytics", credits: 3, taken: true },
-            { code: "OE1", title: "Open Elective I", credits: 3, taken: false }
-          ],
-          total_credits: 17
-        },
-        {
-          name: "Semester 3",
-          year: "Second Year (Sophomore)",
-          courses: [
-            { code: "SWE201", title: "Structured Programming", credits: 3, taken: true },
-            { code: "PHY201", title: "Physics and Engineering Applications II", credits: 3, taken: true },
-            { code: "PHY201L", title: "Physics and Engineering Applications II Lab", credits: 1, taken: true },
-            { code: "STT201", title: "Intermediate Statistics and Research Methods", credits: 3, taken: true },
-            { code: "MTT202", title: "Discrete Mathematics", credits: 3, taken: true },
-            { code: "OE2", title: "Open Elective II", credits: 3, taken: false }
-          ],
-          total_credits: 16
-        },
-        {
-          name: "Semester 4",
-          year: "Second Year (Sophomore)",
-          courses: [
-            { code: "CSC202", title: "Programming II", credits: 3, taken: true },
-            { code: "CSC307", title: "Web Design", credits: 3, taken: true },
-            { code: "CSC302", title: "Database Management Systems", credits: 3, taken: true },
-            { code: "FWS305", title: "Technical Communications for Workplace", credits: 3, taken: true },
-            { code: "MTT204", title: "Introduction to Linear Algebra", credits: 3, taken: true },
-            { code: "COE202", title: "Engineering Ethics, Economy, and Law", credits: 3, taken: true }
-          ],
-          total_credits: 18
-        },
-        {
-          name: "Summer Semester",
-          courses: [
-            { code: "SWE399A", title: "Internship/Project in Software Engineering I", credits: 1.5, taken: false }
-          ]
-        },
-        {
-          name: "Semester 5",
-          year: "Third Year (Junior)",
-          courses: [
-            { code: "CSC301", title: "Data Structures and Algorithms", credits: 3, taken: true },
-            { code: "CSC305", title: "Data Communications and Networks", credits: 3, taken: true },
-            { code: "ITE390", title: "Computer Ethics", credits: 3, taken: true },
-            { code: "SWE371", title: "Software Requirements and Specification", credits: 3, taken: true },
-            { code: "SWE401", title: "Software Engineering", credits: 3, taken: true },
-            { code: "SWE370", title: "Object Oriented Design Patterns", credits: 3, taken: true }
-          ],
-          total_credits: 18
-        },
-        {
-          name: "Semester 6",
-          year: "Third Year (Junior)",
-          courses: [
-            { code: "CSC308", title: "Operating Systems", credits: 3, taken: false },
-            { code: "CSC406", title: "Artificial Intelligence", credits: 3, taken: false },
-            { code: "ITE422", title: "System and Network Administration", credits: 3, taken: false },
-            { code: "ITE421", title: "Native Mobile Application Development", credits: 3, taken: false },
-            { code: "SWE302", title: "Formal Methods in Software Engineering", credits: 3, taken: false },
-            { code: "SWE471", title: "Software Design and Architecture", credits: 3, taken: false }
-          ],
-          total_credits: 18
-        },
-        {
-          name: "Summer Semester",
-          courses: [
-            { code: "SWE399B", title: "Internship/Project in Software Engineering II", credits: 1.5, taken: false }
-          ]
-        },
-        {
-          name: "Semester 7",
-          year: "Fourth Year (Senior)",
-          courses: [
-            { code: "ITE408", title: "Information Security", credits: 3, taken: false },
-            { code: "ITE409", title: "Human Computer Interactions", credits: 3, taken: false },
-            { code: "SWE472", title: "Software Testing and Quality Assurance", credits: 3, taken: false },
-            { code: "ME1", title: "Major Elective I", credits: 3, taken: false },
-            { code: "SWE499A", title: "Capstone Design Project in SWE Part A", credits: 1, taken: false }
-          ],
-          total_credits: 13
-        },
-        {
-          name: "Semester 8",
-          year: "Fourth Year (Senior)",
-          courses: [
-            { code: "CSC408", title: "Distributed Information Systems", credits: 3, taken: false },
-            { code: "SWE473", title: "Software Maintenance and Evolution", credits: 3, taken: false },
-            { code: "ME2", title: "Major Elective II", credits: 3, taken: false },
-            { code: "FWS310", title: "Fundamentals of Innovation and Entrepreneurship", credits: 3, taken: false },
-            { code: "SWE499B", title: "Capstone Design Project in SWE Part B", credits: 2, taken: false }
-          ],
-          total_credits: 14
-        }
-      ]
-    };
 
     try {
       const studyPlanRef = doc(collection(db, "studyPlans"), "userStudyPlan");
-      await setDoc(studyPlanRef, defaultStudyPlan);
       console.log("Study plan initialized in Firestore");
     } catch (error) {
       console.error("Error initializing study plan:", error);
@@ -261,7 +137,7 @@ function StudyPlan() {
         ]
       }} />
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 mt-12">
         {/* Progress Overview */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex flex-col md:flex-row justify-between items-center">

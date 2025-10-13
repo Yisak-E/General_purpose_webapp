@@ -70,7 +70,7 @@ export default function WeatherAbuDhabi() {
                 }
             }/>
 
-            <div className="bg-gray-100 p-4 relative min-h-screen">
+            <div className="bg-gray-100 p-4 relative min-h-screen md:mt-12">
                 <div className="city-search-container max-w-2xl mx-auto">
                     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 className="text-2xl font-bold mb-4 text-gray-800">World Weather</h2>

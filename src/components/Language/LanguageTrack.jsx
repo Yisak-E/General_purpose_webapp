@@ -583,7 +583,7 @@ export default function LanguageTrack() {
 
     return (
       <div>
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg border">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg border ">
           <p className="text-xs md:text-sm text-gray-500 mb-1">
             {quizMode === 'fill-blank' && 'Translate this English word to Spanish:'}
             {quizMode === 'multiple-choice' && 'Select the correct Spanish translation:'}
@@ -780,7 +780,7 @@ export default function LanguageTrack() {
         />
 
         {/* Vocabulary Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 md:mt-16 mt-12">
           <div className="bg-white rounded-lg p-3 text-center shadow">
             <div className="text-xl md:text-2xl font-bold text-blue-600">{vocabularyStats.total}</div>
             <div className="text-xs md:text-sm text-gray-600">Total Words</div>

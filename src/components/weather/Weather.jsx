@@ -105,7 +105,7 @@ const Weather = ({ city = "Abu Dhabi" }) => {
   const feelsLike = getFeelsLike(current.temp_c, current.humidity, current.wind_kph);
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-2xl shadow-lg overflow-hidden">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-2xl shadow-lg overflow-hidden md:mt-12">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6">
         <div className="flex justify-between items-start">
