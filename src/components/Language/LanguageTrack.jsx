@@ -5,8 +5,7 @@ import {
   serverTimestamp,
   getDocs,
   query,
-  orderBy,
-  getCountFromServer
+  orderBy
 } from "firebase/firestore";
 import { db } from '../../api/firebaseConfigs.js';
 import { initialVocabulary } from './initialVocabulary.js';
