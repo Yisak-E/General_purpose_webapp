@@ -150,31 +150,34 @@ export default function AdvancedNotebook() {
     if (!currentNoteId) return;
     alert("Message delation is not allowed, gatcha 😍")
 
-    // if (!window.confirm("Are you sure you want to delete this note?")) return;
-    //
-    // try {
-    //   const noteDoc = doc(notesRef, currentNoteId);
-    //   await deleteDoc(noteDoc);
-    //
-    //   // Select the next note or previous if at the end
-    //   if (notes.length > 1) {
-    //     const newIndex = currentNoteIndex >= notes.length - 1 ? currentNoteIndex - 1 : currentNoteIndex;
-    //     selectNote(newIndex);
-    //   } else {
-    //     // No notes left
-    //     setNoteContent("");
-    //     setNoteTitle("");
-    //     setCurrentNoteId(null);
-    //     setCurrentNoteIndex(-1);
-    //   }
-    //
-    //   setMessage("Note deleted successfully");
-    //   setTimeout(() => setMessage(""), 3000);
-    // } catch (error) {
-    //   console.error("Error deleting note:", error);
-    //   setMessage("Error deleting note");
-    //   setTimeout(() => setMessage(""), 3000);
-    // }
+    if (!window.confirm("Are you sure you want to delete this note?")) return;
+
+    const passes= prompt("Enter the key")
+    if(passes !== "starHack") return;
+
+    try {
+      const noteDoc = doc(notesRef, currentNoteId);
+      await deleteDoc(noteDoc);
+
+      // Select the next note or previous if at the end
+      if (notes.length > 1) {
+        const newIndex = currentNoteIndex >= notes.length - 1 ? currentNoteIndex - 1 : currentNoteIndex;
+        selectNote(newIndex);
+      } else {
+        // No notes left
+        setNoteContent("");
+        setNoteTitle("");
+        setCurrentNoteId(null);
+        setCurrentNoteIndex(-1);
+      }
+
+      setMessage("Note deleted successfully");
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      setMessage("Error deleting note");
+      setTimeout(() => setMessage(""), 3000);
+    }
   };
 
   // Navigate to next/previous note

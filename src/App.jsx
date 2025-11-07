@@ -13,7 +13,8 @@ import TodoAndDone from "./components/todo/TodoAndDone.jsx";
 import Moody from "./components/mood/Moody.jsx";
 import CourseNotebook from "./components/study_adu/Notebook.jsx";
 import LanguageTrack from "./components/Language/LanguageTrack.jsx";
-import LandingPage from "./components/LandingPage.jsx"; // Import the new LandingPage
+import LandingPage from "./components/LandingPage.jsx";
+import Planner from "./components/study_adu/Planner.jsx"; // Import the new LandingPage
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/moody" element={<Moody/>}/>
                 <Route path="/course" element={<CourseNotebook/>}/>
                 <Route path="/language" element={<LanguageTrack/>}/>
+                <Route path="/exam-preparation" element={<Planner/>}/>
             </Routes>
           <Footer/>
       </BrowserRouter>

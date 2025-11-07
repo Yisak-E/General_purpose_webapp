@@ -225,7 +225,18 @@ export default function HomePage() {
             navigator: navigateTo,
             category: 'education',
             icon: '🇪🇸'
-        }
+        },
+        {
+    title: 'Exam Planner Pro',
+    image: 'https://img.freepik.com/free-vector/exam-preparation-concept-illustration_114360-12347.jpg?w=740&t=st=1696117500~exp=1696118100~hmac=ghi789',
+    description: 'Plan your exam preparation with subject tracking, progress analytics, coverage monitoring, and exam probability assessment.',
+    navigateTo: '/exam-preparation',
+    navigator: navigateTo,
+    category: 'Education',
+    icon: '📚',
+
+}
+
     ];
 
     const filteredCards = activeCategory === 'all' 

@@ -83,7 +83,14 @@ export default function LandingPage() {
             description: 'Monitor your Spanish language learning journey with progress tracking, vocabulary builders, and skill assessment tools.',
             icon: '🇪🇸',
             category: 'Education'
+        }, {
+            title: 'Exam Planner Pro',
+            image: 'https://img.freepik.com/free-vector/exam-preparation-concept-illustration_114360-12347.jpg?w=740&t=st=1696117500~exp=1696118100~hmac=ghi789',
+            description: 'Plan your exam preparation with subject tracking, progress analytics, coverage monitoring, and exam probability assessment.',
+            icon: '📚',
+            category: 'Education'
         }
+
     ];
 
     const categories = [...new Set(features.map(feature => feature.category))];
