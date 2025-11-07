@@ -6,3 +6,13 @@
     background-repeat: no-repeat;
 
 }
+
+
+/* Add this to your global CSS */
+tbody tr:nth-child(odd) {
+  background-color: #fef3c7; /* yellow-100 */
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fffbeb; /* amber-50 */
+}
