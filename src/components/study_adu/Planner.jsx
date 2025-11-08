@@ -154,7 +154,7 @@ const SortableRow = ({ row, onEdit, onDelete, isExpanded, onToggleExpand, onUpda
             <div>
               <h4 className="font-semibold mb-2">Study Notes</h4>
               <textarea
-                className="w-full p-2 border rounded min-h-24"
+                className="w-full p-2 border rounded h-[300px] bg-[#479f67] font-semibold italic"
                 placeholder="Add your study notes here..."
                 value={row.notes || ''}
                 onChange={(e) => {
