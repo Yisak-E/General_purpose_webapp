@@ -228,7 +228,7 @@ export default function HomePage() {
         },
         {
     title: 'Exam Planner Pro',
-    image: 'https://img.freepik.com/free-vector/exam-preparation-concept-illustration_114360-12347.jpg?w=740&t=st=1696117500~exp=1696118100~hmac=ghi789',
+    image: "https://cdn.pixabay.com/photo/2018/09/04/10/23/boy-3653385_1280.jpg",
     description: 'Plan your exam preparation with subject tracking, progress analytics, coverage monitoring, and exam probability assessment.',
     navigateTo: '/exam-preparation',
     navigator: navigateTo,
