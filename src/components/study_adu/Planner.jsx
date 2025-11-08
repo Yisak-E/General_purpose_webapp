@@ -774,42 +774,69 @@ const handleUpdateNotes = async (pageId, newNotes) => {
     reader.readAsText(file);
   };
 
-  const uploadToFirebase = async (importedData) => {
-    try {
-      // First, clear existing Firebase data
+const uploadToFirebase = async (importedData, shouldMerge = true) => {
+  try {
+    if (!shouldMerge) {
+      // REPLACE MODE: Clear all data
       const existingDocs = await getDocs(collection(db, "study-planner"));
       const deletePromises = existingDocs.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
+    }
 
-      // Then upload new data
-      const uploadPromises = [];
+    // Get existing data to check for duplicates (in merge mode)
+    const existingData = shouldMerge ? await getDocs(collection(db, "study-planner")) : null;
+    const existingPages = existingData ? existingData.docs.map(doc => ({ id: doc.id, ...doc.data() })) : [];
 
-      importedData.courses?.forEach(course => {
-        course.chapters?.forEach(chapter => {
-          chapter.pages?.forEach(page => {
-            const firebaseDoc = {
-              ...page,
-              courseId: course.id,
-              courseName: course.name,
-              chapterId: chapter.id,
-              chapterName: chapter.name,
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp()
-            };
+    const uploadPromises = [];
 
-            uploadPromises.push(addDoc(collection(db, "study-planner"), firebaseDoc));
-          });
+    importedData.courses?.forEach(course => {
+      course.chapters?.forEach(chapter => {
+        chapter.pages?.forEach(page => {
+          // Check if this page already exists (by content, not just ID)
+          const existingPage = existingPages.find(existing =>
+            existing.page === page.page &&
+            existing.topicSummary === page.topicSummary &&
+            existing.courseId === course.id
+          );
+
+          // Use existing ID if found, otherwise generate new one
+          const pageId = existingPage ? existingPage.id : doc(collection(db, "study-planner")).id;
+
+          const firebaseDoc = {
+            page: page.page || '',
+            topicSummary: page.topicSummary || '',
+            likelyQuestionTypes: page.likelyQuestionTypes || '',
+            examProbability: page.examProbability || 'Medium',
+            coverage: shouldMerge && existingPage ? existingPage.coverage : (page.coverage || 0),
+            notes: shouldMerge && existingPage ? existingPage.notes : (page.notes || ''),
+            studyStatus: shouldMerge && existingPage ? existingPage.studyStatus : (page.studyStatus || 'Not Started'),
+            priority: page.priority || 999,
+            courseId: course.id || 'default-course',
+            courseName: course.name || 'Unnamed Course',
+            chapterId: chapter.id || 'default-chapter',
+            chapterName: chapter.name || 'Unnamed Chapter',
+            chapterPriority: chapter.priority || 1,
+            updatedAt: serverTimestamp(),
+          };
+
+          // Only set createdAt for new documents
+          if (!existingPage) {
+            firebaseDoc.createdAt = serverTimestamp();
+          }
+
+          uploadPromises.push(setDoc(doc(db, "study-planner", pageId), firebaseDoc, { merge: true }));
         });
       });
+    });
 
-      await Promise.all(uploadPromises);
-      console.log('Successfully uploaded to Firebase');
+    await Promise.all(uploadPromises);
+    console.log('Successfully uploaded to Firebase');
 
-    } catch (error) {
-      console.error('Firebase upload failed:', error);
-      throw new Error('Firebase upload failed');
-    }
-  };
+  } catch (error) {
+    console.error('Firebase upload failed:', error);
+    throw new Error('Firebase upload failed');
+  }
+};
 
   const calculateChapterStats = () => {
     const chapter = getCurrentChapter();
