@@ -37,6 +37,7 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import Header from "../headers/Header.jsx";
 import { db } from "../../api/firebaseConfigs.js";
+import {AnalyticsDashboard} from "./AnalyticsComponents.jsx";
 
 // Sortable Row Component
 // Sortable Row Component
@@ -1094,7 +1095,6 @@ const filteredPages = getCurrentPages().filter(page => {
                     </button>
                   </div>
                 )}
-
                 {/* Table */}
                 <div className="overflow-x-auto" id="study-table">
                   <DndContext
@@ -1149,64 +1149,138 @@ const filteredPages = getCurrentPages().filter(page => {
                 </div>
               </>
             ) : viewMode === "charts" ? (
+              <AnalyticsDashboard
+                data={data}
+                selectedCourse={selectedCourse}
+                selectedChapter={selectedChapter}
+                getCurrentPages={getCurrentPages}
+                getCurrentChapter={getCurrentChapter}
+                getCurrentCourse={getCurrentCourse}
+              />
+            ) : viewMode === "analytics" ? (
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold">Study Analytics</h3>
-
-                {/* Chapter Coverage Chart */}
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-medium mb-4">Chapter Coverage Progress</h4>
-                  <div className="space-y-3">
-                    {currentCourse?.chapters.map(chapter => {
-                      const chapterPages = chapter.pages || [];
-                      const totalCoverage = chapterPages.reduce((sum, page) => sum + (page.coverage || 0), 0);
-                      const avgCoverage = chapterPages.length > 0 ? Math.round(totalCoverage / chapterPages.length) : 0;
-
-                      return (
-                        <div key={chapter.id} className="flex items-center">
-                          <span className="w-48 text-sm truncate">{chapter.name}</span>
-                          <div className="flex-1 bg-gray-200 rounded-full h-4 mx-4">
-                            <div
-                              className="bg-blue-600 h-4 rounded-full"
-                              style={{ width: `${avgCoverage}%` }}
-                            ></div>
-                          </div>
-                          <span className="w-12 text-sm font-medium">{avgCoverage}%</span>
-                        </div>
-                      );
-                    })}
+                <div className="bg-white p-6 rounded-lg shadow border">
+                  <h3 className="text-xl font-semibold mb-4">Advanced Analytics</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{chapterStats.totalPages}</div>
+                      <div className="text-sm text-blue-800">Total Pages</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">{chapterStats.averageCoverage}%</div>
+                      <div className="text-sm text-green-800">Average Coverage</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">{chapterStats.completed}</div>
+                      <div className="text-sm text-purple-800">Completed Pages</div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Probability Distribution */}
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-medium mb-4">Exam Probability Distribution</h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-red-100 rounded-lg">
+                  {/* Additional Analytics Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
                       <div className="text-2xl font-bold text-red-600">
                         {filteredPages.filter(p => p.examProbability === 'High').length}
                       </div>
-                      <div className="text-sm font-medium">High Priority</div>
+                      <div className="text-sm text-red-800">High Priority</div>
                     </div>
-                    <div className="text-center p-4 bg-yellow-100 rounded-lg">
+                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
                       <div className="text-2xl font-bold text-yellow-600">
                         {filteredPages.filter(p => p.examProbability === 'Medium').length}
                       </div>
-                      <div className="text-sm font-medium">Medium Priority</div>
+                      <div className="text-sm text-yellow-800">Medium Priority</div>
                     </div>
-                    <div className="text-center p-4 bg-green-100 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">
-                        {filteredPages.filter(p => p.examProbability === 'Low').length}
+                    <div className="text-center p-4 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {filteredPages.filter(p => p.studyStatus === 'In Progress').length}
                       </div>
-                      <div className="text-sm font-medium">Low Priority</div>
+                      <div className="text-sm text-orange-800">In Progress</div>
                     </div>
+                  </div>
+
+                  {/* Progress Breakdown */}
+                  <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h4 className="font-semibold mb-3">Progress Breakdown</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Not Started</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gray-400 h-2 rounded-full"
+                              style={{ width: `${(filteredPages.filter(p => p.studyStatus === 'Not Started').length / filteredPages.length) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium w-8">
+                            {filteredPages.filter(p => p.studyStatus === 'Not Started').length}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">In Progress</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full"
+                              style={{ width: `${(filteredPages.filter(p => p.studyStatus === 'In Progress').length / filteredPages.length) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium w-8">
+                            {filteredPages.filter(p => p.studyStatus === 'In Progress').length}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Completed</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-green-500 h-2 rounded-full"
+                              style={{ width: `${(filteredPages.filter(p => p.studyStatus === 'Completed').length / filteredPages.length) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium w-8">
+                            {filteredPages.filter(p => p.studyStatus === 'Completed').length}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Study Recommendations */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-3 text-blue-800">Study Recommendations</h4>
+                    <div className="space-y-2">
+                      {filteredPages.filter(p => p.examProbability === 'High' && p.coverage < 50).length > 0 && (
+                        <p className="text-sm text-blue-700">
+                          ⚠️ Focus on {filteredPages.filter(p => p.examProbability === 'High' && p.coverage < 50).length} high-priority pages with low coverage
+                        </p>
+                      )}
+                      {filteredPages.filter(p => p.studyStatus === 'Not Started' && p.examProbability === 'High').length > 0 && (
+                        <p className="text-sm text-blue-700">
+                          🎯 Start studying {filteredPages.filter(p => p.studyStatus === 'Not Started' && p.examProbability === 'High').length} high-priority pages
+                        </p>
+                      )}
+                      {chapterStats.averageCoverage > 70 && (
+                        <p className="text-sm text-green-700">
+                          ✅ Great progress! You're {chapterStats.averageCoverage}% through this chapter
+                        </p>
+                      )}
+                      {filteredPages.filter(p => p.coverage >= 80).length === filteredPages.length && (
+                        <p className="text-sm text-green-700">
+                          🎉 Excellent! All pages have good coverage
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="text-center py-8">
+                    <p className="text-gray-600">Advanced predictive analytics and insights coming soon...</p>
+                    <p className="text-sm text-gray-500 mt-2">Study patterns, performance trends, and personalized recommendations</p>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                Advanced analytics view coming soon...
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
