@@ -776,12 +776,7 @@ const handleUpdateNotes = async (pageId, newNotes) => {
 
 const uploadToFirebase = async (importedData, shouldMerge = true) => {
   try {
-    if (!shouldMerge) {
-      // REPLACE MODE: Clear all data
-      const existingDocs = await getDocs(collection(db, "study-planner"));
-      const deletePromises = existingDocs.docs.map(doc => deleteDoc(doc.ref));
-      await Promise.all(deletePromises);
-    }
+
 
     // Get existing data to check for duplicates (in merge mode)
     const existingData = shouldMerge ? await getDocs(collection(db, "study-planner")) : null;
