@@ -9,9 +9,23 @@ import jopSearchImg from '../assets/jopSearch.jpg';
 import weatherImg from '../assets/weatherabu.png';
 import nutTrackerImg from '../assets/nut_tracker.jpg';
 import moodyImg from '../assets/img.png';
+import {useEffect, useState} from "react";
 
 export default function LandingPage() {
+    const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
+    const goToNextSlide = () => {
+      setCurrentSlide((prev) => (prev + 1) % features.length);
+    };
+
+    const goToPreviousSlide = () => {
+      setCurrentSlide((prev) => (prev - 1 + features.length) % features.length);
+    };
+
+  useEffect(() => {
+      const interval = setInterval(goToNextSlide, 5000); // Change slide every 5 seconds
+      return () => clearInterval(interval);
+    }, []);
 
     const features = [
         {
@@ -85,7 +99,7 @@ export default function LandingPage() {
             category: 'Education'
         }, {
             title: 'Exam Planner Pro',
-            image: 'https://img.freepik.com/free-vector/exam-preparation-concept-illustration_114360-12347.jpg?w=740&t=st=1696117500~exp=1696118100~hmac=ghi789',
+            image: "https://cdn.pixabay.com/photo/2018/09/04/10/23/boy-3653385_1280.jpg",
             description: 'Plan your exam preparation with subject tracking, progress analytics, coverage monitoring, and exam probability assessment.',
             icon: '📚',
             category: 'Education'
@@ -97,11 +111,7 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-            {/* Use Header with landing page props */}
-            {/*<Header headerProps={{*/}
-            {/*    title: 'GPA Productivity Suite',*/}
-            {/*    navLinks: [] // Empty array since we'll show Get Started button in Header*/}
-            {/*}} />*/}
+
             {/* Hero Section */}
             <section className="text-center py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
                 <div className="max-w-4xl mx-auto">
@@ -121,73 +131,136 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Features Overview */}
-            <section className="py-16 px-4">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                            Everything You Need in One Place
-                        </h2>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            From productivity tools to wellness trackers, our suite offers comprehensive
-                            solutions for modern life challenges.
-                        </p>
-                    </div>
+{/* Features Overview - Slideshow Version */}
+<section className="py-16 px-4">
+  <div className="max-w-6xl mx-auto">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold text-gray-800 mb-4">
+        Everything You Need in One Place
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        From productivity tools to wellness trackers, our suite offers comprehensive
+        solutions for modern life challenges.
+      </p>
+    </div>
 
-                    {/* Category Filters */}
-                    <div className="flex flex-wrap justify-center gap-3 mb-12">
-                        <button className="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200 font-semibold text-gray-700 hover:bg-blue-50">
-                            All Features
-                        </button>
-                        {categories.map((category, index) => (
-                            <button
-                                key={index}
-                                className="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200 font-semibold text-gray-700 hover:bg-blue-50"
-                            >
-                                {category}
-                            </button>
-                        ))}
-                    </div>
+    {/* Category Filters */}
+    <div className="flex flex-wrap justify-center gap-3 mb-12">
+      <button className="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200 font-semibold text-gray-700 hover:bg-blue-50">
+        All Features
+      </button>
+      {categories.map((category, index) => (
+        <button
+          key={index}
+          className="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200 font-semibold text-gray-700 hover:bg-blue-50"
+        >
+          {category}
+        </button>
+      ))}
+    </div>
 
-                    {/* Features Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {features.map((feature, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
-                            >
-                                <div className="relative overflow-hidden">
-                                    <img
-                                        src={feature.image}
-                                        alt={feature.title}
-                                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
-                                        <span className="text-2xl">{feature.icon}</span>
-                                    </div>
-                                    <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                        {feature.category}
-                                    </div>
-                                </div>
-
-                                <div className="p-6">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-3">
-                                        {feature.title}
-                                    </h3>
-                                    <p className="text-gray-600 leading-relaxed mb-4">
-                                        {feature.description}
-                                    </p>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-sm text-gray-500">
-                                            Click to explore →
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+    {/* Slideshow Container */}
+    <div className="relative">
+      {/* Slideshow */}
+      <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
+        <div className="relative h-96 md:h-[500px]">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
+                currentSlide === index ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              <div className="flex flex-col md:flex-row h-full">
+                {/* Image Section */}
+                <div className="md:w-1/2 relative overflow-hidden">
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm rounded-full p-3">
+                    <span className="text-3xl">{feature.icon}</span>
+                  </div>
+                  <div className="absolute top-6 right-6 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                    {feature.category}
+                  </div>
                 </div>
-            </section>
+
+                {/* Content Section */}
+                <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-gradient-to-br from-white to-gray-50">
+                  <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    {feature.description}
+                  </p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-blue-600 font-semibold text-lg">
+                      Explore Feature →
+                    </span>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span>{index + 1}</span>
+                      <span>/</span>
+                      <span>{features.length}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={goToPreviousSlide}
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 z-10"
+      >
+        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <button
+        onClick={goToNextSlide}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 z-10"
+      >
+        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Slide Indicators */}
+      <div className="flex justify-center space-x-3 mt-6">
+        {features.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              currentSlide === index 
+                ? 'bg-blue-500 w-8' 
+                : 'bg-gray-300 hover:bg-gray-400'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+
+    {/* Mobile Navigation Dots */}
+    <div className="flex justify-center space-x-2 mt-8 md:hidden">
+      {features.map((_, index) => (
+        <button
+          key={index}
+          onClick={() => setCurrentSlide(index)}
+          className={`w-2 h-2 rounded-full ${
+            currentSlide === index ? 'bg-blue-500' : 'bg-gray-300'
+          }`}
+        />
+      ))}
+    </div>
+  </div>
+</section>
 
             {/* Stats Section */}
             <section className="py-16 bg-white">
