@@ -196,9 +196,9 @@ export default function MemoryGame() {
             setShowAllCards(true);
 
             const showDuration = {
-                junior: 4000,
-                senior: 3000,
-                expert: 5000
+                junior: 7000,
+                senior: 6000,
+                expert: 7000
             };
 
             const showTimer = setTimeout(() => {
