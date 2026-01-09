@@ -1,4 +1,4 @@
-export const options = (...params: string[]) => {
+export const options = (...params: any[]) => {
     return {
         method: params[0],
         url: params[1],
