@@ -7,7 +7,7 @@ import {
   query,
   orderBy
 } from "firebase/firestore";
-import { db } from '../../api/firebaseConfigs.js';
+import { db } from '../../../src/api/firebaseConfigs.js';
 import { initialVocabulary } from './initialVocabulary.js';
 import largeVocabulary from './large-vocabulary.json'; // Import from external file
 import Header from "../headers/Header.jsx";
