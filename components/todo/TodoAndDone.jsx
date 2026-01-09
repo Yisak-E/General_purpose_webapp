@@ -11,8 +11,7 @@ import {
   doc,
   deleteDoc,
   query,
-  orderBy,
-  where,
+  orderBy, 
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import {
@@ -22,7 +21,6 @@ import {
   Edit3,
   Calendar,
   Clock,
-  Filter,
   Search,
   Plus,
   AlertCircle
@@ -456,6 +454,7 @@ g
         {/* Tasks Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Todo Tasks */}
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-bold flex items-center gap-2">

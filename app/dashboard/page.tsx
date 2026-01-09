@@ -6,7 +6,7 @@ const cards: NavFeatures[] = [
             title: 'Smart Scheduler',
             image: "/assets/schedule.jpg",
             description: 'Organize your weekly activities with our intuitive scheduling system. Plan your days, set reminders, and never miss important deadlines.',
-            navigateTo: '/schedule',
+            navigateTo: '/dashboard/tasks/schedule',
             category: 'productivity',
             icon: '📅'
         },
@@ -14,7 +14,7 @@ const cards: NavFeatures[] = [
             title: 'Study Plan Creator',
             image: "/assets/studyplan.jpg",
             description: 'Design personalized study schedules that adapt to your learning style. Track progress and optimize your study sessions.',
-            navigateTo: '/studyPlan',
+            navigateTo: '/dashboard/tasks/studyPlan',
             category: 'education',
             icon: '📚'
         },
@@ -22,7 +22,7 @@ const cards: NavFeatures[] = [
             title: 'Job Search Pro',
             image: "/assets/virtualJooSearch.png",
             description: 'Streamline your job hunting with smart filters and application tracking. Find your dream career with personalized recommendations.',
-            navigateTo: '/jobSearch',
+            navigateTo: '/dashboard/jop',
 
             category: 'productivity',
             icon: '💼'
@@ -31,7 +31,7 @@ const cards: NavFeatures[] = [
             title: 'Live Weather Dashboard',
             image: "/assets/weatherabu.png",
             description: 'Get real-time weather forecasts with advanced metrics. Plan your day with accurate atmospheric conditions and predictions.',
-            navigateTo: '/weather',
+            navigateTo: '/dashboard/weather',
             category: 'utilities',
             icon: '🌤️'
         },
@@ -39,7 +39,7 @@ const cards: NavFeatures[] = [
             title: 'Memory Challenge Pro',
             image: '/assets/memory.png',
             description: 'Boost cognitive skills with engaging memory games. Multiple difficulty levels to challenge and improve concentration.',
-            navigateTo: '/memorygame',
+            navigateTo: '/dashboard/game/memory',
             category: 'games',
             icon: '🧠'
         },
@@ -49,7 +49,7 @@ const cards: NavFeatures[] = [
             description:
                 ' Tic-Tac-Toe helps improve decision-making,' +
                 ' pattern recognition, and tactical planning in just a few moves.',
-            navigateTo: '/tic',
+            navigateTo: '/dashboard/game/tictactoe',
             category: 'games',
             icon:'✔️'
         },
@@ -57,7 +57,7 @@ const cards: NavFeatures[] = [
             title: "Nutrition Tracker+",
             image: "/assets/nut_tracker.jpg",
             description: "Monitor daily nutritional intake, set health goals, and maintain a balanced lifestyle with comprehensive tracking.",
-            navigateTo: '/Tracker',
+            navigateTo: '/dashboard/tasks/nutritionTracker',
             category: 'health',
             icon: '🥗'
         },
@@ -65,7 +65,7 @@ const cards: NavFeatures[] = [
             title: 'Smart Task Manager',
             image: '/assets/tasktrack.png',
             description: 'Organize tasks with priority settings, deadlines, and progress tracking. Stay productive and accomplish daily objectives.',
-            navigateTo: '/TodoAndDone',
+            navigateTo: '/dashboard/tasks/todo',
             category: 'productivity',
             icon: '✅'
         },
@@ -73,7 +73,7 @@ const cards: NavFeatures[] = [
             title: 'Mood Tracker Pro',
             image: "/assets/moody.png",
             description: 'Document your emotional journey with daily mood entries. Identify patterns and gain insights into mental well-being.',
-            navigateTo: '/moody',
+            navigateTo: '/dashboard/mood',
             category: 'health',
             icon: '😊'
         },

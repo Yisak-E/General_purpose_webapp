@@ -92,7 +92,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
                                     transform hover:scale-105
                                     overflow-hidden
                                     group
-                                    ${location.pathname === link.path
+                                    ${pathname === link.path
                                         ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-2xl'
                                         : 'text-gray-600 hover:text-gray-800 bg-gray-100/50 hover:bg-white shadow-md hover:shadow-xl'
                                     }
@@ -102,7 +102,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
                                 <div className={`
                                     absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 
                                     transition-transform duration-500
-                                    ${location.pathname === link.path 
+                                    ${pathname === link.path 
                                         ? 'scale-100' 
                                         : 'scale-0 group-hover:scale-100'
                                     }
@@ -113,7 +113,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
                                     <span>{link.label}</span>
                                     <svg
                                         className={`w-4 h-4 transition-transform duration-300 ${
-                                            location.pathname === link.path ? 'rotate-45' : 'group-hover:rotate-45'
+                                            pathname === link.path ? 'rotate-45' : 'group-hover:rotate-45'
                                         }`}
                                         fill="none"
                                         stroke="currentColor"
@@ -124,7 +124,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
                                 </span>
 
                                 {/* Active indicator */}
-                                {location.pathname === link.path && (
+                                {pathname === link.path && (
                                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1/2 h-1 bg-white rounded-full"></div>
                                 )}
                             </button>
@@ -247,7 +247,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
                         className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300"
                         style={{
                             width: `${(() => {
-                                const currentPath = location.pathname;
+                                const currentPath = pathname;
                                 const totalPaths = navLinks.length;
                                 const currentIndex = navLinks.findIndex(link => link.path === currentPath);
                                 return currentIndex >= 0 ? ((currentIndex + 1) / totalPaths) * 100 : 0;
