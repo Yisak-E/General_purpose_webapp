@@ -3,7 +3,7 @@
 import CategoryFiltration from "@/components/sections/CategoryFiltration";
 import MobileNavigation from "@/components/sections/MobileNavigation";
 import { Feature } from "@/type";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface SlideShowProps {
     features: Feature[];
@@ -14,6 +14,14 @@ export default function SlideShow({features, categories}: SlideShowProps) {
 
     const [currentSlide, setCurrentSlide] = React.useState(0);
 
+    useEffect(() => {
+        const slideInterval = setInterval(() => {
+            goToNextSlide();
+        }, 5000); 
+
+        return () => clearInterval(slideInterval);
+    }, [features.length]);
+
     const goToNextSlide = () => {
         setCurrentSlide((prevSlide) => (prevSlide + 1) % features.length);
     };
@@ -21,26 +29,26 @@ export default function SlideShow({features, categories}: SlideShowProps) {
         setCurrentSlide((prevSlide) => (prevSlide - 1 + features.length) % features.length);
     };
     return (
-        <section className="py-16 px-4">
-  <div className="max-w-6xl mx-auto">
-    <div className="text-center mb-12">
-      <h2 className="text-4xl font-bold text-gray-800 mb-4">
-        Everything You Need in One Place
-      </h2>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        From productivity tools to wellness trackers, our suite offers comprehensive
-        solutions for modern life challenges.
-      </p>
-    </div>
+        <section className="py-16 px-4 bg-gray-900 border-t rounded-3xl">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Everything You Need in One Place
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              From productivity tools to wellness trackers, our suite offers comprehensive
+              solutions for modern life challenges.
+            </p>
+          </div>
 
      {/* Category Filters */}
          <CategoryFiltration categories={categories} />
     
 
    
-    <div className="relative">
+    <div className="relative ">
       {/* Slideshow */}
-      <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
+      <div className="overflow-hidden rounded-2xl  shadow-xl">
         <div className="relative h-96 md:h-[500px]">
           {features.map((feature, index) => (
             <div

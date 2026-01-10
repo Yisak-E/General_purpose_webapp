@@ -5,7 +5,7 @@ import Footer from '@/components/sections/Footer';
 import Hero from '@/components/sections/Hero';
 import { Feature } from '@/type';
 import { useRouter } from 'next/navigation';
-import { use } from 'react';
+
 
 
 interface LandingPageProps {
@@ -17,7 +17,7 @@ export default function LandingPage({ features, categories }: LandingPageProps) 
 
     const navigate = useRouter();
     return (
-        <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <main className="min-h-screen">
 
         {/* hero section  */}
         <Hero categories={categories} />
@@ -27,7 +27,7 @@ export default function LandingPage({ features, categories }: LandingPageProps) 
 
 
          {/* Stats Section */}
-            <section className="py-16 bg-white">
+            <section className="py-16 bg-black">
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         <div>
@@ -52,7 +52,7 @@ export default function LandingPage({ features, categories }: LandingPageProps) 
 
 
          {/* CTA Section */}
-            <section className="py-20 bg-gradient-to-r from-green-500 to-blue-600 text-white">
+            <section className="py-20 bg-black text-white">
                 <div className="max-w-4xl mx-auto text-center px-4">
                     <h2 className="text-4xl font-bold mb-6">
                         Ready to Transform Your Daily Routine?
