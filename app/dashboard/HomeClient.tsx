@@ -52,17 +52,17 @@ export default function HomeClient({ cards }: HomeClientProbs) {
         : cards.filter(card => card.category === activeCategory);
 
     return (
-        <div className="w-full  flex flex-col items-center justify-start pt-10 px-4 bg-gray-50 pt-20">
+        <div className="w-full  flex flex-col items-center justify-start pt-10 px-4 bg-black mt-20 ">
            
             {/* Category Filters */}
-             <section className="py-8 bg-white/80 backdrop-blur-sm sticky top-0 z-10 border-b border-gray-200">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-wrap justify-center gap-3">
+             <section className="py-8  backdrop-blur-sm sticky top-0 z-10   bg-black">
+                <div className="container mx-auto px-4  bg-black">
+                    <div className="flex flex-wrap justify-center gap-3 bg-black/80">
                         <button
                             onClick={() => setActiveCategory('all')}
                             className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                                 activeCategory === 'all' 
-                                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                                    ? 'bg-gradient-to-r from-green-500 to-yellow-600 text-white shadow-lg' 
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                         >

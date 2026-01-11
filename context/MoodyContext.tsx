@@ -43,25 +43,31 @@ export function MoodyProvider({ children }: { children: React.ReactNode }) {
     );
 
     return onSnapshot(q, (snap) => {
-      setPosts(
-        snap.docs.map((d) => ({
+    setPosts(
+      snap.docs.map((d) => {
+        const data = d.data();
+
+        return {
           id: d.id,
-          ...(d.data() as Omit<Moodpost, "id">),
-        }))
-      );
-    });
+          feeling: data.feeling,
+          message: data.message,
+          postedAt: data.postedAt?.toDate() ?? new Date(),   // 🔥 convert Timestamp → Date
+        } satisfies Moodpost;
+      })
+    );
+  });
   }, []);
 
   
   const addPost = async (
     message: string,
-    mood: Moodpost["feeling"]
+    feeling: string
   ) => {
     if (!message.trim()) return;
 
     await addDoc(collection(db, "posts"), {
       message,
-      mood,
+      feeling,
       postedAt: serverTimestamp(),
     });
   };
@@ -70,13 +76,13 @@ export function MoodyProvider({ children }: { children: React.ReactNode }) {
   const updatePost = async (
     id: string,
     message: string,
-    mood: Moodpost["feeling"]
+    feeling: string
   ) => {
     if (!id) return;
 
     await updateDoc(doc(db, "posts", id), {
       message,
-      mood,
+      feeling,
       updatedAt: serverTimestamp(),
     });
   };
