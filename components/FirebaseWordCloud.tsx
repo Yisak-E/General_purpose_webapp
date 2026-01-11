@@ -7,6 +7,7 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
+import { s } from "motion/react-m";
 import { useEffect, useState } from "react";
 
 interface KeywordDoc {
@@ -33,14 +34,17 @@ export default function FirebaseWordCloud() {
   const maxCount = Math.max(...keywords.map(k => k.count), 1);
 
   return (
-    <div className="flex flex-wrap gap-3 justify-center p-4">
+    <div className="flex flex-wrap gap-3 justify-center items-center p-4 bg-gray-900 rounded-lg shadow h-[300px] ">
       {keywords.map(({ keyword, count }) => {
         const size = 12 + (count / maxCount) * 28;
 
         return (
           <span
             key={keyword}
-            style={{ fontSize: `${size}px` }}
+            style={{ fontSize: `${size}px`,
+            rotate: `${(size) % 180}deg` 
+          
+          }}
             className="text-blue-400 hover:text-green-400 transition cursor-pointer"
           >
             {keyword}
