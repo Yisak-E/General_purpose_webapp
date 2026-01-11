@@ -2,7 +2,7 @@
 
 import { db } from "@/api/firebaseConfigs";
 import axios from "axios";
-import { JopSearchType, JSearchJob } from "@/type/jopSearchType";
+import { JobSearchType, JSearchJob } from "@/type/jobSearchType";
 import {
   collection,
   onSnapshot,
@@ -22,20 +22,20 @@ import {
   useState,
 } from "react";
 
-interface JopContextType {
-  jopLists: JSearchJob[];
+interface jobContextType {
+  jobLists: JSearchJob[];
   loading: boolean;
   error: string | null;
-  addJop: (newJop: JSearchJob) => Promise<void>;
-  updateJop: (updatedJop: JSearchJob) => Promise<void>;
-  deleteJop: (jobId: string) => Promise<void>;
-  searchJop: (query: JopSearchType) => Promise<void>;
+  addjob: (newjob: JSearchJob) => Promise<void>;
+  updatejob: (updatedjob: JSearchJob) => Promise<void>;
+  deletejob: (jobId: string) => Promise<void>;
+  searchjob: (query: JobSearchType) => Promise<void>;
 }
 
-const JopContext = createContext<JopContextType | null>(null);
+const jobContext = createContext<jobContextType | null>(null);
 
-export function JopProvider({ children }: { children: React.ReactNode }) {
-  const [jopLists, setJopLists] = useState<JSearchJob[]>([]);
+export function JobProvider({ children }: { children: React.ReactNode }) {
+  const [jobLists, setjobLists] = useState<JSearchJob[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,35 +47,35 @@ export function JopProvider({ children }: { children: React.ReactNode }) {
     );
 
     return onSnapshot(q, (snap) => {
-      setJopLists(
+      setjobLists(
         snap.docs.map((d) => d.data() as JSearchJob)
       );
     });
   }, []);
 
   /* ➕ ADD JOB */
-  const addJop = async (newJop: JSearchJob) => {
-    await setDoc(doc(db, "jopLists", newJop.job_id), {
-      ...newJop,
+  const addjob = async (newjob: JSearchJob) => {
+    await setDoc(doc(db, "jopLists", newjob.job_id), {
+      ...newjob,
       createdAt: serverTimestamp(),
     });
   };
 
   /* ✏️ UPDATE JOB */
-  const updateJop = async (updatedJop: JSearchJob) => {
-    await updateDoc(doc(db, "jopLists", updatedJop.job_id), {
-      ...updatedJop,
+  const updatejob = async (updatedjob: JSearchJob) => {
+    await updateDoc(doc(db, "jopLists", updatedjob.job_id), {
+      ...updatedjob,
       updatedAt: serverTimestamp(),
     });
   };
 
   /* ❌ DELETE JOB */
-  const deleteJop = async (jobId: string) => {
+  const deletejob = async (jobId: string) => {
     await deleteDoc(doc(db, "jopLists", jobId));
   };
 
   /* 🔍 SEARCH JOB FROM API */
-  const searchJop = async (searchQuery: JopSearchType) => {
+  const searchjob = async (searchQuery: JobSearchType) => {
     if (!searchQuery.name?.trim()) {
       throw new Error("Job title is required");
     }
@@ -118,7 +118,7 @@ export function JopProvider({ children }: { children: React.ReactNode }) {
 
       response.data.data.forEach((job: JSearchJob) => {
         batch.set(
-          doc(db, "jopLists", job.job_id),
+          doc(db, "jobLists", job.job_id),
           {
             ...job,
             createdAt: serverTimestamp(),
@@ -138,26 +138,26 @@ export function JopProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <JopContext.Provider
+    <jobContext.Provider
       value={{
-        jopLists,
+        jobLists,
         loading,
         error,
-        addJop,
-        updateJop,
-        deleteJop,
-        searchJop,
+        addjob,
+        updatejob,
+        deletejob,
+        searchjob,
       }}
     >
       {children}
-    </JopContext.Provider>
+    </jobContext.Provider>
   );
 }
 
-export function useJopContext() {
-  const context = useContext(JopContext);
+export function usejobContext() {
+  const context = useContext(jobContext);
   if (!context) {
-    throw new Error("useJopContext must be used inside JopProvider");
+    throw new Error("usejobContext must be used inside jobProvider");
   }
   return context;
 }

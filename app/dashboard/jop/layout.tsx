@@ -1,13 +1,13 @@
-import { JopProvider } from "@/context/JopContext";
+import { JobProvider } from "@/context/JobContext";
 
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function JopLayout({ children }: { children: React.ReactNode }) {
     return (
         
         <div>
-           <JopProvider>
+           <JobProvider>
               {children}
-            </JopProvider>
+            </JobProvider>
         </div>
     );
 }

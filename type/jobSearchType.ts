@@ -77,7 +77,7 @@ export interface JSearchJob {
 
 
 
-export interface JopSearchType {
+export interface JobSearchType {
     name: string;
     skill: string[] | string;
     location: string;
