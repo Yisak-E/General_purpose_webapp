@@ -56,3 +56,4 @@ export interface Moodpost {
     postedAt: Date;
     message: string;
 } 
+

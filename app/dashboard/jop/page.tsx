@@ -1,7 +1,9 @@
+import JopClient from "./JopClient";
+
 export default function Page() {
     return (
         <div>
-            Game Dashboard Page
+            <JopClient />
         </div>
     );
 }
