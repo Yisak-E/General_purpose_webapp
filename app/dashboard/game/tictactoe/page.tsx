@@ -2,8 +2,8 @@ import TikClient from "./TikClient";
 
 export default function Page() {
     return (
-        <div>
-            Tic Tac Toe Game Page
+        <div className="p-4">
+            
             <TikClient />
         </div>
     );
