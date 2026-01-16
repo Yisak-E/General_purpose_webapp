@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+const scorePackage: number[] = [ 5, 10, 15, 20, 25, 30, 40, 50,60, 70];
+
 type MemoryGameContextType = {
     score: number;
     setScore: React.Dispatch<React.SetStateAction<number>>;
@@ -34,13 +36,14 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [bestScore, setBestScore] = useState(0);
     const [clickedEmojis, setClickedEmojis] = useState<Set<{id: number, emoji: string}>>(new Set());
     const [gameStarted, setGameStarted] = useState(false);
+    const [canClick, setCanClick] = useState(true);
     const [gameCompleted, setGameCompleted] = useState(false);
     const [pairedEmojis, setPairedEmojis] = useState<Set<string>>(new Set());
 
     
          // function to handle card click
     const handleCardClick = (index: number) => {
-        if (gameCompleted || cards[index].isFlipped || cards[index].isMatched) return;
+        if (gameCompleted || cards[index].isFlipped || cards[index].isMatched || !canClick) return;
         const selectedEmoji = cards[index].emoji;
 
 
@@ -61,13 +64,47 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     i === index ? { ...card, isFlipped: true } : card
                 )
             );
+           
+            // Check for match with previously clicked card
+            const prevClickedArray = Array.from(clickedEmojis);
+            const prevClicked = prevClickedArray.length > 0 ? prevClickedArray[prevClickedArray.length - 1] : null;
+             
+            if (prevClicked && prevClicked.emoji === selectedEmoji) {
+                // It's a match
+                setCards(prevCards =>
+                    prevCards.map((card, i) =>
+                        i === index || i === prevClicked.id ? { ...card, isMatched: true } : card
+                    )
+                );
+                setPairedEmojis(prev => new Set(prev).add(selectedEmoji));
+
+                if(flipCount < scorePackage.length){
+                    setScore(prevScore => prevScore + scorePackage[flipCount]); 
+                }
+
+                else{
+                setScore(prevScore => prevScore + 2);
+                }
+            }
+            else {
+                // Not a match - flip back after a delay
+                setCanClick(false);
+                setTimeout(() => {
+                    setCards(prevCards =>
+                        prevCards.map((card, i) =>
+                            i === index || (prevClicked && i === prevClicked.id) ? { ...card, isFlipped: false } : card
+                        )
+                    );
+
+                    clickedEmojis.delete(prevClicked!);
+                    setClickedEmojis(new Set(clickedEmojis));
+                    setCanClick(true);
+                }, 1000);
+            }
             setFlipCount(prev => prev + 1);
-            const newClickedEmojis = new Set(clickedEmojis);
-            newClickedEmojis.add({id: index, emoji: selectedEmoji});
-            setClickedEmojis(newClickedEmojis);
-
-
+            setScore(prevScore => prevScore - 1); // Deduct score for every second flip
         }
+
         
 
     };

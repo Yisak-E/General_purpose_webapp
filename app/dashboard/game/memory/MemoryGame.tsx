@@ -45,14 +45,20 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         setTimeout(() => {
             setCards(prevCards => prevCards.map(card => ({ ...card, isFlipped: false })));
             setShowAllCards(false);
-        }, 5000);
+        }, 2000);
     };
 
-   
-
-    // function to check for matches
 
     // Effect to check for game completion
+    useEffect(() => {
+        if (gameStarted && cards.every(card => card.isMatched)) {
+            setGameCompleted(true);
+            setGameStarted(false);
+            if (bestScore === 0 || score < bestScore) {
+                setBestScore(score);
+            }
+        }
+    }, [cards, gameStarted, score, bestScore, setBestScore, setGameCompleted, setGameStarted]);
    
 
 
@@ -61,7 +67,8 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
     return (
         <div>
        <h1>Memory Game</h1>
-       <article className="grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 ">
+       <article className={`grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 `}>
+
         <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1"}>
         {/* how to play description  */}
         <h2 className="text-xl font-bold mb-2">How to Play</h2>
@@ -77,7 +84,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         <p>{flipCount}</p>
         </section>
 
-       <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center"}>
+       <section className={`border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center  ${gameCompleted ? 'hidden' : ''}`}>
         <GameBoard emojiSet={cards} />
        </section>
 
@@ -143,7 +150,7 @@ function Card({ card, index }: CardProps) {
         <div 
         onClick={() => { handleCardClick(index!) }}
         className={`border p-4 m-2 inline-block text-4xl cursor-pointer rounded-lg shadow-lg hover:scale-105 transition-transform ${card.isFlipped || card.isMatched ? 'bg-white' : 'bg-gray-300'}`}>
-            {card.isFlipped || card.isMatched ? card.emoji : '❓' }{ index}
+            {card.isFlipped || card.isMatched ? card.emoji : '❓' }
         </div>
     );
 }
