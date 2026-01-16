@@ -1,9 +1,10 @@
+import { TicContextProvider } from "@/context/TicContext";
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div>
-            {children}
+            <TicContextProvider>{children}</TicContextProvider>
         </div>
     );
 }
