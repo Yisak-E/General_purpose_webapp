@@ -1,7 +1,10 @@
+import TikClient from "./TikClient";
+
 export default function Page() {
     return (
         <div>
-            Game Dashboard Page
+            Tic Tac Toe Game Page
+            <TikClient emojiSet={['❌', '⭕']} />
         </div>
     );
 }

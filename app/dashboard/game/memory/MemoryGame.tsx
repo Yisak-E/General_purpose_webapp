@@ -1,7 +1,9 @@
 'use client';
 
 import { useMemoryGameContext } from "@/context/MemoryGameContext";
-import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { useEffect } from "react";
+
 
 interface MemoryGameProps {
     emojiSet: string[];
@@ -67,7 +69,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
     return (
         <div>
        <h1>Memory Game</h1>
-       <article className={`grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 `}>
+       <article className={`grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 min-h-[400px]`}>
 
         <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1"}>
         {/* how to play description  */}
@@ -84,8 +86,49 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         <p>{flipCount}</p>
         </section>
 
-       <section className={`border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center  ${gameCompleted ? 'hidden' : ''}`}>
-        <GameBoard emojiSet={cards} />
+       <section className={`border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center  `}>
+        {
+            gameCompleted || !gameStarted ? (
+                <div>
+                  <div>
+                    {gameCompleted ? (
+                        <div className="text-center mb-4">
+                            <h2 className="text-2xl font-bold mb-2">Congratulations! 🎉</h2>
+                            <p className="mb-2">You've completed the game!</p>
+                            <p className="mb-2">Your Score: {score}</p>
+                            <p className="mb-2">Best Score: {bestScore}</p>
+                        </div>
+                    ) : (
+                        <motion.div className="text-center mb-4 border p-4 rounded-lg shadow-lg bg-green-300"
+                            initial={{scale: 1,  backgroundColor: "rgb(56, 200, 12)",}}
+                            animate={{ scale: 1.5,  backgroundColor: "rgb(203, 200, 12)" }}
+                            transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 0 }}
+                            whileHover={{ scale: 1.1, rotateY: 360, transition: { duration: 3 }  }}
+                            exit={{ scale: 1,rotateY: 0, backgroundColor: "rgb(200, 20, 12)" }}
+                            
+                        
+                        >
+                            <h2 className="text-2xl font-bold mb-2">Memory Game</h2>
+                            <p className="mb-2">Click "Play" to start the game!</p>
+                        </motion.div>
+                    )}
+
+                  </div>
+                    <motion.button
+                        className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
+                        onClick={startGame}
+                        initial={{ scale: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        Play 
+                    </motion.button>
+                </div>
+            ) : (
+                <GameBoard emojiSet={cards} />
+            )
+        }
+       
        </section>
 
 
@@ -94,12 +137,16 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             <h2 className="text-xl font-bold mb-2">Scoreboard</h2>
             <p className="mb-2">Current Score: {score}</p>
             <p className="mb-2">Best Score: {bestScore}</p>
-            <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer"
+            <motion.button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer border shadow-lg"
                 onClick={startGame}
+                initial={{ scale: 1 }}
+                whileHover={{ scale: 1.1, rotate: 360, transition: { duration: 3 }  }}
+                whileTap={{ scale: 0.9 , }}
+
             >
-                Restart Game
-            </button>
+                Start Game
+            </motion.button>
 
             {
                 clickedEmojis.size >0 && (
