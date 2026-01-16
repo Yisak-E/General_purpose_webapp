@@ -1,7 +1,7 @@
 import MemoryGame from "./MemoryGame";
 
 export default function Page() {
-    const emojiSet = ['😀', '🎉', '🚀', '💧', '🍕', '🐱', '🏀' , '🎵', "⭐","🔥"  ];
+    const emojiSet = ['😀', '🎉', '🚀', '💧', '🐦‍🔥', '🪼', '🏀' , '🎵', "⭐","🔥"  ];
 
     return (
         <div className="p-4">

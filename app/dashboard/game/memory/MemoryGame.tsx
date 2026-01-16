@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemoryGameContext } from "@/context/MemoryGameContext";
 import { useEffect, useState } from "react";
 
 interface MemoryGameProps {
@@ -7,66 +8,53 @@ interface MemoryGameProps {
 }
 
 export default function MemoryGame({ emojiSet }: MemoryGameProps) {
-    const [score, setScore] = useState(0);
-    const [showAllCards, setShowAllCards] = useState(false);
-    const [flipCount, setFlipCount] = useState(0);
-    const [cards, setCards] = useState<{ emoji: string; isFlipped: boolean; isMatched: boolean }[]>([]);
-    const [bestScore, setBestScore] = useState(0);
-    const [clickedEmojis, setClickedEmojis] = useState<Set<string>>(new Set());
-
-    const [gameStarted, setGameStarted] = useState(false);
-    const [gameCompleted, setGameCompleted] = useState(false);
-    const [pairedEmojis, setPairedEmojis] = useState<Set<string>>(new Set());
-    const [shuffledEmojis, setShuffledEmojis] = useState<string[]>([]);
-
-    useEffect(() => {
-        gameStarter();
-    }, [emojiSet]);
-
-    useEffect(() => {
-        if (score > bestScore) {
-            setBestScore(score);
-        }
-    }, [score, bestScore]);
-
    
+    const {
+        gameStarted, setGameStarted,
+        gameCompleted, setGameCompleted,
+        score, setScore,
+        showAllCards, setShowAllCards,
+        cards, setCards,
+        bestScore, setBestScore,
+        clickedEmojis, setClickedEmojis,
+        pairedEmojis, setPairedEmojis,
+        flipCount, setFlipCount,
 
-    useEffect(() => {
-        if (gameStarted && !gameCompleted) {
-            setShowAllCards(true);
-            const timer = setTimeout(() => {
-                setShowAllCards(false);
-                cards.forEach((card, index) => {
-                    card.isFlipped = false;
-                });
-                setCards([...cards]);
-            }, 5000); // Show all cards for 5 seconds
+    } = useMemoryGameContext();
 
-            return () => clearTimeout(timer);
-        }
+    // Initialize cards on component mount
+    const initializeCards = () => {
+        const doubledEmojis = [...emojiSet, ...emojiSet];
+        const shuffledEmojis = shuffleArray(doubledEmojis);
+        const initialCards = shuffledEmojis.map(emoji => ({ emoji, isFlipped: true, isMatched: false }));
+        setCards(initialCards);
+    }
+  
 
-
-
-        
-    }, [gameStarted, gameCompleted]);
-
-
-    const gameStarter = () => {
+    // Function to start/restart the game
+    const startGame = () => {
+        initializeCards();
         setScore(0);
         setClickedEmojis(new Set());
         setPairedEmojis(new Set());
-        const doubledEmojis = [...emojiSet, ...emojiSet];
-        setShuffledEmojis(shuffleArray(doubledEmojis));
-        setCards(
-            shuffleArray(doubledEmojis).map((emoji) => ({
-                emoji,
-                isFlipped: true,
-                isMatched: false,
-            }))
-        );
         setGameStarted(true);
         setGameCompleted(false);
-    }
+        setShowAllCards(true);
+        setFlipCount(0);
+        // Hide cards after a brief delay
+        setTimeout(() => {
+            setCards(prevCards => prevCards.map(card => ({ ...card, isFlipped: false })));
+            setShowAllCards(false);
+        }, 5000);
+    };
+
+   
+
+    // function to check for matches
+
+    // Effect to check for game completion
+   
+
 
 
 
@@ -86,10 +74,11 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         <p className="mb-4">
             Match all pairs to win the game!
         </p>
+        <p>{flipCount}</p>
         </section>
 
        <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center"}>
-        <GameBoard emojiSet={cards} showAllCards={showAllCards} />
+        <GameBoard emojiSet={cards} />
        </section>
 
 
@@ -99,11 +88,27 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             <p className="mb-2">Current Score: {score}</p>
             <p className="mb-2">Best Score: {bestScore}</p>
             <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={gameStarter}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer"
+                onClick={startGame}
             >
                 Restart Game
             </button>
+
+            {
+                clickedEmojis.size >0 && (
+                    <div className="mt-4">
+                        <h3 className="text-lg font-bold mb-2">Clicked Emojis:</h3>
+                        <div className="flex flex-wrap">
+                            {[...clickedEmojis].map((item) => (
+                                <span key={item.id} className="text-3xl m-1">{item.emoji}</span>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
+
+
         </section>
        </article>
     </div>
@@ -113,14 +118,13 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
 
 interface GameBoardProps {
     emojiSet: { emoji: string; isFlipped: boolean; isMatched: boolean }[];
-    showAllCards: boolean;
 }
-function GameBoard({ emojiSet, showAllCards }: GameBoardProps) {
+function GameBoard({ emojiSet }: GameBoardProps) {
     return (
         <div className="flex flex-wrap max-w-md">
            {
             emojiSet.map((emoji, index) => (
-                <Card key={index} index={index} card={emoji} showAllCards={showAllCards} />
+                <Card key={index} index={index} card={emoji} />
             ))
             
            }
@@ -131,18 +135,15 @@ function GameBoard({ emojiSet, showAllCards }: GameBoardProps) {
 interface CardProps {
     index?: number;
     card: { emoji: string; isFlipped: boolean; isMatched: boolean };
-    showAllCards: boolean;
+   
 }
-function Card({ card, showAllCards }: CardProps) {
+function Card({ card, index }: CardProps) {
+    const { handleCardClick } = useMemoryGameContext();
     return (
         <div 
-        onClick={() => {
-            if (!card.isFlipped && !card.isMatched) {
-                card.isFlipped = true;
-            }
-        }}
+        onClick={() => { handleCardClick(index!) }}
         className={`border p-4 m-2 inline-block text-4xl cursor-pointer rounded-lg shadow-lg hover:scale-105 transition-transform ${card.isFlipped || card.isMatched ? 'bg-white' : 'bg-gray-300'}`}>
-            {card.isFlipped || card.isMatched ? card.emoji : '❓'}
+            {card.isFlipped || card.isMatched ? card.emoji : '❓' }{ index}
         </div>
     );
 }

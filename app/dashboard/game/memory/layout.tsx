@@ -1,9 +1,10 @@
+import { MemoryGameProvider } from "@/context/MemoryGameContext";
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div>
-            {children}
+            <MemoryGameProvider>{children}</MemoryGameProvider>
         </div>
     );
 }
