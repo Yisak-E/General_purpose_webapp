@@ -13,7 +13,7 @@ interface HeroProps {
 
 export default function Hero({ categories }: HeroProps) {
     return (
-        <section className="text-center py-20 px-4  bg-black  text-white relative overflow-hidden">
+        <section className="text-center py-10 px-4  bg-black  text-white relative overflow-hidden">
            <div>
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
                     Your All-in-One <span className="text-yellow-300">Productivity</span> Suite</h1>

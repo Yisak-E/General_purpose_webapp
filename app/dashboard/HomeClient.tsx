@@ -52,10 +52,10 @@ export default function HomeClient({ cards }: HomeClientProbs) {
         : cards.filter(card => card.category === activeCategory);
 
     return (
-        <div className="w-full  flex flex-col items-center justify-start pt-10 px-4 bg-black mt-20 ">
+        <div className="w-full  flex flex-col items-center justify-start pt-10 px-4 bg-black mt-0 ">
            
             {/* Category Filters */}
-             <section className="py-8  backdrop-blur-sm sticky top-0 z-10   bg-black">
+             <section className="py-8  backdrop-blur-sm  top-0 z-10   bg-black">
                 <div className="container mx-auto px-4  bg-black">
                     <div className="flex flex-wrap justify-center gap-3 bg-black/80">
                         <button
