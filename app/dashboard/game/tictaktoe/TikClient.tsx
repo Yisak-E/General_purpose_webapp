@@ -19,10 +19,20 @@ interface GameComponentProps {
     // Define any props needed for the GameComponent
 }
 
+ 
+
 const GameComponent = () => {
+    const ticCards = Array(9).fill(null);
     return (
         <div>
-            Game Component
+            {
+               
+                ticCards.map((_, index) => (
+                    <TicCard key={index} value={""} onClick={() => {}} />
+                ))
+
+
+            }
         </div>
     );
 }

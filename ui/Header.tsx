@@ -3,6 +3,7 @@
 
 import { usePathname, useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 
 interface HeaderProps {
@@ -53,17 +54,21 @@ export default function Header({ title, navLinks }: HeaderProps) {
                     {/* Logo and Title - Left Side */}
                     <div
                         className="flex items-center space-x-4 lg:space-x-6 cursor-pointer group"
-                        // onClick={() => navigateTo(isLandingPage ? "/" : "/home")}
+                         onClick={() => navigateTo("/" )}
                     >
                         <div className="relative">
-                            <img
-                                src={"assets/gpa.png"}
+                            <Image
+                                src="/assets/gpa.png"
                                 alt="GPA Logo"
-                                className="h-10 w-auto transition-all duration-500 lg:h-14 group-hover:scale-110 group-hover:rotate-3"
+                                width={58}
+                                height={58}
+                                className="h-20 w-auto transition-all duration-500 lg:h-14 group-hover:scale-110 group-hover:rotate-3"
                             />
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 rounded-full transition-all duration-500"></div>
                         </div>
-                        <h1 className={`
+                        <h1
+                            onClick={() => navigateTo(isLandingPage ? "/" : "/dashboard")}
+                         className={`
                             font-bold transition-all duration-500
                             ${isScrolled 
                                 ? 'text-2xl lg:text-3xl' 
