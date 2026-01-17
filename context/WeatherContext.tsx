@@ -34,7 +34,7 @@ export const WeatherContext = createContext<WeatherContextType | null>(null);
 
 
 export const WeatherContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [location , setLocation] = useState<string>('New York');
+    const [location , setLocation] = useState<string>('Abu Dhabi');
 
     const getWeatherData = async (location: string) => {
         const apiKey = process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY;
