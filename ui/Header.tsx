@@ -15,7 +15,7 @@ export default function Header({ title, navLinks }: HeaderProps) {
     const router = useRouter();
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
-    const isLandingPage = pathname === '/';
+    const isLandingPage = pathname === '/dashboard' || pathname === '/';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -54,20 +54,11 @@ export default function Header({ title, navLinks }: HeaderProps) {
                     {/* Logo and Title - Left Side */}
                     <div
                         className="flex items-center space-x-4 lg:space-x-6 cursor-pointer group"
-                         onClick={() => navigateTo("/" )}
+                         onClick={() => navigateTo(isLandingPage ? "/" : "/dashboard")}
                     >
-                        <div className="relative">
-                            <Image
-                                src="/assets/gpa.png"
-                                alt="GPA Logo"
-                                width={58}
-                                height={58}
-                                className="h-20 w-auto transition-all duration-500 lg:h-14 group-hover:scale-110 group-hover:rotate-3"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 rounded-full transition-all duration-500"></div>
-                        </div>
+                       
                         <h1
-                            onClick={() => navigateTo(isLandingPage ? "/" : "/dashboard")}
+                            
                          className={`
                             font-bold transition-all duration-500
                             ${isScrolled 

@@ -16,7 +16,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return (
         <div className="min-h-screen flex flex-col w-full">
-            <Header title="GPA Productivity Suite Dashboard" navLinks={navLinks} />
+            <Header title="General" navLinks={navLinks} />
             <main className="flex-grow bg-gray-50 w-full ">
                 <div className=" ">
                     {children}

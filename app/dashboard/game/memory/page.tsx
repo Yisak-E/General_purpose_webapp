@@ -5,7 +5,6 @@ export default function Page() {
 
     return (
         <div className="p-4">
-            Game Dashboard Page
             <MemoryGame emojiSet={emojiSet} />
         </div>
     );

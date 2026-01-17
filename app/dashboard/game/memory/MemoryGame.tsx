@@ -96,25 +96,11 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
 
     return (
         <div>
-       <h1>Memory Game</h1>
-       <article className={`grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 min-h-[400px]`}>
+       <article className={`grid gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 min-h-[600px]`}>
 
-        <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1"}>
-        {/* how to play description  */}
-        <h2 className="text-xl font-bold mb-2">How to Play</h2>
-        <p className="mb-4">
-            Click on a card to reveal the emoji. Try to find matching pairs!
-        </p>
-        <p className="mb-4">
-            If you click on a card you&apos;ve already revealed, the game is over.
-        </p>
-        <p className="mb-4">
-            Match all pairs to win the game!
-        </p>
-        <p>{flipCount}</p>
-        </section>
+        
 
-       <section className={`border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 flex justify-center items-center  `}>
+       <section className={`border p-4 m-2 rounded-lg shadow-lg lg:col-span-2 md:col-span-2 sm:col-span-1 flex justify-center items-center  `}>
         {
             gameCompleted || !gameStarted ? (
                 <div>
@@ -151,16 +137,17 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
        </section>
 
 
-        <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:grid-cols-2 sm:col-span-1"}>
-          <div className="grid grid-cols-2">
+        <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 "}>
+          <div className="grid grid-cols-2 gap-4 min-h-[600px]">
             <div className="mb-4 rounded-l-lg shadow-lg p-4 bg-yellow-100">
              <h2>Leaderboard</h2>
                {
                 /* Leaderboard component or display logic here */
                 gameScores.slice(0,10).map((entry, index) => (
                     <div key={index} className="flex justify-between border-b py-2">
+                        <span>{index + 1}</span>
                         <span>{entry.name}</span>
-                            <span>{entry.score}</span>
+                        <span>{entry.score}</span>
                     </div>
                 ))
                }
