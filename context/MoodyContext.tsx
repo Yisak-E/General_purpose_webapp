@@ -33,7 +33,6 @@ const MoodyContext = createContext<MoodyContextType | null>(null);
 
 export function MoodyProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<Moodpost[]>([]);
-  const editorRef = useRef<HTMLDivElement | null>(null);
 
 
   useEffect(() => {

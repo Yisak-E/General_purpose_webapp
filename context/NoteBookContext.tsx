@@ -23,10 +23,8 @@ export function NoteBookProvider({children}: {children: React.ReactNode}) {
     const [notes, setNotes] = useState<Note[]>([]);
     const [noteTitle, setNoteTitle] = useState<string>('');
     const [noteContent, setNoteContent] = useState<string>('');
-    const [quizType, setQuizType] = useState<QuizType>('mcq');
-    const [quizData, setQuizData] = useState<Quiz | null>(null);
-
-     const editorRef = useRef<HTMLDivElement | null>(null);
+    const [quizType] = useState<QuizType>('mcq');
+    const [quizData] = useState<Quiz | null>(null);
      
     useEffect(() => {
         const q = query(collection(db, "advanced-notes"), orderBy("updatedAt", "desc"));

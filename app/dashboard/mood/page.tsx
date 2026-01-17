@@ -1,4 +1,3 @@
-import { useMoody } from "@/context/MoodyContext";
 import MoodClient from "./MoodClient";
 
 export default function MoodyPage() {

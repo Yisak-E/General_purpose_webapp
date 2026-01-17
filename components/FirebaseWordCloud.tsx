@@ -7,7 +7,6 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { s } from "motion/react-m";
 import { useEffect, useState } from "react";
 
 interface KeywordDoc {

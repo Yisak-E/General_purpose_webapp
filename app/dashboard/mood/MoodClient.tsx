@@ -1,7 +1,7 @@
 'use client';
 
 import { useMoody } from "@/context/MoodyContext";
-import { motion, scale } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { Chart } from "react-google-charts";
 
@@ -15,7 +15,7 @@ const imojis = [
 
 
 export default function MoodClient() {
-    const [moods, setMoods] = useState(imojis);
+    const [moods] = useState(imojis);
     const {posts, addPost} = useMoody();
     const [selectedMood, setSelectedMood] = useState<string >("");
     const [message, setMessage] = useState("");

@@ -1,14 +1,14 @@
 'use client';
 
 
-import { usejobContext } from '@/context/JobContext';
+import { useJobContext } from '@/context/JobContext';
 import { useState } from 'react';
 import FirebaseWordCloud from "@/components/FirebaseWordCloud";
 import JopForm from './JobForm';
 import JobCardView from '@/ui/JobCardView';
 
-export default function jobClient() {
-  const { jobLists } = usejobContext();
+export default function JopClient() {
+  const { jobLists } = useJobContext();
   const [index, setIndex] = useState(0);
 
   return (

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import './globals.css';
 import LandingPage from "./LandingPage";
 import type { Feature } from "../type/index";

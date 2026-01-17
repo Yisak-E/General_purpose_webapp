@@ -128,8 +128,14 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
       });
 
       await batch.commit();
-    } catch (err: any) {
-      console.error(err.response?.data || err.message);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error(err.response?.data || err.message);
+      } else if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error("Unknown error while searching jobs");
+      }
       setError("Job search failed");
       throw err;
     } finally {
@@ -154,10 +160,10 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function usejobContext() {
+export function useJobContext() {
   const context = useContext(jobContext);
   if (!context) {
-    throw new Error("usejobContext must be used inside jobProvider");
+    throw new Error("useJobContext must be used inside JobProvider");
   }
   return context;
 }

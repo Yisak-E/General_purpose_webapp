@@ -1,8 +1,8 @@
 'use client';
 
-import { div } from "motion/react-m";
+import { Feature } from "@/type";
 interface MobileNavigationProps {
-    features: any[];
+  features: Feature[];
     currentSlide: number;
     setCurrentSlide: (index: number) => void;
 }

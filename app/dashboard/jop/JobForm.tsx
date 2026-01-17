@@ -2,12 +2,12 @@
 
 import { FormEvent, useState } from "react";
 import { JobSearchType } from "@/type/jobSearchType";
-import { usejobContext } from "@/context/JobContext";
+import { useJobContext } from "@/context/JobContext";
 import { saveSearchKeywords } from "@/lib/saveSearchKeywords";
 
 export default function JopForm() {
-    const [error, setError] = useState<Error | string>('');
-     const { jobLists, searchjob } = usejobContext();
+  const [error, setError] = useState<Error | string>("");
+  const { searchjob } = useJobContext();
     
 
     const [searchParams, setSearchParams] = useState<JobSearchType>({
@@ -19,7 +19,7 @@ export default function JopForm() {
 
     const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
         const combinedText = `${searchParams.name} ${searchParams.skill} ${searchParams.location}`;
@@ -27,8 +27,12 @@ export default function JopForm() {
         await saveSearchKeywords(combinedText);
         await searchjob(searchParams);
 
-    } catch (err: any) {
-        setError(err instanceof Error ? err : 'Search failed');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Search failed");
+        }
     }
     };
 
@@ -109,6 +113,11 @@ export default function JopForm() {
             >
               Search job
             </button>
+            {error && (
+              <p className="mt-2 text-sm text-red-400">
+                {typeof error === "string" ? error : error.message}
+              </p>
+            )}
           </form>
     );
 }

@@ -1,10 +1,7 @@
 'use client';
 
 import RotateScaleAnim from "@/animations/RotateScaleAnim";
-import SolarSystem from "@/animations/SolarSystem";
-import SolarSystem3D from "@/animations/SolarSystem3D";
 import TextTypingAnim from "@/animations/TextTypingAnim";
-import { motion } from "framer-motion";
 
 interface HeroProps {
     categories: string[];
@@ -22,7 +19,12 @@ export default function Hero({ categories }: HeroProps) {
                    <TextTypingAnim text='Discover a comprehensive collection of tools designed to enhance your daily life,
                     boost productivity, and support your personal growth journey.'/>
                 </p>
-               
+
+                                {categories.length > 0 && (
+                                    <p className="mb-6 text-sm text-blue-300">
+                                        Explore {categories.length} feature categories tailored to your needs.
+                                    </p>
+                                )}
 
 
                 <button>
