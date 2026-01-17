@@ -15,6 +15,13 @@ import {
 import { FirebaseError } from 'firebase/app';
 
 
+/** * Weather Context Type Definition
+ * @property {string} location - Current location for weather data
+ * @property {function} setLocation - Function to update the location
+ * @property {function} getFromFirestore - Function to fetch weather data from Firestore
+ * @property {function} saveWeatherDataToFirestore - Function to save weather data to Firestore
+ * @throws FirebaseError when Firestore operations fail
+ */
 type WeatherContextType = {
     location: string;
     setLocation: React.Dispatch<React.SetStateAction<string>>;
@@ -74,7 +81,10 @@ export const WeatherContextProvider = ({ children }: { children: React.ReactNode
     
 }
 
-
+/**
+ * Custom hook to use the WeatherContext
+ * @throws Error if used outside of WeatherContextProvider
+ */
 export const  useWeatherContext = () => {
     const context = useContext(WeatherContext);
     if (!context) {
@@ -85,6 +95,11 @@ export const  useWeatherContext = () => {
 
 
 
+/**
+ * Weather API Response Type
+ * Adapted from OpenWeatherMap API response structure
+ * See: https://openweathermap.org/current/data/2.5#JSON/current_JSON
+ */
 export interface WeatherResponse {
   coord: {
     lon: number;

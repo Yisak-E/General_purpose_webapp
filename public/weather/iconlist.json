@@ -1,0 +1,74 @@
+{
+  "01d": {
+    "description": "clear sky (day)",
+    "image_url": "https://openweathermap.org/img/wn/01d@2x.png"
+  },
+  "01n": {
+    "description": "clear sky (night)",
+    "image_url": "https://openweathermap.org/img/wn/01n@2x.png"
+  },
+  "02d": {
+    "description": "few clouds (day)",
+    "image_url": "https://openweathermap.org/img/wn/02d@2x.png"
+  },
+  "02n": {
+    "description": "few clouds (night)",
+    "image_url": "https://openweathermap.org/img/wn/02n@2x.png"
+  },
+  "03d": {
+    "description": "scattered clouds (day)",
+    "image_url": "https://openweathermap.org/img/wn/03d@2x.png"
+  },
+  "03n": {
+    "description": "scattered clouds (night)",
+    "image_url": "https://openweathermap.org/img/wn/03n@2x.png"
+  },
+  "04d": {
+    "description": "broken clouds (day)",
+    "image_url": "https://openweathermap.org/img/wn/04d@2x.png"
+  },
+  "04n": {
+    "description": "broken clouds (night)",
+    "image_url": "https://openweathermap.org/img/wn/04n@2x.png"
+  },
+  "09d": {
+    "description": "shower rain (day)",
+    "image_url": "https://openweathermap.org/img/wn/09d@2x.png"
+  },
+  "09n": {
+    "description": "shower rain (night)",
+    "image_url": "https://openweathermap.org/img/wn/09n@2x.png"
+  },
+  "10d": {
+    "description": "rain (day)",
+    "image_url": "https://openweathermap.org/img/wn/10d@2x.png"
+  },
+  "10n": {
+    "description": "rain (night)",
+    "image_url": "https://openweathermap.org/img/wn/10n@2x.png"
+  },
+  "11d": {
+    "description": "thunderstorm (day)",
+    "image_url": "https://openweathermap.org/img/wn/11d@2x.png"
+  },
+  "11n": {
+    "description": "thunderstorm (night)",
+    "image_url": "https://openweathermap.org/img/wn/11n@2x.png"
+  },
+  "13d": {
+    "description": "snow (day)",
+    "image_url": "https://openweathermap.org/img/wn/13d@2x.png"
+  },
+  "13n": {
+    "description": "snow (night)",
+    "image_url": "https://openweathermap.org/img/wn/13n@2x.png"
+  },
+  "50d": {
+    "description": "mist (day)",
+    "image_url": "https://openweathermap.org/img/wn/50d@2x.png"
+  },
+  "50n": {
+    "description": "mist (night)",
+    "image_url": "https://openweathermap.org/img/wn/50n@2x.png"
+  }
+}
