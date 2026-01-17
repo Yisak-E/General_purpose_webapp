@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemoryGameContext } from "@/context/MemoryGameContext";
+import { LeaderboardEntry } from "@/type/memoType";
 import { motion } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 interface MemoryGameProps {
@@ -10,17 +11,22 @@ interface MemoryGameProps {
 }
 
 export default function MemoryGame({ emojiSet }: MemoryGameProps) {
+    const [name, setName] = useState("Ruhama");
+    const [gameScores, setGameScores] = useState<{ name: string; score: number }[]>([]);
    
     const {
         gameStarted, setGameStarted,
         gameCompleted, setGameCompleted,
         score, setScore,
-        showAllCards, setShowAllCards,
+        setShowAllCards,
         cards, setCards,
         bestScore, setBestScore,
-        clickedEmojis, setClickedEmojis,
-        pairedEmojis, setPairedEmojis,
+        setClickedEmojis,
+        setPairedEmojis,
         flipCount, setFlipCount,
+        getLeaderboard,
+        updateLeaderboard,
+        user, setUser,
 
     } = useMemoryGameContext();
 
@@ -50,6 +56,17 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         }, 2000);
     };
 
+    useEffect(() => {
+        gameScoresHandler();
+        if(gameCompleted){
+            setUser({ name, score });
+            const camelName = name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
+            const entry : LeaderboardEntry = { name: camelName, score, timestamp: Date.now() };
+            updateLeaderboard(entry);   
+           
+           
+        }
+    }, [gameCompleted, name , score]);
 
     // Effect to check for game completion
     useEffect(() => {
@@ -63,7 +80,19 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
     }, [cards, gameStarted, score, bestScore, setBestScore, setGameCompleted, setGameStarted]);
    
 
+    const gameScoresHandler = async () => {
+        const gameScores = await getLeaderboard();
+        setGameScores(gameScores);
+    }
 
+    const gameStartHandler = () => {
+       if( name.trim().length < 3){
+        alert("Name must be at least 3 characters long.");
+        return;
+       }
+        startGame();
+        setName(name.trim());
+    };
 
 
     return (
@@ -114,15 +143,6 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
                     )}
 
                   </div>
-                    <motion.button
-                        className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
-                        onClick={startGame}
-                        initial={{ scale: 1 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        Play 
-                    </motion.button>
                 </div>
             ) : (
                 <GameBoard emojiSet={cards} />
@@ -133,33 +153,52 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
 
 
         <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:grid-cols-2 sm:col-span-1"}>
-            {/* Scoreboard */}
-            <h2 className="text-xl font-bold mb-2">Scoreboard</h2>
-            <p className="mb-2">Current Score: {score}</p>
-            <p className="mb-2">Best Score: {bestScore}</p>
-            <motion.button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:cursor-pointer border shadow-lg"
-                onClick={startGame}
-                initial={{ scale: 1 }}
-                whileHover={{ scale: 1.1, rotate: 360, transition: { duration: 3 }  }}
-                whileTap={{ scale: 0.9 , }}
-
-            >
-                Start Game
-            </motion.button>
-
-            {
-                clickedEmojis.size >0 && (
-                    <div className="mt-4">
-                        <h3 className="text-lg font-bold mb-2">Clicked Emojis:</h3>
-                        <div className="flex flex-wrap">
-                            {[...clickedEmojis].map((item) => (
-                                <span key={item.id} className="text-3xl m-1">{item.emoji}</span>
-                            ))}
-                        </div>
+          <div className="grid grid-cols-2">
+            <div className="mb-4 rounded-l-lg shadow-lg p-4 bg-yellow-100">
+             <h2>Leaderboard</h2>
+               {
+                /* Leaderboard component or display logic here */
+                gameScores.slice(0,10).map((entry, index) => (
+                    <div key={index} className="flex justify-between border-b py-2">
+                        <span>{entry.name}</span>
+                            <span>{entry.score}</span>
                     </div>
-                )
-            }
+                ))
+               }
+            </div>
+            <div className="mb-4 p-4 rounded-r-lg shadow-lg bg-blue-100">
+                <form action="">
+                    <label htmlFor="name" className="block mb-2 font-semibold">Enter Name:</label>
+                    <input 
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full p-2 border rounded mb-4"
+                    />
+                    <p>{name}</p>
+                </form>
+                <h2>Score: {score}</h2>
+                <h2>Best Score: {bestScore}</h2>
+
+                {/* button  */}
+                <div className="mt-4">
+                <motion.button
+                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
+                        onClick={gameStartHandler}
+                        initial={{ scale: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        {gameStarted ? 'Restart Game' : 'Start Game'}
+                    </motion.button>
+
+               </div>
+            </div>
+            
+
+          </div>
 
 
 

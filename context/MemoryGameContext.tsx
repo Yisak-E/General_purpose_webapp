@@ -1,7 +1,20 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { db } from "@/api/firebaseConfigs";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  doc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
+import { FirebaseError } from 'firebase/app';
+import { LeaderboardEntry } from '@/type/memoType';
 
-const scorePackage: number[] = [ 5, 10, 15, 20, 25, 30, 40, 50,60, 70];
+
+const scorePackage: number[] = [ 10, 20,30, 40, 50,60, 70, 80, 75, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5 ];
 
 type MemoryGameContextType = {
     score: number;
@@ -24,6 +37,16 @@ type MemoryGameContextType = {
     setPairedEmojis: React.Dispatch<React.SetStateAction<Set<string>>>;
 
     handleCardClick: (index: number) => void;
+
+   
+    getLeaderboard: (difficulty?: string) => Promise<LeaderboardEntry[]>;
+    updateLeaderboard: (entry: LeaderboardEntry) => Promise<void>;
+    
+    user : { name: string; score: number; difficulty?: string } | null;
+    setUser: React.Dispatch<React.SetStateAction<{ name: string; score: number; difficulty?: string } | null>>;
+    
+
+    
 };
 
 export const MemoryGameContext = React.createContext<MemoryGameContextType | undefined>(undefined);
@@ -39,6 +62,73 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [canClick, setCanClick] = useState(true);
     const [gameCompleted, setGameCompleted] = useState(false);
     const [pairedEmojis, setPairedEmojis] = useState<Set<string>>(new Set());
+    const [user, setUser] = useState<{ name: string; score: number; difficulty?: string } | null>(null);
+
+
+
+   
+    const getLeaderboard = async (difficulty?: string): Promise<LeaderboardEntry[]> => {
+        try{
+        const q = query(
+            collection(db, "memoScore"),
+            orderBy("score", "desc")
+        )
+        const snap = await new Promise<any>((resolve, reject) => {
+            onSnapshot(q, (snapshot) => {
+                resolve(snapshot);
+            }, (error) => {
+                reject(error);
+            });
+        });
+
+        const entries: LeaderboardEntry[] = snap.docs.map((d: any) => {
+            const data = d.data();
+            return {
+                name: data.name,
+                score: data.score,
+                timestamp: data.timestamp,
+                difficulty: data.difficulty || undefined,
+            } satisfies LeaderboardEntry;
+        });
+
+        if (difficulty) {
+            return entries.filter(entry => entry.difficulty === difficulty);
+        } else {
+            return entries;
+        }
+        }catch (error) {
+        throw new FirebaseError('failed-precondition', 'Failed to fetch leaderboard');
+        }
+    }
+   const updateLeaderboard = async (entry: LeaderboardEntry): Promise<void> => {
+    try {
+        const id = entry.name;
+        const docRef = doc(db, "memoScore", id);
+
+            const snap = await getDoc(docRef);
+
+            // If user exists and old score is higher → do nothing
+            if (snap.exists() && snap.data().score >= entry.score) {
+                return;
+            }
+
+            await setDoc(
+                docRef,
+                {
+                    name: entry.name,
+                    score: entry.score,
+                    timestamp: entry.timestamp,
+                    difficulty: entry.difficulty ?? null,
+                },
+                    { merge: true }
+            );
+
+        
+        } catch (error) {
+                throw new Error("Failed to update leaderboard");
+            }
+        };
+    
 
     
          // function to handle card click
@@ -111,6 +201,7 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return (
         <MemoryGameContext.Provider
             value={{
+                // state and setters
                 score,
                 setScore,
                 showAllCards,
@@ -131,6 +222,12 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 setPairedEmojis,
                 handleCardClick,
 
+                // firebase functions
+                getLeaderboard,
+                updateLeaderboard,
+                user,
+                setUser,
+
             }}
         >
             {children}
@@ -145,3 +242,8 @@ export const useMemoryGameContext = () => {
     }
     return context;
 };
+
+
+
+
+

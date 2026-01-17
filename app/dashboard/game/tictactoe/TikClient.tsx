@@ -1,7 +1,6 @@
 'use client';
 
 import RainingLetters from "@/animations/amie/RainingLetters";
-import RotateScaleAnim from "@/animations/RotateScaleAnim";
 import { useTicContext } from "@/context/TicContext";
 import { motion } from "framer-motion";
 

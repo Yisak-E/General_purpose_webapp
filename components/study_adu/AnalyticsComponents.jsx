@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart
+  PieChart, Pie, Cell, Line, AreaChart, Area, ComposedChart
 } from 'recharts';
 
 // Chart color scheme
