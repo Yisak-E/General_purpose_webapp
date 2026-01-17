@@ -3,7 +3,7 @@
 import CategoryFiltration from "@/components/sections/CategoryFiltration";
 import MobileNavigation from "@/components/sections/MobileNavigation";
 import { Feature } from "@/type";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 interface SlideShowProps {
     features: Feature[];
@@ -14,20 +14,21 @@ export default function SlideShow({features, categories}: SlideShowProps) {
 
     const [currentSlide, setCurrentSlide] = React.useState(0);
 
+  const goToNextSlide = useCallback(() => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % features.length);
+  }, [features.length]);
+
+  const goToPreviousSlide = useCallback(() => {
+    setCurrentSlide((prevSlide) => (prevSlide - 1 + features.length) % features.length);
+  }, [features.length]);
+
     useEffect(() => {
         const slideInterval = setInterval(() => {
             goToNextSlide();
         }, 5000); 
 
         return () => clearInterval(slideInterval);
-    }, [features.length]);
-
-    const goToNextSlide = () => {
-        setCurrentSlide((prevSlide) => (prevSlide + 1) % features.length);
-    };
-    const goToPreviousSlide = () => {
-        setCurrentSlide((prevSlide) => (prevSlide - 1 + features.length) % features.length);
-    };
+  }, [features.length, goToNextSlide]);
     return (
         <section className="py-16 px-4 bg-gray-900 border-t rounded-3xl">
         <div className="max-w-6xl mx-auto">

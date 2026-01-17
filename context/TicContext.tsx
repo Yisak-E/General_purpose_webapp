@@ -1,7 +1,6 @@
 'use client';
 
-import { i, s } from 'motion/react-m';
-import {useContext , createContext, useState, useEffect} from 'react';
+import {useContext , createContext, useState, useEffect, useCallback} from 'react';
 
  const emojiSet = ['✖️', '🟢', '😊'];
 
@@ -39,8 +38,35 @@ export const TicContextProvider = ({ children }: { children: React.ReactNode }) 
     const [playerTurn, setPlayerTurn] = useState<typeof emojiSet[number]>(emojiSet[0]);
     const [canClick, setCanClick] = useState(true);
     const [winningCombination, setWinningCombination] = useState<number[] | undefined>(undefined);
-    
-
+   
+    const aiMoves = useCallback((boardState: string[]) => {
+        if (gameOver) {
+            return;
+        }
+        if (playerTurn !== emojiSet[1]) {
+            return;
+        }
+        if (!canClick) {
+            const aiMove = best_move(boardState, emojiSet[1]);
+            if (aiMove !== null) {
+                const updatedBoard = [...boardState];
+                updatedBoard[aiMove] = emojiSet[1];
+                setBoard(updatedBoard);
+                if (check_win(updatedBoard, emojiSet[1])) {
+                    setGameOver(true);
+                    setWinner(emojiSet[1]);
+                    return;
+                }
+                if (updatedBoard.every(cell => cell !== emojiSet[2])) {
+                    setGameOver(true);
+                    setWinner(null);
+                    return;
+                }
+            }
+            setPlayerTurn(emojiSet[0]);
+            setCanClick(true);
+        }
+    }, [canClick, gameOver, playerTurn]);
 
 
     useEffect(() => {
@@ -49,11 +75,9 @@ export const TicContextProvider = ({ children }: { children: React.ReactNode }) 
             setTimeout(() => {
                 const newBoard = [...board];
                 aiMoves(newBoard);
-                setCanClick(true);
             }, 1000);
         }
-    
-    }, [playerTurn, board, gameOver, setCanClick]);
+    }, [aiMoves, board, gameOver, playerTurn]);
 
     const check_win = (boardItem: string[], player:string ): boolean => {
     const win_combinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
@@ -96,35 +120,6 @@ export const TicContextProvider = ({ children }: { children: React.ReactNode }) 
         }
         setCanClick(false);
         setPlayerTurn(emojiSet[1]);
-    }
-
-    const aiMoves = (board: string[]) => {
-        if (gameOver) {
-            return;
-        }
-        if (playerTurn !== emojiSet[1]) {
-            return;
-        }
-        if(!canClick) {
-            const aiMove = best_move(board, emojiSet[1]);
-        if (aiMove !== null) {
-            board[aiMove] = emojiSet[1];
-            setBoard(board);
-            if (check_win(board, emojiSet[1])) {
-                setGameOver(true);
-                setWinner(emojiSet[1]);
-                return;
-            }
-            if (board.every(cell => cell !== emojiSet[2])) {
-                setGameOver(true);
-                setWinner(null);
-                return;
-            }
-        }
-        setPlayerTurn(emojiSet[0]);
-        setCanClick(true);
-        }
-
     }
 
 

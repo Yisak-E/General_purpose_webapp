@@ -3,7 +3,7 @@
 import { useMemoryGameContext } from "@/context/MemoryGameContext";
 import { LeaderboardEntry } from "@/type/memoType";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 interface MemoryGameProps {
@@ -26,21 +26,21 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         flipCount, setFlipCount,
         getLeaderboard,
         updateLeaderboard,
-        user, setUser,
+        setUser,
 
     } = useMemoryGameContext();
 
     // Initialize cards on component mount
-    const initializeCards = () => {
+    const initializeCards = useCallback(() => {
         const doubledEmojis = [...emojiSet, ...emojiSet];
         const shuffledEmojis = shuffleArray(doubledEmojis);
         const initialCards = shuffledEmojis.map(emoji => ({ emoji, isFlipped: true, isMatched: false }));
         setCards(initialCards);
-    }
+    }, [emojiSet, setCards]);
   
 
     // Function to start/restart the game
-    const startGame = () => {
+    const startGame = useCallback(() => {
         initializeCards();
         setScore(0);
         setClickedEmojis(new Set());
@@ -54,19 +54,22 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             setCards(prevCards => prevCards.map(card => ({ ...card, isFlipped: false })));
             setShowAllCards(false);
         }, 2000);
-    };
+    }, [initializeCards, setCards, setClickedEmojis, setGameCompleted, setGameStarted, setPairedEmojis, setScore, setShowAllCards]);
+
+    const gameScoresHandler = useCallback(async () => {
+        const scores = await getLeaderboard();
+        setGameScores(scores);
+    }, [getLeaderboard]);
 
     useEffect(() => {
         gameScoresHandler();
-        if(gameCompleted){
+        if (gameCompleted) {
             setUser({ name, score });
             const camelName = name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
-            const entry : LeaderboardEntry = { name: camelName, score, timestamp: Date.now() };
-            updateLeaderboard(entry);   
-           
-           
+            const entry: LeaderboardEntry = { name: camelName, score, timestamp: Date.now() };
+            updateLeaderboard(entry);
         }
-    }, [gameCompleted, name , score]);
+    }, [gameCompleted, gameScoresHandler, name, score, setUser, updateLeaderboard]);
 
     // Effect to check for game completion
     useEffect(() => {
@@ -79,11 +82,6 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
         }
     }, [cards, gameStarted, score, bestScore, setBestScore, setGameCompleted, setGameStarted]);
    
-
-    const gameScoresHandler = async () => {
-        const gameScores = await getLeaderboard();
-        setGameScores(gameScores);
-    }
 
     const gameStartHandler = () => {
        if( name.trim().length < 3){
