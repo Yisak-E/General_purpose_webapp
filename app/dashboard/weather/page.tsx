@@ -1,7 +1,9 @@
+import WeatherClient from "./WeatherClient";
+
 export default function Page() {
     return (
         <div>
-            Game Dashboard Page
+           <WeatherClient />
         </div>
     );
 }

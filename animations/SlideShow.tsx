@@ -3,6 +3,7 @@
 import CategoryFiltration from "@/components/sections/CategoryFiltration";
 import MobileNavigation from "@/components/sections/MobileNavigation";
 import { Feature } from "@/type";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
 
 interface SlideShowProps {
@@ -11,8 +12,12 @@ interface SlideShowProps {
 }
 
 export default function SlideShow({features, categories}: SlideShowProps) {
+  const router = useRouter();
+  const navigateTo = () => {
+    router.push('/dashboard');
 
-    const [currentSlide, setCurrentSlide] = React.useState(0);
+  };
+  const [currentSlide, setCurrentSlide] = React.useState(0);
 
   const goToNextSlide = useCallback(() => {
     setCurrentSlide((prevSlide) => (prevSlide + 1) % features.length);
@@ -47,7 +52,9 @@ export default function SlideShow({features, categories}: SlideShowProps) {
     
 
    
-    <div className="relative ">
+    <div className="relative "
+    onClick={navigateTo}
+    >
       {/* Slideshow */}
       <div className="overflow-hidden rounded-2xl  shadow-xl">
         <div className="relative h-96 md:h-[500px]">
