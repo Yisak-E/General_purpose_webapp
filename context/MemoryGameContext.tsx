@@ -2,13 +2,15 @@
 import React, { useState } from 'react';
 import { db } from "@/api/firebaseConfigs";
 import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  doc,
-  setDoc,
-  getDoc,
+    collection,
+    onSnapshot,
+    orderBy,
+    query,
+    doc,
+    setDoc,
+    getDoc,
+    QueryDocumentSnapshot,
+    DocumentData,
 } from "firebase/firestore";
 import { FirebaseError } from 'firebase/app';
 import { LeaderboardEntry } from '@/type/memoType';
@@ -73,7 +75,7 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             collection(db, "memoScore"),
             orderBy("score", "desc")
         )
-        const snap = await new Promise<any>((resolve, reject) => {
+        const snap = await new Promise((resolve, reject) => {
             onSnapshot(q, (snapshot) => {
                 resolve(snapshot);
             }, (error) => {
@@ -81,7 +83,7 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             });
         });
 
-        const entries: LeaderboardEntry[] = snap.docs.map((d: any) => {
+        const entries: LeaderboardEntry[] = (snap as { docs: QueryDocumentSnapshot<DocumentData>[] }).docs.map((d) => {
             const data = d.data();
             return {
                 name: data.name,
@@ -97,6 +99,7 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             return entries;
         }
         }catch (error) {
+        console.error(error);
         throw new FirebaseError('failed-precondition', 'Failed to fetch leaderboard');
         }
     }
@@ -125,7 +128,8 @@ export const MemoryGameProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         
         } catch (error) {
-                throw new Error("Failed to update leaderboard");
+            console.error(error);
+            throw new Error("Failed to update leaderboard");
             }
         };
     

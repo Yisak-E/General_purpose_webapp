@@ -41,7 +41,7 @@ export default function TikClient() {
                             winner ? (
                                 <p className="text-xl">Winner: {winner}</p>
                             ) : (
-                                <p className="text-xl">It's a Draw!</p>
+                                <p className="text-xl">It&apos;s a Draw!</p>
                             )
                         ) : (
                             <p className="text-xl">Current Turn: {playerTurn}</p>

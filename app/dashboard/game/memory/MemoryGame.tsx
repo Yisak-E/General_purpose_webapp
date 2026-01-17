@@ -3,7 +3,7 @@
 import { useMemoryGameContext } from "@/context/MemoryGameContext";
 import { LeaderboardEntry } from "@/type/memoType";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 interface MemoryGameProps {
@@ -31,16 +31,16 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
     } = useMemoryGameContext();
 
     // Initialize cards on component mount
-    const initializeCards = useCallback(() => {
+    const initializeCards = () => {
         const doubledEmojis = [...emojiSet, ...emojiSet];
         const shuffledEmojis = shuffleArray(doubledEmojis);
         const initialCards = shuffledEmojis.map(emoji => ({ emoji, isFlipped: true, isMatched: false }));
         setCards(initialCards);
-    }, [emojiSet, setCards]);
+    };
   
 
     // Function to start/restart the game
-    const startGame = useCallback(() => {
+    const startGame = () => {
         initializeCards();
         setScore(0);
         setClickedEmojis(new Set());
@@ -54,14 +54,15 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             setCards(prevCards => prevCards.map(card => ({ ...card, isFlipped: false })));
             setShowAllCards(false);
         }, 2000);
-    }, [initializeCards, setCards, setClickedEmojis, setGameCompleted, setGameStarted, setPairedEmojis, setScore, setShowAllCards]);
+    };
 
-    const gameScoresHandler = useCallback(async () => {
+    const gameScoresHandler = async () => {
         const scores = await getLeaderboard();
         setGameScores(scores);
-    }, [getLeaderboard]);
+    };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         gameScoresHandler();
         if (gameCompleted) {
             setUser({ name, score });
@@ -105,7 +106,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             Click on a card to reveal the emoji. Try to find matching pairs!
         </p>
         <p className="mb-4">
-            If you click on a card you've already revealed, the game is over.
+            If you click on a card you&apos;ve already revealed, the game is over.
         </p>
         <p className="mb-4">
             Match all pairs to win the game!
@@ -121,7 +122,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
                     {gameCompleted ? (
                         <div className="text-center mb-4">
                             <h2 className="text-2xl font-bold mb-2">Congratulations! 🎉</h2>
-                            <p className="mb-2">You've completed the game!</p>
+                            <p className="mb-2">You&apos;ve completed the game!</p>
                             <p className="mb-2">Your Score: {score}</p>
                             <p className="mb-2">Best Score: {bestScore}</p>
                         </div>
@@ -136,7 +137,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
                         
                         >
                             <h2 className="text-2xl font-bold mb-2">Memory Game</h2>
-                            <p className="mb-2">Click "Play" to start the game!</p>
+                            <p className="mb-2">Click &quot;Play&quot; to start the game!</p>
                         </motion.div>
                     )}
 

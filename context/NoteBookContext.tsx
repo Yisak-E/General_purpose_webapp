@@ -1,5 +1,5 @@
 'use client';
-import {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from '../api/firebaseConfigs';
 import { Note } from '@/type';

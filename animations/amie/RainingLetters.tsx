@@ -19,10 +19,10 @@ export default function RainingLetters({
   columns = 3,
 }: RainingLettersProps) {
   const baseChars = text.split("");
-  const rows: string[][] = Array.from({ length: columns }, (_, colIndex) => {
+  const rows: string[][] = Array.from({ length: columns }, () => {
     // Repeat the base text so each column has enough letters
     const repeated = Array.from({ length: 3 }, () => baseChars).flat();
-    return repeated.map((ch, i) => (ch === " " ? "\u00A0" : ch));
+    return repeated.map((ch) => (ch === " " ? "\u00A0" : ch));
   });
 
   return (

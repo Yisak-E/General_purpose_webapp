@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { JSearchJob } from "@/type/jobSearchType";
 
 interface JobCardViewProps {
-  job: any;
+  job: JSearchJob;
 }
 
 const JobCardView = ({ job }: JobCardViewProps)=>{

@@ -108,7 +108,6 @@ const cards: NavFeatures[] = [
 
 export default function DashboardPage(){
 
-    const categories = [...new Set(cards.map( (card)=> card.category))];
     return (
         <main>
            <HomeClient cards={cards}  />
