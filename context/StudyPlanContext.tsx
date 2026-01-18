@@ -17,16 +17,15 @@ import {
     snapshotEqual,
     updateDoc,
 } from "firebase/firestore";
-import { FirebaseError } from 'firebase/app';
-import { s } from "motion/react-client";
+    
 
 /** * Study Plan Context Type Definition
  * @property 
  */
 type StudyPlanContextType = {
     studyPlans: StudyPlanType[];
-    semestersData: (plans: StudyPlanType[]) => SemesterType[];
    
+    changeCourseStatus:(course_code: string) => Promise<void>;
     updatePlan: (planId: string, data: Partial<StudyPlanType>) => Promise<void>;
 };
 
@@ -35,6 +34,7 @@ export const StudyPlanContext = createContext<StudyPlanContextType | null>(null)
 
 export const StudyPlanContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [studyPlans, setStudyPlans] = useState<StudyPlanType[]>([]);
+   
     
     useEffect(() => {
         const q = query(collection(db, "studyPlans"));
@@ -62,15 +62,31 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
         return () => unsubscribe();
     }, []);
 
-    const semestersData = (plans: StudyPlanType[]) => {
-        const semesters: SemesterType[] = [];
-        plans.forEach(plan => {
-            plan.semesters.forEach(semester => {
-                semesters.push(semester);
-            });
-        });
-        return semesters;
+    const changeCourseStatus = async (course_code: string) => {
+        try {
+            const planRef = doc(db, "studyPlans", studyPlans[0].id);
+            const planSnap = await getDoc(planRef);
+            if (planSnap.exists()) {
+                const planData = planSnap.data() as StudyPlanType;
+                const updatedSemesters = planData.semesters.map((semester) => {
+                    const updatedCourses = semester.courses.map((c) => {
+                        if (c.code === course_code) {
+                            return { ...c, taken: !c.taken };
+                        }
+                        return c;
+                    });
+                    return { ...semester, courses: updatedCourses };
+                });
+
+                await updateDoc(planRef, { semesters: updatedSemesters });
+            }
+        } catch (error) {
+            console.error("Error changing course status:", error);
+        }
     };
+
+
+   
 
     const updatePlan = async (planId: string, data: Partial<StudyPlanType>) => {
         try {
@@ -85,7 +101,7 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
     return (
         <StudyPlanContext.Provider value={{
             studyPlans,
-            semestersData,
+            changeCourseStatus,
             updatePlan,
         }}>
             {children}

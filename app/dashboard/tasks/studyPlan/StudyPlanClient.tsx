@@ -1,11 +1,11 @@
 'use client';
 
-import { SemesterType, useStudyPlanContext } from "@/context/StudyPlanContext";
+import {  useStudyPlanContext } from "@/context/StudyPlanContext";
 import {CourseType} from "@/context/StudyPlanContext";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 export default function StudyPlanClient() {
-    const {studyPlans} = useStudyPlanContext();
+    const {studyPlans, changeCourseStatus} = useStudyPlanContext();
     const [selectedSemester, setSelectedSemester] = useState<number>(0);
 
     if (studyPlans.length === 0) {
@@ -32,7 +32,7 @@ export default function StudyPlanClient() {
     }
 
 
-    const perSemsterCompletion = (courses: CourseType[]) => {
+    const completedCourses  = (courses: CourseType[]) => {
         const completedCredits = courses
             .filter(course => course.taken).length;
 
@@ -73,7 +73,7 @@ export default function StudyPlanClient() {
                         <div key={index} className={`col-span-1 m-2 border-b-2 p-2 rounded-l hover:bg-blue-100 ${selectedSemester === index ? "bg-blue-300" : ""}`} onClick={() => setSelectedSemester(index)}>
                             <h3 className="font-semibold text-lg">{semester.name}</h3>
                             <p className="text-gray-700">{semester.year}</p>
-                            <p>{perSemsterCompletion(semester.courses).completedCredits} / {perSemsterCompletion(semester.courses).totalCoursesInSemester} completed</p>
+                            <p>{completedCourses (semester.courses).completedCredits} / {completedCourses (semester.courses).totalCoursesInSemester} completed</p>
                         </div>
                     
                         ))}
@@ -81,7 +81,7 @@ export default function StudyPlanClient() {
 
                     <section className="lg:col-span-4 border p-2 w-full overflow-x-auto">
                         <h2></h2>
-                        <SemesterTable courses={activeSemester.courses} />
+                        <SemesterTable courses={activeSemester.courses} statusChanger={changeCourseStatus} />
 
                     </section>
                 </article>
@@ -95,8 +95,9 @@ export default function StudyPlanClient() {
 
 interface SemesterTableProps {
     courses: CourseType[];
+    statusChanger: (course_code: string) => void;
 }
-function SemesterTable({ courses }: SemesterTableProps) {
+function SemesterTable({ courses, statusChanger }: SemesterTableProps) {
     return (
         <table className="w-full p-4 border-collapse">
             <thead>
@@ -116,7 +117,9 @@ function SemesterTable({ courses }: SemesterTableProps) {
                         <td className="px-4 py-4 text-center lg:w-1/5 ">{course.credits}</td>
                         <td className="px-4 py-4 text-center">{course.taken ? "Completed" : "Pending"}</td>
                         <td className="px-4 py-4 text-center lg:w-1/7 ">
-                            <button className={`px-3 py-1 rounded ${!course.taken ? "bg-red-500 text-white" : "bg-green-500 text-white"}`}>
+                            <button 
+                                onClick={() => statusChanger(course.code)}
+                            className={`px-3 py-1 rounded ${!course.taken ? "bg-red-500 text-white" : "bg-green-500 text-white"}`}>
                                 {course.taken ? "untake" : "Complete"}
                             </button>
                         </td>
