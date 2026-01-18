@@ -25,8 +25,7 @@ import { s } from "motion/react-client";
  */
 type StudyPlanContextType = {
     studyPlans: StudyPlanType[];
-
-
+    semestersData: (plans: StudyPlanType[]) => SemesterType[];
    
     updatePlan: (planId: string, data: Partial<StudyPlanType>) => Promise<void>;
 };
@@ -36,7 +35,7 @@ export const StudyPlanContext = createContext<StudyPlanContextType | null>(null)
 
 export const StudyPlanContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [studyPlans, setStudyPlans] = useState<StudyPlanType[]>([]);
-
+    
     useEffect(() => {
         const q = query(collection(db, "studyPlans"));
 
@@ -47,7 +46,7 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
                     const data = d.data();
                     return {
                         id: d.id,
-                        program: data.Program,
+                        program: data.program,
                         semesters: data.semesters,
                         total_credit_hours: data.total_credit_hours,
                     } satisfies StudyPlanType;
@@ -63,6 +62,16 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
         return () => unsubscribe();
     }, []);
 
+    const semestersData = (plans: StudyPlanType[]) => {
+        const semesters: SemesterType[] = [];
+        plans.forEach(plan => {
+            plan.semesters.forEach(semester => {
+                semesters.push(semester);
+            });
+        });
+        return semesters;
+    };
+
     const updatePlan = async (planId: string, data: Partial<StudyPlanType>) => {
         try {
             const planRef = doc(db, "studyPlans", planId);
@@ -76,6 +85,7 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
     return (
         <StudyPlanContext.Provider value={{
             studyPlans,
+            semestersData,
             updatePlan,
         }}>
             {children}
