@@ -10,14 +10,14 @@ const cards: NavFeatures[] = [
         //     category: 'productivity',
         //     icon: '📅'
         // },
-        // {
-        //     title: 'Study Plan Creator',
-        //     image: "/assets/studyplan.jpg",
-        //     description: 'Design personalized study schedules that adapt to your learning style. Track progress and optimize your study sessions.',
-        //     navigateTo: '/dashboard/tasks/studyPlan',
-        //     category: 'education',
-        //     icon: '📚'
-        // },
+        {
+            title: 'Study Plan Creator',
+            image: "/assets/studyplan.jpg",
+            description: 'Design personalized study schedules that adapt to your learning style. Track progress and optimize your study sessions.',
+            navigateTo: '/dashboard/tasks/studyPlan',
+            category: 'education',
+            icon: '📚'
+        },
         {
             title: 'Job Search Pro',
             image: "/assets/virtualJooSearch.png",
