@@ -47,7 +47,7 @@ export const StudyPlanContextProvider = ({ children }: { children: React.ReactNo
                     const data = d.data();
                     return {
                         id: d.id,
-                        Program: data.Program,
+                        program: data.Program,
                         semesters: data.semesters,
                         total_credit_hours: data.total_credit_hours,
                     } satisfies StudyPlanType;
@@ -95,18 +95,23 @@ export const useStudyPlanContext = () => {
 
  export interface StudyPlanType {
     id: string;
-    Program: string;
-    semesters: {
-        courses:{
-            code: string;
-            credits: number;
-            taken: boolean;
-            title: string;
-        }[];
-        name: string;
-        total_credits: number;
-        year: string;
-
-    }[];
+    program: string;
+    semesters: SemesterType[];
     total_credit_hours: number;
+}   
+    
+
+
+export type CourseType = {
+    code: string;
+    credits: number;
+    taken: boolean;
+    title: string;
+}
+
+export type SemesterType = {
+    name: string;
+    year: string;
+    total_credits: number;
+    courses: CourseType[];
 }
