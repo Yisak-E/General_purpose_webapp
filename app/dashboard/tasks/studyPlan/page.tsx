@@ -1,7 +1,9 @@
+import StudyPlanClient from "./StudyPlanClient";
+
 export default function Page() {
     return (
         <div>
-            Game Dashboard Page
+           <StudyPlanClient />  
         </div>
     );
 }

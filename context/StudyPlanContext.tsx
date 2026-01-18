@@ -15,6 +15,7 @@ import {
     QueryDocumentSnapshot,
     DocumentData,
     snapshotEqual,
+    updateDoc,
 } from "firebase/firestore";
 import { FirebaseError } from 'firebase/app';
 import { s } from "motion/react-client";
@@ -23,8 +24,11 @@ import { s } from "motion/react-client";
  * @property 
  */
 type StudyPlanContextType = {
-    getPlans: () => void;
-    updatePlan: (planId: string, data: any) => void;
+    studyPlans: StudyPlanType[];
+
+
+   
+    updatePlan: (planId: string, data: Partial<StudyPlanType>) => Promise<void>;
 };
 
 export const StudyPlanContext = createContext<StudyPlanContextType | null>(null);
@@ -33,52 +37,45 @@ export const StudyPlanContext = createContext<StudyPlanContextType | null>(null)
 export const StudyPlanContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [studyPlans, setStudyPlans] = useState<StudyPlanType[]>([]);
 
-    
-useEffect(() => {
-        console.log("StudyPlanContextProvider mounted", studyPlans);
- 
-}, [studyPlans]);
+    useEffect(() => {
+        const q = query(collection(db, "studyPlans"));
 
-    const getPlans = async () => {
-       
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const plans: StudyPlanType[] = snapshot.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
+                    const data = d.data();
+                    return {
+                        id: d.id,
+                        Program: data.Program,
+                        semesters: data.semesters,
+                        total_credit_hours: data.total_credit_hours,
+                    } satisfies StudyPlanType;
+                });
 
-        try{
-           const q = query(
-            collection(db, "studyPlans"),
-           );
+                setStudyPlans(plans);
+            },
+            (error) => {
+                console.error("Error fetching study plans: ", error);
+            }
+        );
 
-           const snap = await new Promise((resolve, reject) => {
-            onSnapshot(q, (snapshot) => {
-                resolve(snapshot);
-            }, (error) => {
-                reject(error);
-            });
-           });
+        return () => unsubscribe();
+    }, []);
 
-           const plans: StudyPlanType[] = (snap as { docs: QueryDocumentSnapshot<DocumentData>[] }).docs.map((d) => {
-            const data = d.data();
-            return {
-                id: d.id,
-                Program: data.Program,
-                semesters: data.semesters,
-                total_credit_hours: data.total_credit_hours,
-            } satisfies StudyPlanType;
-           });
-           setStudyPlans(plans);
-        
-        }catch(error : any){
-            console.error("Error fetching study plans: ", error);
+    const updatePlan = async (planId: string, data: Partial<StudyPlanType>) => {
+        try {
+            const planRef = doc(db, "studyPlans", planId);
+            await updateDoc(planRef, data as any);
+        } catch (error) {
+            console.error("Error updating study plan:", error);
         }
-    };
-
-    const updatePlan = (planId: string, data: any) => {
-        // Implementation to update a study plan in Firestore
     };
 
 
     return (
         <StudyPlanContext.Provider value={{
-            getPlans,
+            studyPlans,
             updatePlan,
         }}>
             {children}
