@@ -3,10 +3,10 @@ import Header from "@/ui/Header";
 
 
 const navLinks = [
-                    { label: 'Todo Manager', path: '/TodoAndDone' },
-                    { label: 'Mood Tracker', path: '/moody' },
-                    { label: 'Memory Game', path: '/memorygame' },
-                    { label: 'Weather', path: '/weather' }
+                    { label: 'Jobs', path: '/dashboard/jop' },
+                    { label: 'Mood Tracker', path: '/dashboard/mood' },
+                    { label: 'Memory Game', path: '/dashboard/game/memory' },
+                    { label: 'Weather', path: '/dashboard/weather' }
                 ];
 
 interface DashboardLayoutProps {

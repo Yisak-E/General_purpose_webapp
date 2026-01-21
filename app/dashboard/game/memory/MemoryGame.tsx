@@ -70,7 +70,7 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
             const entry: LeaderboardEntry = { name: camelName, score, timestamp: Date.now() };
             updateLeaderboard(entry);
         }
-    }, [gameCompleted, gameScoresHandler, name, score, setUser, updateLeaderboard]);
+    }, [gameCompleted]);
 
     // Effect to check for game completion
     useEffect(() => {
