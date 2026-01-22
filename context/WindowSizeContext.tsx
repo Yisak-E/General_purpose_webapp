@@ -3,36 +3,41 @@
 
 import {useContext, createContext , useState, useEffect} from 'react';
 
+type WindowContextType = {
+  width: number;
+  breakpoint: 'small' | 'medium' | 'large';
+};
 
 
+const getBreakpoint = (w: number) => {
+  if (w < 640) return 'small';
+  if (w < 1024) return 'medium';
+  return 'large';
+};
 
 
-
-type WindowContextType ={
-    width: number;
-
-}
 
 
 export const windowContext = createContext<WindowContextType| null>(null);
 
 export const WindowContextProvider = ({children}:{ children: React.ReactNode})=>{
     const [width, setWidth] = useState(0);
+    const breakpoint = getBreakpoint(width);
 
-    useEffect(()=>{
-        const handleResize = () => setWidth(window.innerWidth);
+  useEffect(() => {
+    const update = () => setWidth(window.innerWidth);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
-        handleResize(); // set initial size
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    },[])
 
 
     return (
         <windowContext.Provider
          value={{
-             width
+             width,
+             breakpoint
          }}
         >
            { children}
