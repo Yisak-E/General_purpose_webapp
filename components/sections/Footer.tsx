@@ -1,7 +1,7 @@
 
 export default function Footer(){
     return (
-        <footer className="bg-gray-800 text-white p-4 mt-4 w-full bottom-0">
+        <footer className=" bg-gray-800 text-white p-4 mt-4 w-full bottom-0">
             <div className="container mx-auto text-center">
                 {/*this is my personal information site as well name Yisak Metaferiya and software engineering student */}
                 <section>

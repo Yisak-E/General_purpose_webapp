@@ -136,6 +136,16 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
        
        </section>
 
+       {/* this will be shown for small screen only */}
+
+        <div className=" md:hidden flex flex-col rounded-xl">
+            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
+            onClick={gameStartHandler}
+            >
+                 {gameStarted ? 'Restart Game' : 'Start Game'}
+            </button>
+
+        </div>
 
         <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 "}>
           <div className="grid grid-cols-2 gap-4 min-h-[600px]">

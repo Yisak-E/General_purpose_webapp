@@ -95,7 +95,7 @@ export default function MoodClient() {
                 </div>
 
            </div>
-            <div className="space-y-2 mt-4 flex flex-col justify-center md:flex-row md:col-span-1  md:flex-wrap gap-4 overflow-y-auto  max-h-[600px]">
+            <div className="space-y-2 mt-4 flex flex-col justify-center item-center  md:flex-row md:col-span-1  md:flex-wrap gap-4 overflow-y-auto  max-h-[600px] ">
 
             
                 {posts.map((post) => (
