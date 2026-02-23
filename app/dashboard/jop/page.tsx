@@ -2,7 +2,7 @@ import JopClient from "./JopClient";
 
 export default function Page() {
     return (
-        <div className="sm:fixed">
+        <div className="">
             <JopClient />
         </div>
     );

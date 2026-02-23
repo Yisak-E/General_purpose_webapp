@@ -12,7 +12,7 @@ export default function JopClient() {
   const [index, setIndex] = useState(0);
 
   return (
-    <div className="p-4 mt-20 bg-gray-800 text-white rounded-lg shadow h-min-screen w-full ">
+    <div className="p-4 mt-0 bg-gray-800 text-white rounded-lg shadow h-min-screen w-full ">
       <article className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
 
         {/* 🔍 SEARCH SECTION */}

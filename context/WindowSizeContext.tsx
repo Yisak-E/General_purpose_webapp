@@ -29,7 +29,7 @@ export const WindowContextProvider = ({children}:{ children: React.ReactNode})=>
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
-  }, []);
+  }, [width]);
 
 
 

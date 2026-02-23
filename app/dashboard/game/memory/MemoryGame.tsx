@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemoryGameContext } from "@/context/MemoryGameContext";
+import { useWindowContext } from "@/context/WindowSizeContext";
 import { LeaderboardEntry } from "@/type/memoType";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -13,6 +14,22 @@ interface MemoryGameProps {
 export default function MemoryGame({ emojiSet }: MemoryGameProps) {
     const [name, setName] = useState("Ruhama");
     const [gameScores, setGameScores] = useState<{ name: string; score: number }[]>([]);
+    const {breakpoint, width} = useWindowContext();
+    const [animSize, setAnimSize]= useState(1);
+
+    useEffect(()=>{
+        if(breakpoint ==='small'){
+            setAnimSize(1.3);
+        }else if(breakpoint ==='medium'){
+            setAnimSize(2.5);
+        }else{
+            setAnimSize(4.0);
+        }
+
+    }, [width]);
+
+
+
    
     const {
         gameStarted, setGameStarted,
@@ -113,11 +130,11 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
                             <p className="mb-2">Best Score: {bestScore}</p>
                         </div>
                     ) : (
-                        <motion.div className="text-center mb-4 border p-4 rounded-lg shadow-lg bg-green-300"
+                        <motion.div className="text-center mb-4 border p-4 rounded-lg shadow-lg bg-green-300 "
                             initial={{scale: 1,  backgroundColor: "rgb(56, 200, 12)",}}
-                            animate={{ scale: 1.5,  backgroundColor: "rgb(203, 200, 12)" }}
+                            animate={{ scale: animSize,  backgroundColor: "rgb(203, 200, 12)" }}
                             transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 0 }}
-                            whileHover={{ scale: 1.1, rotateY: 360, transition: { duration: 3 }  }}
+                            whileHover={{ scale: animSize, rotateY: 360, transition: { duration: 3 }  }}
                             exit={{ scale: 1,rotateY: 0, backgroundColor: "rgb(200, 20, 12)" }}
                             
                         
@@ -138,22 +155,25 @@ export default function MemoryGame({ emojiSet }: MemoryGameProps) {
 
        {/* this will be shown for small screen only */}
 
-        <div className=" md:hidden flex flex-col rounded-xl">
-            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
-            onClick={gameStartHandler}
-            >
-                 {gameStarted ? 'Restart Game' : 'Start Game'}
-            </button>
+       {
+        breakpoint ==='small' &&(
+            <div className="  flex flex-col rounded-xl">
+                <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hover:cursor-pointer border shadow-lg"
+                onClick={gameStartHandler}
+                >
+                    {gameStarted ? 'Restart Game' : 'Start Game'}
+                </button>
 
-        </div>
-
+            </div>
+        )
+       }
         <section className={"border p-4 m-2 rounded-lg shadow-lg lg:col-span-1 md:col-span-2 sm:col-span-1 "}>
-          <div className="grid grid-cols-2 gap-4 min-h-[600px]">
+          <div className={`grid grid-cols-2 gap-4 ${breakpoint === 'small'? 'min-h-[300px]': 'min-h-[600px]'} `}>
             <div className="mb-4 rounded-l-lg shadow-lg p-4 bg-yellow-100">
              <h2>Leaderboard</h2>
                {
                 /* Leaderboard component or display logic here */
-                gameScores.slice(0,10).map((entry, index) => (
+                gameScores.slice(0, breakpoint === 'small'? 5 : 10).map((entry, index) => (
                     <div key={index} className="flex justify-between border-b py-2">
                         <span>{index + 1}</span>
                         <span>{entry.name}</span>
